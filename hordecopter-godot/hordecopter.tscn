@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://x4pith38mxmy"]
+
+[ext_resource type="Script" uid="uid://cic3ppafpkp31" path="res://hordecopter.gd" id="1_eifgo"]
+[ext_resource type="PackedScene" uid="uid://d25k72efcjldo" path="res://vain_body.glb" id="3_7mbbw"]
+[ext_resource type="Script" uid="uid://nmj5je32etrs" path="res://rollaus_pivot_piste.gd" id="4_qxvvh"]
+[ext_resource type="PackedScene" uid="uid://yksjed5m5v1b" path="res://vain_ropeli.glb" id="5_ka8e6"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_eifgo"]
+
+[node name="Hordecopter" type="RigidBody3D" unique_id=648785908]
+mass = 100.0
+script = ExtResource("1_eifgo")
+kp = 250.0
+ki = 10.0
+kd = 100.0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1275976041]
+shape = SubResource("BoxShape3D_eifgo")
+
+[node name="infotext" type="Label3D" parent="." unique_id=677977877]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1138026, 0.41907665, 0)
+
+[node name="vain_body" parent="." unique_id=1179742415 instance=ExtResource("3_7mbbw")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, -0.45981646, 0)
+
+[node name="rollaus_pivot_piste" type="Node3D" parent="." unique_id=536056627]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.18035194)
+script = ExtResource("4_qxvvh")
+
+[node name="vain_ropeli" parent="rollaus_pivot_piste" unique_id=1203383160 instance=ExtResource("5_ka8e6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.45494208, -0.20959833)

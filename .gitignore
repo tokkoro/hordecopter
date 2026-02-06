@@ -1,0 +1,41 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+# Godot engine
+.godot/
+.import/
+export.cfg
+export_presets.cfg
+
+# Godot 4 build/cache
+*.tmp
+*.log
+
+# Mono / C#
+.mono/
+data_*/
+**/*.csproj
+**/*.sln
+**/*.user
+**/*.userprefs
+**/*.pidb
+**/*.mdb
+**/*.opendb
+
+# Builds
+/build/
+/dist/
+/bin/
+
+# Editor backups
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.vscode/
+.idea/
+*.swp
