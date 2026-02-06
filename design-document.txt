@@ -1,0 +1,8 @@
+This project will be a Godot game called Hordecopter, where helicopter flies and shoots enemy hordes around it. It's a spiritual clone of Vampire Survivors.
+
+It should have many upgradeable weapons that are AI generated.
+ * minigun, laser, rope, grenade, homing missiles
+
+Every run will have a different AI generated environment with a fitting set of AI generated monsters to shoot at. The monsters behaviors should have some variance (movement speed, shooting or not, move in swarms). The game should get harder over a single run until the player fails, which should take be approximately 10 minutes long.
+
+The project folder is ./hordecopter-godot
