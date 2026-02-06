@@ -18,7 +18,7 @@ repos:
         name: Lint & format GDScript
         description: |
           1) Run gdlint on staged `.gd` files
-          2) Format staged `.gd` files with four-space indentation
+          2) Format staged `.gd` files with tab indentation
           3) Re-stage each formatted file
         entry: >-
           bash -c '
@@ -28,7 +28,7 @@ repos:
             [ -z "$files" ] && exit 0
 
             gdlint $files
-            gdformat --use-spaces=4 $files
+            gdformat $files
             git add $files
 
             echo "✅ GDScript linting and formatting complete."

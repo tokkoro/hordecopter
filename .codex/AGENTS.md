@@ -27,7 +27,7 @@
 
 > \[!IMPORTANT]
 >
-> * **Indentation:** Always 4 spaces in `.gd`, `.gdshader`, `.cs`. Never use tabs.
+> * **Indentation:** Use tabs in `.gd`, `.gdshader`, `.cs` files. Do not use spaces.
 > * `gdlint` expects `class_name` **before** `extends`.
 
 > \[!IMPORTANT]
@@ -130,7 +130,7 @@ dotnet test --logger "console;verbosity=quiet" || true
 
 ```text
 apply_patch
-├─ gdformat --use-spaces=4 <changed.gd>
+├─ gdformat <changed.gd>
 ├─ gdlint   <changed.gd>     (non-blocking)
 ├─ godot  --headless --editor --import --quit --path . --quiet
 ├─ godot  --headless --check-only      --quit --path . --quiet
@@ -159,7 +159,7 @@ fix & rerun.
 2. **Design principles** – data-driven, modular, extensible, compartmentalized.
    Follow each language’s canonical formatter (PEP 8, rustfmt, go fmt, gdformat…).
 
-3. **Indentation** – spaces-only except in languages that *require* tabs
+3. **Indentation** – tabs-only for `.gd`, `.gdshader`, `.cs`
    (e.g., `Makefile`).
 
 4. **Header comment block** – for files that support comments, prepend:
@@ -206,7 +206,5 @@ enforce them strictly.
 # End of Codex Agent Workspace Guide
 ###############################################################################
 ```
-
-
 
 

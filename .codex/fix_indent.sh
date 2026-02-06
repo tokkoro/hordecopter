@@ -3,7 +3,7 @@ set -euo pipefail
 
 TIMEOUT_SEC=20
 LOG_FILE="/tmp/gdformat.log"
-GD_ARGS=(--use-spaces=4)
+GD_ARGS=()
 
 files=()
 for f in "$@"; do
