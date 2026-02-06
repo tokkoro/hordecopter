@@ -1,9 +1,16 @@
 [gd_scene format=3 uid="uid://b5ap7upuq6g6l"]
 
-[ext_resource type="Script" uid="uid://cuo8py83enlce" path="res://weapons/laser_beam.gd" id="1_laser"]
+[ext_resource type="Script" uid="uid://c5yjtkmrdj16w" path="res://weapons/laser_beam.gd" id="1_laser"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1"]
+albedo_color = Color(1, 0.25, 0.25, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_1"]
+size = Vector3(1, 1, 1)
 
 [node name="LaserBeam" type="Node3D"]
 script = ExtResource("1_laser")
 
-[node name="Line3D" type="Line3D" parent="."]
-width = 0.05
+[node name="BeamMesh" type="MeshInstance3D" parent="."]
+material_override = SubResource("StandardMaterial3D_1")
+mesh = SubResource("BoxMesh_1")

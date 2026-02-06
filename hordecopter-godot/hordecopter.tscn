@@ -1,7 +1,7 @@
 [gd_scene format=3 uid="uid://x4pith38mxmy"]
 
 [ext_resource type="Script" uid="uid://cic3ppafpkp31" path="res://hordecopter.gd" id="1_eifgo"]
-[ext_resource type="Script" uid="uid://b1o51i7aqh01i" path="res://weapons/weapon_system.gd" id="2_weapon_system"]
+[ext_resource type="Script" uid="uid://du5imvvtitjbn" path="res://weapons/weapon_system.gd" id="2_weapon_system"]
 [ext_resource type="Resource" uid="uid://dlye5cgxsu3f6" path="res://weapons/laser_weapon.tres" id="3_laser_weapon"]
 [ext_resource type="PackedScene" uid="uid://d25k72efcjldo" path="res://vain_body.glb" id="3_7mbbw"]
 [ext_resource type="Script" uid="uid://nmj5je32etrs" path="res://rollaus_pivot_piste.gd" id="4_qxvvh"]

@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="WeaponDefinition" load_steps=3 format=3 uid="uid://dlye5cgxsu3f6"]
 
-[ext_resource type="Script" uid="uid://b0k2y3q2m0l2i" path="res://weapons/weapon_definition.gd" id="1_weapon"]
+[ext_resource type="Script" uid="uid://jw2coyki72vv" path="res://weapons/weapon_definition.gd" id="1_weapon"]
 [ext_resource type="PackedScene" uid="uid://b5ap7upuq6g6l" path="res://weapons/laser_beam.tscn" id="2_beam"]
 
 [resource]

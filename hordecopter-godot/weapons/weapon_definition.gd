@@ -1,3 +1,13 @@
+###############################################################
+# weapons/weapon_definition.gd
+# Key Classes      • WeaponDefinition – data for a single weapon
+# Key Functions    • n/a
+# Critical Consts  • n/a
+# Editor Exports   • weapon_name: String – display label
+# Dependencies     • n/a
+# Last Major Rev   • 25-09-20 – initial data-driven weapon model
+###############################################################
+
 class_name WeaponDefinition
 extends Resource
 

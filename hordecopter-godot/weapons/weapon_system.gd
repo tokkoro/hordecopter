@@ -1,3 +1,13 @@
+###############################################################
+# weapons/weapon_system.gd
+# Key Classes      • WeaponSystem – runtime firing logic
+# Key Functions    • try_fire() – cooldown gate + dispatch
+# Critical Consts  • n/a
+# Editor Exports   • weapon: WeaponDefinition – data source
+# Dependencies     • weapons/weapon_definition.gd
+# Last Major Rev   • 25-09-20 – initial weapon system
+###############################################################
+
 class_name WeaponSystem
 extends Node3D
 
@@ -47,7 +57,9 @@ func _fire_hitscan() -> void:
 	var hit_point := end
 	if result:
 		hit_point = result.position
-		var collider := result.collider
+		var collider: Object = null
+		if result.has("collider"):
+			collider = result.collider
 		if collider != null and collider.has_method("apply_damage"):
 			collider.apply_damage(weapon.damage)
 	if weapon.beam_scene != null:
