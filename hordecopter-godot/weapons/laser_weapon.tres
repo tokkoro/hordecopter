@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="WeaponDefinition" load_steps=3 format=3 uid="uid://dlye5cgxsu3f6"]
+
+[ext_resource type="Script" uid="uid://b0k2y3q2m0l2i" path="res://weapons/weapon_definition.gd" id="1_weapon"]
+[ext_resource type="PackedScene" uid="uid://b5ap7upuq6g6l" path="res://weapons/laser_beam.tscn" id="2_beam"]
+
+[resource]
+script = ExtResource("1_weapon")
+weapon_name = "Laser"
+fire_mode = 0
+cooldown = 0.15
+damage = 4.0
+range = 60.0
+beam_scene = ExtResource("2_beam")
+beam_color = Color(1, 0.25, 0.25, 1)
+beam_width = 0.06
