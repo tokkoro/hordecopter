@@ -1,6 +1,8 @@
 [gd_scene format=3 uid="uid://x4pith38mxmy"]
 
 [ext_resource type="Script" uid="uid://cic3ppafpkp31" path="res://hordecopter.gd" id="1_eifgo"]
+[ext_resource type="Script" uid="uid://du5imvvtitjbn" path="res://weapons/weapon_system.gd" id="2_weapon_system"]
+[ext_resource type="Resource" uid="uid://dlye5cgxsu3f6" path="res://weapons/laser_weapon.tres" id="3_laser_weapon"]
 [ext_resource type="PackedScene" uid="uid://d25k72efcjldo" path="res://vain_body.glb" id="3_7mbbw"]
 [ext_resource type="Script" uid="uid://nmj5je32etrs" path="res://rollaus_pivot_piste.gd" id="4_qxvvh"]
 [ext_resource type="PackedScene" uid="uid://yksjed5m5v1b" path="res://vain_ropeli.glb" id="5_ka8e6"]
@@ -19,6 +21,13 @@ shape = SubResource("BoxShape3D_eifgo")
 
 [node name="infotext" type="Label3D" parent="." unique_id=677977877]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1138026, 0.41907665, 0)
+
+[node name="Muzzle" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, -1.4)
+
+[node name="WeaponSystem" type="Node3D" parent="."]
+script = ExtResource("2_weapon_system")
+weapon = ExtResource("3_laser_weapon")
 
 [node name="vain_body" parent="." unique_id=1179742415 instance=ExtResource("3_7mbbw")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, -0.45981646, 0)
