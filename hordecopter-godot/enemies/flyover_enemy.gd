@@ -20,6 +20,7 @@ extends CharacterBody3D
 
 var flyover_enemy_direction: Vector3 = Vector3.FORWARD
 var flyover_enemy_max_health: float = 1.0
+var flyover_enemy_is_elite: bool = false
 
 @onready
 var flyover_enemy_health_bar: EnemyHealthBar3D = get_node_or_null("HealthBar3D") as EnemyHealthBar3D
@@ -48,6 +49,16 @@ func apply_damage(amount: float) -> void:
 	_update_health_bar()
 	if health <= 0.0:
 		queue_free()
+
+
+func configure_elite() -> void:
+	if flyover_enemy_is_elite:
+		return
+	flyover_enemy_is_elite = true
+	scale *= 2.0
+	health *= 8.0
+	flyover_enemy_max_health = max(1.0, health)
+	_update_health_bar()
 
 
 func _update_health_bar() -> void:

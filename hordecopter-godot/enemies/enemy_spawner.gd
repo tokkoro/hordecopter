@@ -38,6 +38,8 @@ extends Node3D
 @export var flyover_spawn_margin: float = 20.0
 
 var enemy_spawner_elapsed: float = 0.0
+var enemy_spawner_elite_chance_step: float = 0.07
+var enemy_spawner_elite_chance: float = enemy_spawner_elite_chance_step
 var enemy_spawner_rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var enemy_spawner_warned_missing_scene: bool = false
 var enemy_spawner_warned_bad_interval: bool = false
@@ -193,6 +195,19 @@ func _spawn_enemy_instance(
 	if configure_callback.is_valid():
 		configure_callback.call(enemy_spawner_instance)
 	_apply_time_scaling(enemy_spawner_instance)
+	_apply_elite_roll(enemy_spawner_instance)
+
+
+func _apply_elite_roll(enemy_instance: Node3D) -> void:
+	var enemy_spawner_is_elite: bool = enemy_spawner_rng.randf() <= enemy_spawner_elite_chance
+	if enemy_spawner_is_elite:
+		enemy_spawner_elite_chance = enemy_spawner_elite_chance_step
+		if enemy_instance.has_method("configure_elite"):
+			enemy_instance.call("configure_elite")
+	else:
+		enemy_spawner_elite_chance = min(
+			1.0, enemy_spawner_elite_chance + enemy_spawner_elite_chance_step
+		)
 
 
 func _configure_medusa_flyer(enemy_instance: Node3D, travel_direction: Vector3) -> void:
