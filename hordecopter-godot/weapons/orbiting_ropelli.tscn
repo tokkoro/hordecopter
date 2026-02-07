@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://bvillwguvjmyl"]
+
+[ext_resource type="PackedScene" uid="uid://yksjed5m5v1b" path="res://models/vain_ropeli.glb" id="1_fb6ee"]
+[ext_resource type="Script" uid="uid://mg1e4v7tp1if" path="res://weapons/orbiting_ropelli.gd" id="1_s46cg"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_6gtap"]
+top_radius = 0.18
+bottom_radius = 0.25
+height = 0.35
+
+[node name="small_ropelli_item" type="Node3D" unique_id=350802075]
+script = ExtResource("1_s46cg")
+
+[node name="vain_ropeli" parent="." unique_id=1609318281 instance=ExtResource("1_fb6ee")]
+transform = Transform3D(0.43, 0, 0, 0, 0.43, 0, 0, 0, 0.43, 0.0026253462, -0.32558742, -0.09898639)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=325692991]
+visible = false
+mesh = SubResource("CylinderMesh_6gtap")

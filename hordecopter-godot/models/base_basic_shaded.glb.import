@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://efl81xx8ds8p"
-path="res://.godot/imported/base_basic_shaded.glb-891a11bcc60b09686437996c28852cd0.scn"
+path="res://.godot/imported/base_basic_shaded.glb-873ef1dc44eab1c4766ec419e4b32cc7.scn"
 
 [deps]
 
-source_file="res://base_basic_shaded.glb"
-dest_files=["res://.godot/imported/base_basic_shaded.glb-891a11bcc60b09686437996c28852cd0.scn"]
+source_file="res://models/base_basic_shaded.glb"
+dest_files=["res://.godot/imported/base_basic_shaded.glb-873ef1dc44eab1c4766ec419e4b32cc7.scn"]
 
 [params]
 

@@ -3,7 +3,7 @@
 importer="texture"
 type="CompressedTexture2D"
 uid="uid://uecr7cne1heb"
-path.s3tc="res://.godot/imported/base_basic_shaded_shaded.png-a091fcbe392cbab5e386072875eaf93d.s3tc.ctex"
+path.s3tc="res://.godot/imported/base_basic_shaded_shaded.png-7549118a4777823eefe4338202fdcd49.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -14,8 +14,8 @@ generator_parameters={
 
 [deps]
 
-source_file="res://base_basic_shaded_shaded.png"
-dest_files=["res://.godot/imported/base_basic_shaded_shaded.png-a091fcbe392cbab5e386072875eaf93d.s3tc.ctex"]
+source_file="res://models/base_basic_shaded_shaded.png"
+dest_files=["res://.godot/imported/base_basic_shaded_shaded.png-7549118a4777823eefe4338202fdcd49.s3tc.ctex"]
 
 [params]
 

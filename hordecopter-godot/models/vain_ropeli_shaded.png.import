@@ -2,8 +2,8 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://id6hcclh36f2"
-path.s3tc="res://.godot/imported/vain_body_shaded.png-dc13f706449318ed5956e8aea735f21f.s3tc.ctex"
+uid="uid://5gesjxxnnxsf"
+path.s3tc="res://.godot/imported/vain_ropeli_shaded.png-7528eecf7c947fe6b305c5c90db25e4f.s3tc.ctex"
 metadata={
 "imported_formats": ["s3tc_bptc"],
 "vram_texture": true
@@ -14,8 +14,8 @@ generator_parameters={
 
 [deps]
 
-source_file="res://vain_body_shaded.png"
-dest_files=["res://.godot/imported/vain_body_shaded.png-dc13f706449318ed5956e8aea735f21f.s3tc.ctex"]
+source_file="res://models/vain_ropeli_shaded.png"
+dest_files=["res://.godot/imported/vain_ropeli_shaded.png-7528eecf7c947fe6b305c5c90db25e4f.s3tc.ctex"]
 
 [params]
 

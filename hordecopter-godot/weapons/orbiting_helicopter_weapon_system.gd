@@ -13,6 +13,8 @@
 class_name OrbitingHelicopterWeaponSystem
 extends WeaponSystem
 
+@export var orbiting_object: PackedScene
+
 @export var orbit_count: int = 4
 @export var orbit_radius_min: float = 1.5
 @export var orbit_radius_max: float = 4.0
@@ -68,17 +70,10 @@ func _spawn_copters() -> void:
 	for copter in ohs_helicopters:
 		copter.queue_free()
 	ohs_helicopters.clear()
-	var copter_mesh := CylinderMesh.new()
-	copter_mesh.top_radius = 0.18
-	copter_mesh.bottom_radius = 0.25
-	copter_mesh.height = 0.35
+
 	for index in range(orbit_count):
-		var holder := Node3D.new()
+		var holder := orbiting_object.instantiate()
 		holder.name = "OrbitCopter%d" % index
-		var mesh_instance := MeshInstance3D.new()
-		mesh_instance.mesh = copter_mesh
-		mesh_instance.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-		holder.add_child(mesh_instance)
 		add_child(holder)
 		ohs_helicopters.append(holder)
 

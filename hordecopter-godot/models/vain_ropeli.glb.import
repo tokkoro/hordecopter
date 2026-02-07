@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://d25k72efcjldo"
-path="res://.godot/imported/vain_body.glb-e00cc7c1720b84a21a154186a04706f0.scn"
+uid="uid://yksjed5m5v1b"
+path="res://.godot/imported/vain_ropeli.glb-df56ad96be99023bb53f7883ea903af3.scn"
 
 [deps]
 
-source_file="res://vain_body.glb"
-dest_files=["res://.godot/imported/vain_body.glb-e00cc7c1720b84a21a154186a04706f0.scn"]
+source_file="res://models/vain_ropeli.glb"
+dest_files=["res://.godot/imported/vain_ropeli.glb-df56ad96be99023bb53f7883ea903af3.scn"]
 
 [params]
 

@@ -20,6 +20,11 @@ extends Node3D
 @export var magnet_radius: float = 10.0
 @export var magnet_speed: float = 6.0
 
+@export var sleep_time: float = 3.0
+
+var start_time: float = 0
+
+
 var experience_token_target: Node3D
 var experience_token_warned_missing_target: bool = false
 var experience_token_warned_missing_scene: bool = false
@@ -27,6 +32,7 @@ var experience_token_warned_missing_scene: bool = false
 
 func _ready() -> void:
 	add_to_group("experience_tokens")
+	start_time = Time.get_ticks_msec()
 
 
 func _physics_process(delta: float) -> void:
@@ -38,7 +44,9 @@ func _physics_process(delta: float) -> void:
 		_collect()
 		return
 	if distance <= magnet_radius:
-		global_position = global_position.move_toward(target.global_position, magnet_speed * delta)
+		var t = (Time.get_ticks_msec() - start_time) / (sleep_time * 1000)
+		t = clampf(t, 0, 1)
+		global_position = global_position.move_toward(target.global_position, magnet_speed * delta * t)
 
 
 func configure_amount(amount: int) -> void:
