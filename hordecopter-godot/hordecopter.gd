@@ -11,6 +11,9 @@
 class_name Hordecopter
 extends RigidBody3D
 
+const HC_WEAPON_DAMAGE_STEP: float = 0.25
+const HC_WEAPON_COOLDOWN_MULTIPLIER: float = 0.92
+
 @export var auto_float: bool = true
 @export var my_camera_name: StringName = &"Camera3D"
 @export var auto_float_power_max: float = 2000.0
@@ -37,6 +40,9 @@ var hc_weapon_system_names: Array[StringName] = [
 var hc_weapon_input_actions: Array[StringName] = [
 	&"p1_weapon_1", &"p1_weapon_2", &"p1_weapon_3", &"p1_weapon_4"
 ]
+var hc_weapon_levels: Array[int] = []
+var hc_weapon_base_damage: Array[float] = []
+var hc_weapon_base_cooldown: Array[float] = []
 var _i: float = 0.0
 var _prev_error: float = 0.0
 var _d_state: float = 0.0
@@ -182,12 +188,22 @@ func _configure_weapon_systems() -> void:
 	hc_weapon_systems = _collect_weapon_systems()
 	if hc_weapon_systems.is_empty():
 		return
+	hc_weapon_levels.clear()
+	hc_weapon_base_damage.clear()
+	hc_weapon_base_cooldown.clear()
 	for system in hc_weapon_systems:
 		system.set_physics_process(false)
+		hc_weapon_levels.append(0)
+		if system.weapon != null:
+			hc_weapon_base_damage.append(system.weapon.damage)
+			hc_weapon_base_cooldown.append(system.weapon.cooldown)
+		else:
+			hc_weapon_base_damage.append(0.0)
+			hc_weapon_base_cooldown.append(0.0)
 	var rng := RandomNumberGenerator.new()
 	rng.randomize()
 	var index := rng.randi_range(0, hc_weapon_systems.size() - 1)
-	hc_weapon_systems[index].set_physics_process(true)
+	_unlock_weapon_system(index, true)
 
 
 func _handle_weapon_toggles() -> void:
@@ -200,10 +216,89 @@ func _handle_weapon_toggles() -> void:
 func _toggle_weapon_system(index: int) -> void:
 	if index < 0 or index >= hc_weapon_systems.size():
 		return
+	if _is_weapon_locked(index):
+		return
 	var system := hc_weapon_systems[index]
 	if system == null:
 		return
 	system.set_physics_process(not system.is_physics_processing())
+
+
+func get_level_up_options(count: int) -> Array[Dictionary]:
+	var options: Array[Dictionary] = []
+	if hc_weapon_systems.is_empty():
+		return options
+	var indices: Array[int] = []
+	for index in range(hc_weapon_systems.size()):
+		indices.append(index)
+	indices.shuffle()
+	var option_count: int = int(min(count, indices.size()))
+	for option_index in range(option_count):
+		var system_index := indices[option_index]
+		var system := hc_weapon_systems[system_index]
+		var weapon_name := "Weapon"
+		if system != null and system.weapon != null and system.weapon.weapon_name != "":
+			weapon_name = system.weapon.weapon_name
+		elif system != null:
+			weapon_name = system.name
+		var current_level := hc_weapon_levels[system_index]
+		var label: String
+		if current_level <= 0:
+			label = "Unlock %s" % weapon_name
+		else:
+			label = "Upgrade %s (Lv %d → %d)" % [weapon_name, current_level, current_level + 1]
+		options.append({"index": system_index, "label": label})
+	return options
+
+
+func apply_level_up_choice(choice: Dictionary) -> void:
+	if not choice.has("index"):
+		return
+	var system_index := int(choice["index"])
+	if system_index < 0 or system_index >= hc_weapon_systems.size():
+		return
+	if hc_weapon_levels[system_index] <= 0:
+		_unlock_weapon_system(system_index, false)
+	else:
+		hc_weapon_levels[system_index] += 1
+		_apply_weapon_level(system_index)
+
+
+func _unlock_weapon_system(index: int, make_active: bool) -> void:
+	if index < 0 or index >= hc_weapon_systems.size():
+		return
+	if hc_weapon_levels[index] <= 0:
+		hc_weapon_levels[index] = 1
+		_apply_weapon_level(index)
+	if make_active:
+		_disable_all_weapon_systems()
+		hc_weapon_systems[index].set_physics_process(true)
+
+
+func _disable_all_weapon_systems() -> void:
+	for system in hc_weapon_systems:
+		if system != null:
+			system.set_physics_process(false)
+
+
+func _apply_weapon_level(index: int) -> void:
+	if index < 0 or index >= hc_weapon_systems.size():
+		return
+	var system := hc_weapon_systems[index]
+	if system == null or system.weapon == null:
+		return
+	var base_damage := hc_weapon_base_damage[index]
+	var base_cooldown := hc_weapon_base_cooldown[index]
+	var level: int = int(max(1, hc_weapon_levels[index]))
+	system.weapon.damage = base_damage * (1.0 + HC_WEAPON_DAMAGE_STEP * float(level - 1))
+	var cooldown_multiplier := pow(HC_WEAPON_COOLDOWN_MULTIPLIER, float(level - 1))
+	system.weapon.cooldown = max(0.05, base_cooldown * cooldown_multiplier)
+
+
+func _is_weapon_locked(index: int) -> bool:
+	if index < 0 or index >= hc_weapon_levels.size():
+		return true
+	return hc_weapon_levels[index] <= 0
 
 
 func get_camera_xz_basis(cam: Camera3D) -> Dictionary:

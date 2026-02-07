@@ -77,7 +77,8 @@ func _spawn_group() -> void:
 		if enemy_spawner_pick_ground:
 			_spawn_ground_enemy()
 		else:
-			_spawn_medusa_flyer()
+			_spawn_ground_enemy()
+			#wa_spawn_medusa_flyer()
 
 
 func _spawn_ground_enemy() -> void:
