@@ -17,8 +17,9 @@ const WEAPON_SYSTEM_MISSILE_SFX: AudioStream = preload("res://sfx/missile_shoot.
 @export var weapon: WeaponDefinition
 @export var muzzle_path: NodePath = NodePath("../Muzzle")
 
-var is_ready = false
-var is_active = false
+var is_ready: bool = false
+var is_active: bool = false
+
 var _muzzle: Node3D
 var _next_fire_time: float = 0.0
 
@@ -70,6 +71,21 @@ func _fire_hitscan() -> void:
 	_play_sfx_at(WEAPON_SYSTEM_LASER_SFX, _muzzle.global_position)
 	var start := _muzzle.global_position
 	var direction := -_muzzle.global_transform.basis.z
+	var beam: Node = null
+	if weapon.beam_scene != null:
+		beam = weapon.beam_scene.instantiate()
+		get_tree().current_scene.add_child(beam)
+		if beam.has_method("configure_sweep"):
+			beam.configure_sweep(
+				start,
+				direction,
+				weapon.range,
+				weapon.damage,
+				weapon.beam_color,
+				weapon.beam_width,
+				get_parent()
+			)
+			return
 	var end := start + direction * weapon.range
 	var space := get_world_3d().direct_space_state
 	var query := PhysicsRayQueryParameters3D.create(start, end)
@@ -83,11 +99,8 @@ func _fire_hitscan() -> void:
 			collider = result.collider
 		if collider != null and collider.has_method("apply_damage"):
 			collider.apply_damage(weapon.damage)
-	if weapon.beam_scene != null:
-		var beam := weapon.beam_scene.instantiate()
-		get_tree().current_scene.add_child(beam)
-		if beam.has_method("configure"):
-			beam.configure(start, hit_point, weapon.beam_color, weapon.beam_width)
+	if beam != null and beam.has_method("configure"):
+		beam.configure(start, hit_point, weapon.beam_color, weapon.beam_width)
 
 
 func _fire_projectile() -> void:
