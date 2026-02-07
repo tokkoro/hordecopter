@@ -237,10 +237,13 @@ func get_level_up_options(count: int) -> Array[Dictionary]:
 		var system_index := indices[option_index]
 		var system := hc_weapon_systems[system_index]
 		var weapon_name := "Weapon"
+		var icon: Texture2D = null
 		if system != null and system.weapon != null and system.weapon.weapon_name != "":
 			weapon_name = system.weapon.weapon_name
 		elif system != null:
 			weapon_name = system.name
+		if system != null and system.weapon != null:
+			icon = system.weapon.icon
 		var current_level := hc_weapon_levels[system_index]
 		var label: String
 		if current_level <= 0:
@@ -249,7 +252,7 @@ func get_level_up_options(count: int) -> Array[Dictionary]:
 			label = "Unlock %s" % weapon_name
 		else:
 			label = "Upgrade %s (Lv %d → %d)" % [weapon_name, current_level, current_level + 1]
-		options.append({"index": system_index, "label": label})
+		options.append({"index": system_index, "label": label, "icon": icon})
 	return options
 
 

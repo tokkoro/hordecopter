@@ -99,10 +99,13 @@ func show_level_up_choices(options: Array[Dictionary]) -> void:
 		var button := hud_level_up_buttons[index]
 		if index < options.size():
 			var label := str(options[index].get("label", "Option %d" % [index + 1]))
+			var icon := options[index].get("icon", null) as Texture2D
 			button.text = label
+			button.icon = icon
 			button.visible = true
 			button.disabled = false
 		else:
+			button.icon = null
 			button.visible = false
 			button.disabled = true
 	hud_level_up_overlay.visible = true
@@ -161,6 +164,7 @@ func _build_level_up_menu() -> void:
 		var button := Button.new()
 		button.text = "Option %d" % [index + 1]
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		button.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
 		button.pressed.connect(_on_level_up_option_pressed.bind(index))
 		hud_level_up_buttons.append(button)
 		vbox.add_child(button)
