@@ -15,34 +15,23 @@
 ###############################################################
 
 class_name MedusaFlyer
-extends CharacterBody3D
+extends EnemyBase
 
-const MEDUSA_FLYER_HIT_SFX: AudioStream = preload("res://sfx/monster_hit.sfxr")
-
-@export var health: float = 4.0
 @export var move_speed: float = 4.0
 @export var wave_amplitude: float = 1.6
 @export var wave_frequency: float = 0.8
-@export var medusa_flyer_damage_label_scene: PackedScene = preload("res://ui/damage_label_3d.tscn")
 
 var medusa_flyer_direction: Vector3 = Vector3.FORWARD
 var medusa_flyer_target: Node3D
 var medusa_flyer_time: float = 0.0
 var medusa_flyer_base_height: float = 0.0
-var medusa_flyer_max_health: float = 1.0
-var medusa_flyer_is_elite: bool = false
-
-@onready
-var medusa_flyer_health_bar: EnemyHealthBar3D = get_node_or_null("HealthBar3D") as EnemyHealthBar3D
 
 
 func _ready() -> void:
-	add_to_group("enemies")
+	super()
 	medusa_flyer_direction = medusa_flyer_direction.normalized()
 	medusa_flyer_target = _find_player()
 	medusa_flyer_base_height = global_position.y
-	medusa_flyer_max_health = max(1.0, health)
-	_update_health_bar()
 	if medusa_flyer_target == null:
 		push_warning("MedusaFlyer: player target not found; using fallback direction.")
 
@@ -73,68 +62,3 @@ func _physics_process(delta: float) -> void:
 func configure_spawn_direction(direction: Vector3) -> void:
 	if direction != Vector3.ZERO:
 		medusa_flyer_direction = direction.normalized()
-
-
-func apply_damage(amount: float) -> void:
-	_play_hit_sfx()
-	_spawn_damage_label(amount)
-	health -= amount
-	_update_health_bar()
-	if health <= 0.0:
-		queue_free()
-
-
-func configure_elite() -> void:
-	if medusa_flyer_is_elite:
-		return
-	medusa_flyer_is_elite = true
-	scale *= 2.0
-	health *= 8.0
-	medusa_flyer_max_health = max(1.0, health)
-	_update_health_bar()
-
-
-func _update_health_bar() -> void:
-	if medusa_flyer_health_bar == null:
-		return
-	medusa_flyer_health_bar.set_health(health, medusa_flyer_max_health)
-
-
-func _find_player() -> Node3D:
-	var medusa_flyer_player := get_tree().get_first_node_in_group("player")
-	if medusa_flyer_player is Node3D:
-		return medusa_flyer_player
-	return null
-
-
-func _spawn_damage_label(amount: float) -> void:
-	if medusa_flyer_damage_label_scene == null:
-		return
-	var medusa_flyer_label_instance := medusa_flyer_damage_label_scene.instantiate()
-	var medusa_flyer_scene := get_tree().current_scene
-	if medusa_flyer_scene == null:
-		return
-	medusa_flyer_scene.add_child(medusa_flyer_label_instance)
-	if medusa_flyer_label_instance is Node3D:
-		var medusa_flyer_label_node := medusa_flyer_label_instance as Node3D
-		medusa_flyer_label_node.global_position = global_position + Vector3(0.0, 1.5, 0.0)
-	if medusa_flyer_label_instance.has_method("set_damage"):
-		medusa_flyer_label_instance.set_damage(amount)
-
-
-func _play_hit_sfx() -> void:
-	_play_sfx_at(MEDUSA_FLYER_HIT_SFX, global_position)
-
-
-func _play_sfx_at(stream: AudioStream, position: Vector3) -> void:
-	if stream == null:
-		return
-	var current_scene := get_tree().current_scene
-	if current_scene == null:
-		return
-	var player := AudioStreamPlayer3D.new()
-	current_scene.add_child(player)
-	player.stream = stream
-	player.global_position = position
-	player.finished.connect(player.queue_free)
-	player.play()
