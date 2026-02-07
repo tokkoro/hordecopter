@@ -2,6 +2,7 @@
 
 [ext_resource type="PackedScene" path="res://models/crate.glb" id="1_crate_model"]
 [ext_resource type="Script" path="res://props/loot_crate.gd" id="2_loot_crate"]
+[ext_resource type="PackedScene" path="res://enemies/enemy_health_bar.tscn" id="3_enemy_health_bar"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_loot_crate"]
 size = Vector3(1.2, 1.2, 1.2)
@@ -10,6 +11,9 @@ size = Vector3(1.2, 1.2, 1.2)
 script = ExtResource("2_loot_crate")
 
 [node name="CrateModel" parent="." instance=ExtResource("1_crate_model")]
+
+[node name="HealthBar3D" parent="." instance=ExtResource("3_enemy_health_bar")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_loot_crate")

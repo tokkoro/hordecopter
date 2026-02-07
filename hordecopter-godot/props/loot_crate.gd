@@ -12,16 +12,23 @@
 #                 • bomb_pickup_scene: PackedScene – bomb pickup scene
 #                 • clock_pickup_scene: PackedScene – time stop pickup scene
 #                 • health_pack_scene: PackedScene – heal pickup scene
+#                 • magnet_pickup_scene: PackedScene – magnet pickup scene
+#                 • damage_label_scene: PackedScene – damage number visuals
 # Dependencies     • res://items/experience_token.tscn
 #                 • res://items/bomb_pickup.tscn
 #                 • res://items/clock_pickup.tscn
 #                 • res://items/health_pack.tscn
+#                 • res://items/magnet_pickup.tscn
+#                 • res://enemies/enemy_health_bar.tscn
+#                 • res://ui/damage_label_3d.tscn
 #                 • res://models/crate.glb
 # Last Major Rev   • 25-09-28 – add loot crate drops
 ###############################################################
 
 class_name LootCrate
 extends StaticBody3D
+
+const LOOT_CRATE_HIT_SFX: AudioStream = preload("res://sfx/monster_hit.sfxr")
 
 @export var max_health: float = 6.0
 @export var experience_drop_count: int = 6
@@ -31,24 +38,36 @@ extends StaticBody3D
 @export var bomb_pickup_scene: PackedScene = preload("res://items/bomb_pickup.tscn")
 @export var clock_pickup_scene: PackedScene = preload("res://items/clock_pickup.tscn")
 @export var health_pack_scene: PackedScene = preload("res://items/health_pack.tscn")
+@export var magnet_pickup_scene: PackedScene = preload("res://items/magnet_pickup.tscn")
+@export var damage_label_scene: PackedScene = preload("res://ui/damage_label_3d.tscn")
 
 var loot_crate_health: float = 0.0
+var loot_crate_max_health: float = 1.0
 var loot_crate_rng: RandomNumberGenerator = RandomNumberGenerator.new()
+var loot_crate_is_dead: bool = false
+
+@onready
+var loot_crate_health_bar: EnemyHealthBar3D = get_node_or_null("HealthBar3D") as EnemyHealthBar3D
 
 
 func _ready() -> void:
 	add_to_group("props")
+	add_to_group("enemy_targets")
 	loot_crate_health = max(1.0, max_health)
+	loot_crate_max_health = loot_crate_health
+	_update_health_bar()
 	loot_crate_rng.randomize()
 
 
 func apply_damage(amount: float) -> void:
 	if amount <= 0.0:
 		return
+	_spawn_damage_label(amount)
+	_play_hit_sfx()
 	loot_crate_health -= amount
+	_update_health_bar()
 	if loot_crate_health <= 0.0:
-		_spawn_loot()
-		queue_free()
+		_on_destroyed()
 
 
 func _spawn_loot() -> void:
@@ -56,9 +75,7 @@ func _spawn_loot() -> void:
 	if current_scene == null:
 		return
 	_spawn_experience_tokens(current_scene)
-	_spawn_pickup(current_scene, bomb_pickup_scene)
-	_spawn_pickup(current_scene, clock_pickup_scene)
-	_spawn_pickup(current_scene, health_pack_scene)
+	_spawn_random_goodie(current_scene)
 
 
 func _spawn_experience_tokens(current_scene: Node) -> void:
@@ -87,3 +104,69 @@ func _random_drop_offset() -> Vector3:
 	var drop_radius := loot_crate_rng.randf_range(drop_radius_min, drop_radius_max)
 	var drop_angle := loot_crate_rng.randf_range(0.0, TAU)
 	return Vector3(cos(drop_angle) * drop_radius, 0.2, sin(drop_angle) * drop_radius)
+
+
+func _spawn_random_goodie(current_scene: Node) -> void:
+	var goodies: Array[PackedScene] = []
+	if bomb_pickup_scene != null:
+		goodies.append(bomb_pickup_scene)
+	if clock_pickup_scene != null:
+		goodies.append(clock_pickup_scene)
+	if health_pack_scene != null:
+		goodies.append(health_pack_scene)
+	if magnet_pickup_scene != null:
+		goodies.append(magnet_pickup_scene)
+	if goodies.is_empty():
+		return
+	var choice_index := loot_crate_rng.randi_range(0, goodies.size() - 1)
+	_spawn_pickup(current_scene, goodies[choice_index])
+
+
+func _on_destroyed() -> void:
+	if loot_crate_is_dead:
+		return
+	loot_crate_is_dead = true
+	_spawn_loot()
+	queue_free()
+
+
+func _update_health_bar() -> void:
+	if loot_crate_health_bar == null:
+		push_warning("No health bar on loot crate")
+		return
+	loot_crate_health_bar.set_health(loot_crate_health, loot_crate_max_health)
+
+
+func _spawn_damage_label(amount: float) -> void:
+	if damage_label_scene == null:
+		return
+	var loot_crate_label_instance := damage_label_scene.instantiate()
+	var loot_crate_scene := get_tree().current_scene
+	if loot_crate_scene == null:
+		return
+	loot_crate_scene.add_child(loot_crate_label_instance)
+	if loot_crate_label_instance is Node3D:
+		var loot_crate_label_node := loot_crate_label_instance as Node3D
+		loot_crate_label_node.global_position = global_position + Vector3(0.0, 1.5, 0.0)
+	if loot_crate_label_instance.has_method("set_damage"):
+		loot_crate_label_instance.set_damage(amount)
+
+
+func _play_hit_sfx() -> void:
+	_play_sfx_at(LOOT_CRATE_HIT_SFX, global_position)
+
+
+func _play_sfx_at(stream: AudioStream, position: Vector3) -> void:
+	if stream == null:
+		push_warning("no stream for loot crate audio")
+		return
+	var current_scene := get_tree().current_scene
+	if current_scene == null:
+		push_warning("no scene for loot crate audio")
+		return
+	var player := AudioStreamPlayer3D.new()
+	current_scene.add_child(player)
+	player.stream = stream
+	player.global_position = position
+	player.finished.connect(player.queue_free)
+	player.play()

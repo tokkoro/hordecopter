@@ -28,6 +28,7 @@ var start_time: float = 0
 var experience_token_target: Node3D
 var experience_token_warned_missing_target: bool = false
 var experience_token_warned_missing_scene: bool = false
+var experience_token_forced_magnet: bool = false
 
 
 func _ready() -> void:
@@ -43,6 +44,11 @@ func _physics_process(delta: float) -> void:
 	if distance <= pickup_radius:
 		_collect()
 		return
+	if experience_token_forced_magnet:
+		global_position = global_position.move_toward(
+			target.global_position, magnet_speed * delta * 2.0
+		)
+		return
 	if distance <= magnet_radius:
 		var t = (Time.get_ticks_msec() - start_time) / (sleep_time * 1000)
 		t = clampf(t, 0, 1)
@@ -53,6 +59,11 @@ func _physics_process(delta: float) -> void:
 
 func configure_amount(amount: int) -> void:
 	experience_amount = max(1, amount)
+
+
+func apply_magnet() -> void:
+	experience_token_forced_magnet = true
+	start_time = 0
 
 
 func _get_target() -> Node3D:

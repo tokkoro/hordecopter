@@ -1,25 +1,24 @@
 ###############################################################
-# items/bomb_pickup.gd
-# Key Classes      • BombPickup – pickup that detonates enemies
-# Key Functions    • _collect() – apply bomb damage to enemies
-# Critical Consts  • BOMB_DAMAGE – damage dealt to each enemy
+# items/magnet_pickup.gd
+# Key Classes      • MagnetPickup – pickup that attracts all XP
+# Key Functions    • _collect() – trigger experience token magnet
+# Critical Consts  • n/a
 # Editor Exports   • pickup_radius: float – collection radius
 #                 • collect_sound: AudioStream – pickup sound
 # Dependencies     • res://sfx/collect.sfxr
-# Last Major Rev   • 25-09-28 – add bomb pickup effect
+#                 • res://items/experience_token.gd
+# Last Major Rev   • 25-09-28 – add magnet pickup effect
 ###############################################################
 
-class_name BombPickup
+class_name MagnetPickup
 extends Node3D
-
-const BOMB_DAMAGE: float = 1000.0
 
 @export var pickup_radius: float = 1.5
 @export var collect_sound: AudioStream = preload("res://sfx/collect.sfxr")
 
-var bomb_pickup_target: Node3D
-var bomb_pickup_warned_missing_target: bool = false
-var bomb_pickup_warned_missing_scene: bool = false
+var magnet_pickup_target: Node3D
+var magnet_pickup_warned_missing_target: bool = false
+var magnet_pickup_warned_missing_scene: bool = false
 
 
 func _ready() -> void:
@@ -35,29 +34,29 @@ func _physics_process(_delta: float) -> void:
 
 
 func _get_target() -> Node3D:
-	if bomb_pickup_target != null and is_instance_valid(bomb_pickup_target):
-		return bomb_pickup_target
+	if magnet_pickup_target != null and is_instance_valid(magnet_pickup_target):
+		return magnet_pickup_target
 	var current_scene := get_tree().current_scene
 	if current_scene == null:
-		if not bomb_pickup_warned_missing_scene:
-			bomb_pickup_warned_missing_scene = true
-			push_warning("BombPickup: current scene missing; cannot find target.")
+		if not magnet_pickup_warned_missing_scene:
+			magnet_pickup_warned_missing_scene = true
+			push_warning("MagnetPickup: current scene missing; cannot find target.")
 		return null
 	var found := current_scene.find_child("Hordecopter", true, false)
 	if found != null and found is Node3D:
-		bomb_pickup_target = found as Node3D
-		return bomb_pickup_target
-	if not bomb_pickup_warned_missing_target:
-		bomb_pickup_warned_missing_target = true
-		push_warning("BombPickup: Hordecopter not found; pickup cannot be collected.")
+		magnet_pickup_target = found as Node3D
+		return magnet_pickup_target
+	if not magnet_pickup_warned_missing_target:
+		magnet_pickup_warned_missing_target = true
+		push_warning("MagnetPickup: Hordecopter not found; pickup cannot be collected.")
 	return null
 
 
 func _collect() -> void:
-	var enemies := get_tree().get_nodes_in_group("enemy_targets")
-	for enemy in enemies:
-		if enemy != null and enemy.has_method("apply_damage"):
-			enemy.apply_damage(BOMB_DAMAGE)
+	var tokens := get_tree().get_nodes_in_group("experience_tokens")
+	for token in tokens:
+		if token != null and token.has_method("apply_magnet"):
+			token.apply_magnet()
 	_play_sfx_at(collect_sound, global_position)
 	queue_free()
 

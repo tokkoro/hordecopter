@@ -46,7 +46,7 @@ var enemy_base_health_bar: EnemyHealthBar3D = get_node_or_null("HealthBar3D") as
 
 
 func _ready() -> void:
-	add_to_group("enemies")
+	add_to_group("enemy_targets")
 	lock_rotation = true
 	if is_flying:
 		gravity_scale = 0.0
