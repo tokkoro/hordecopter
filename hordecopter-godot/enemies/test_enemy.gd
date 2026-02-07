@@ -76,7 +76,6 @@ func configure_from_time(time_seconds: float) -> void:
 	health = max(1.0, scaled_health)
 
 	test_enemy_max_health = health
-	var scaled_experience := base_experience_reward + time_seconds * experience_per_second
 	test_enemy_experience_reward =  EnemyExperienceManager.calculate_experience_from_health(
 		base_experience_reward, health, base_health
 	)
