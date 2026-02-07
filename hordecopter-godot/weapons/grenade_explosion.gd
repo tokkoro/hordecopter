@@ -29,6 +29,7 @@ var _explosion_has_damaged: bool = false
 func configure(damage: float, radius: float) -> void:
 	explosion_damage = damage
 	explosion_radius = radius
+	_apply_radius()
 
 
 func _ready() -> void:
@@ -38,9 +39,13 @@ func _ready() -> void:
 	_prepare_material()
 	_play_burst()
 	_play_explosion_sfx()
-	call_deferred("_apply_damage")
 	var timer := get_tree().create_timer(expansion_time + linger_time)
 	timer.timeout.connect(queue_free)
+
+
+func _physics_process(delta: float) -> void:
+	if not _explosion_has_damaged:
+		_apply_damage()
 
 
 func _apply_radius() -> void:
@@ -82,7 +87,6 @@ func _play_burst() -> void:
 func _apply_damage() -> void:
 	if _explosion_has_damaged:
 		return
-	_explosion_has_damaged = true
 	var bodies := get_overlapping_bodies()
 	for body in bodies:
 		if body is Node3D:
@@ -90,6 +94,7 @@ func _apply_damage() -> void:
 			var distance := global_position.distance_to(node.global_position)
 			if distance <= explosion_radius and node.has_method("apply_damage"):
 				node.apply_damage(explosion_damage)
+				_explosion_has_damaged = true
 
 
 func _play_explosion_sfx() -> void:
@@ -108,3 +113,4 @@ func _play_sfx_at(stream: AudioStream, position: Vector3) -> void:
 	player.finished.connect(player.queue_free)
 	current_scene.add_child(player)
 	player.play()
+
