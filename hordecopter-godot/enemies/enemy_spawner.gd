@@ -1,14 +1,20 @@
 ###############################################################
 # enemies/enemy_spawner.gd
 # Key Classes      • EnemySpawner – timed enemy spawn controller
-# Key Functions    • _spawn_enemy() – instance and place an enemy
+# Key Functions    • _spawn_group() – instance and place a batch of enemies
+#                 • _spawn_flyover_enemy() – spawn a flyover enemy outside the map
 # Critical Consts  • n/a
-# Editor Exports   • enemy_scene: PackedScene – enemy to spawn
+# Editor Exports   • ground_enemy_scene: PackedScene – wandering enemy type
+#                 • flyover_enemy_scene: PackedScene – flyover enemy type
 #                 • spawn_interval: float – time between spawns
 #                 • max_enemies: int – global enemy cap
-#                 • spawn_radius: float – radius around spawner
-#                 • spawn_height: float – vertical spawn offset
+#                 • group_size: int – count spawned per wave
+#                 • map_size: float – world size in meters
+#                 • spawn_height: float – ground enemy vertical offset
+#                 • flyover_height: float – flyover enemy height
+#                 • flyover_spawn_margin: float – extra distance from map edge
 # Dependencies     • res://enemies/test_enemy.tscn (assigned in scene)
+#                 • res://enemies/flyover_enemy.tscn (assigned in scene)
 #                 • res://game_state.gd
 # Last Major Rev   • 25-09-27 – add time-based enemy scaling
 ###############################################################
@@ -16,11 +22,15 @@
 class_name EnemySpawner
 extends Node3D
 
-@export var enemy_scene: PackedScene
-@export var spawn_interval: float = 1.0
+@export var ground_enemy_scene: PackedScene
+@export var flyover_enemy_scene: PackedScene
+@export var spawn_interval: float = 5.0
 @export var max_enemies: int = 100
-@export var spawn_radius: float = 20.0
+@export var group_size: int = 3
+@export var map_size: float = 100.0
 @export var spawn_height: float = 0.6
+@export var flyover_height: float = 6.0
+@export var flyover_spawn_margin: float = 20.0
 
 var enemy_spawner_elapsed: float = 0.0
 var enemy_spawner_rng: RandomNumberGenerator = RandomNumberGenerator.new()
@@ -33,11 +43,14 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	if enemy_scene == null:
+	if ground_enemy_scene == null:
 		if not enemy_spawner_warned_missing_scene:
-			enemy_spawner_warned_missing_scene = true
-			push_warning("EnemySpawner: enemy_scene is missing; cannot spawn enemies.")
-		return
+					enemy_spawner_warned_missing_scene = true
+					push_warning("EnemySpawner: ground_enemy_scene is missing; cannot spawn enemies.")
+	if flyover_enemy_scene == null:
+		if not enemy_spawner_warned_missing_scene:
+					enemy_spawner_warned_missing_scene = true
+					push_warning("EnemySpawner: flyover_enemy_scene is missing; cannot spawn enemies.")
 	if spawn_interval <= 0.0:
 		if not enemy_spawner_warned_bad_interval:
 			enemy_spawner_warned_bad_interval = true
@@ -46,31 +59,80 @@ func _process(delta: float) -> void:
 	enemy_spawner_elapsed += delta
 	while enemy_spawner_elapsed >= spawn_interval:
 		enemy_spawner_elapsed -= spawn_interval
-		if _can_spawn():
-			_spawn_enemy()
+		if _can_spawn(group_size):
+			_spawn_group()
 		else:
 			break
 
 
-func _can_spawn() -> bool:
-	return get_tree().get_nodes_in_group("enemies").size() < max_enemies
+func _can_spawn(requested_count: int) -> bool:
+	return get_tree().get_nodes_in_group("enemies").size() + requested_count <= max_enemies
 
 
-func _spawn_enemy() -> void:
-	var enemy_spawner_instance: Node3D = enemy_scene.instantiate()
-	var enemy_spawner_offset: Vector3 = _random_offset()
+func _spawn_group() -> void:
+	var enemy_spawner_pick_ground: bool = enemy_spawner_rng.randf() < 0.5
+	for enemy_spawner_index in range(group_size):
+		if enemy_spawner_pick_ground:
+			_spawn_ground_enemy()
+		else:
+			_spawn_flyover_enemy()
+
+
+func _spawn_ground_enemy() -> void:
+	var enemy_spawner_instance: Node3D = ground_enemy_scene.instantiate()
 	get_tree().current_scene.add_child(enemy_spawner_instance)
-	enemy_spawner_instance.global_position = global_position + enemy_spawner_offset
+	enemy_spawner_instance.global_position = _random_ground_position()
 	_apply_time_scaling(enemy_spawner_instance)
 
 
-func _random_offset() -> Vector3:
-	var enemy_spawner_angle: float = enemy_spawner_rng.randf_range(0.0, TAU)
-	var enemy_spawner_radius: float = sqrt(enemy_spawner_rng.randf()) * spawn_radius
+func _spawn_flyover_enemy() -> void:
+	var enemy_spawner_instance: Node3D = flyover_enemy_scene.instantiate()
+	var enemy_spawner_side: int = enemy_spawner_rng.randi_range(0, 3)
+	var enemy_spawner_half: float = map_size * 0.5
+	var enemy_spawner_margin: float = enemy_spawner_half + flyover_spawn_margin
+	var enemy_spawner_position: Vector3 = Vector3.ZERO
+	var enemy_spawner_direction: Vector3 = Vector3.ZERO
+	match enemy_spawner_side:
+		0:
+			enemy_spawner_position = Vector3(
+				-enemy_spawner_margin,
+				flyover_height,
+				enemy_spawner_rng.randf_range(-enemy_spawner_half, enemy_spawner_half)
+			)
+			enemy_spawner_direction = Vector3.RIGHT
+		1:
+			enemy_spawner_position = Vector3(
+				enemy_spawner_margin,
+				flyover_height,
+				enemy_spawner_rng.randf_range(-enemy_spawner_half, enemy_spawner_half)
+			)
+			enemy_spawner_direction = Vector3.LEFT
+		2:
+			enemy_spawner_position = Vector3(
+				enemy_spawner_rng.randf_range(-enemy_spawner_half, enemy_spawner_half),
+				flyover_height,
+				-enemy_spawner_margin
+			)
+			enemy_spawner_direction = Vector3.FORWARD
+		3:
+			enemy_spawner_position = Vector3(
+				enemy_spawner_rng.randf_range(-enemy_spawner_half, enemy_spawner_half),
+				flyover_height,
+				enemy_spawner_margin
+			)
+			enemy_spawner_direction = Vector3.BACK
+	enemy_spawner_instance.global_position = enemy_spawner_position
+	if enemy_spawner_instance.has_method("configure_flyover"):
+		enemy_spawner_instance.call("configure_flyover", enemy_spawner_direction)
+	get_tree().current_scene.add_child(enemy_spawner_instance)
+
+
+func _random_ground_position() -> Vector3:
+	var enemy_spawner_half: float = map_size * 0.5
 	return Vector3(
-		cos(enemy_spawner_angle) * enemy_spawner_radius,
+		enemy_spawner_rng.randf_range(-enemy_spawner_half, enemy_spawner_half),
 		spawn_height,
-		sin(enemy_spawner_angle) * enemy_spawner_radius
+		enemy_spawner_rng.randf_range(-enemy_spawner_half, enemy_spawner_half)
 	)
 
 

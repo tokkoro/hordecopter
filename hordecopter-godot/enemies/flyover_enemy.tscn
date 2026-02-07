@@ -1,0 +1,18 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://enemies/flyover_enemy.gd" id="1_flyover_enemy"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_flyover"]
+size = Vector3(1.0, 0.6, 2.0)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_flyover"]
+size = Vector3(1.0, 0.6, 2.0)
+
+[node name="FlyoverEnemy" type="CharacterBody3D"]
+script = ExtResource("1_flyover_enemy")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_flyover")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_flyover")
