@@ -1,3 +1,13 @@
+###############################################################
+# hordecopter.gd
+# Key Classes      • Hordecopter – player controller + weapon toggles
+# Key Functions    • _configure_weapon_systems() – random starter weapon
+# Critical Consts  • n/a
+# Editor Exports   • auto_float: bool – hover assist toggle
+# Dependencies     • weapons/weapon_system.gd
+# Last Major Rev   • 25-09-20 – weapon activation toggles
+###############################################################
+
 class_name Hordecopter
 extends RigidBody3D
 
@@ -20,6 +30,13 @@ var forward_power: float = 100_000.0
 var max_y_speed: float = 10.0
 var max_x_speed: float = 10.0
 var max_z_speed: float = 10.0
+var hc_weapon_systems: Array[WeaponSystem] = []
+var hc_weapon_system_names: Array[StringName] = [
+	&"WeaponSystem", &"MissileWeaponSystem", &"GrenadeWeaponSystem", &"PlasmaWeaponSystem"
+]
+var hc_weapon_input_actions: Array[StringName] = [
+	&"p1_weapon_1", &"p1_weapon_2", &"p1_weapon_3", &"p1_weapon_4"
+]
 var _i: float = 0.0
 var _prev_error: float = 0.0
 var _d_state: float = 0.0
@@ -33,9 +50,11 @@ func _ready() -> void:
 	if my_camera == null:
 		push_error("Missä on mun kamera? %s" % [my_camera_name])
 		return
+	_configure_weapon_systems()
 
 
 func _physics_process(delta: float) -> void:
+	_handle_weapon_toggles()
 	# handle _p1_ inputs
 	var up_force_input = 0
 	if Input.is_action_pressed("p1_thrust_up"):
@@ -148,6 +167,43 @@ func _find_node_by_name(root: Node, name: StringName) -> Node3D:
 		if found != null:
 			return found
 	return null
+
+
+func _collect_weapon_systems() -> Array[WeaponSystem]:
+	var systems: Array[WeaponSystem] = []
+	for system_name in hc_weapon_system_names:
+		var system := get_node_or_null(system_name) as WeaponSystem
+		if system != null:
+			systems.append(system)
+	return systems
+
+
+func _configure_weapon_systems() -> void:
+	hc_weapon_systems = _collect_weapon_systems()
+	if hc_weapon_systems.is_empty():
+		return
+	for system in hc_weapon_systems:
+		system.set_physics_process(false)
+	var rng := RandomNumberGenerator.new()
+	rng.randomize()
+	var index := rng.randi_range(0, hc_weapon_systems.size() - 1)
+	hc_weapon_systems[index].set_physics_process(true)
+
+
+func _handle_weapon_toggles() -> void:
+	var action_count := min(hc_weapon_input_actions.size(), hc_weapon_systems.size())
+	for index in action_count:
+		if Input.is_action_just_pressed(hc_weapon_input_actions[index]):
+			_toggle_weapon_system(index)
+
+
+func _toggle_weapon_system(index: int) -> void:
+	if index < 0 or index >= hc_weapon_systems.size():
+		return
+	var system := hc_weapon_systems[index]
+	if system == null:
+		return
+	system.set_physics_process(not system.is_physics_processing())
 
 
 func get_camera_xz_basis(cam: Camera3D) -> Dictionary:
