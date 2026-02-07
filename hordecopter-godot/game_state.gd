@@ -4,6 +4,7 @@
 # Key Functions    • add_experience() – apply experience and handle leveling
 #                 • get_elapsed_time() – report time since start
 #                 • register_hud() – receive HUD instance from UI
+#                 • are_enemy_health_bars_visible() – toggle state getter
 # Critical Consts  • n/a
 # Editor Exports   • level_start: int – starting level
 #                 • experience_start: int – starting experience value
@@ -29,10 +30,14 @@ var game_state_experience: int = 0
 var game_state_experience_cap: int = 10
 var game_state_hud: GameHud
 var game_state_warned_missing_hud: bool = false
+
+var game_state_show_enemy_health_bars: bool = false
+
 var game_state_pending_level_ups: int = 0
 var game_state_level_up_active: bool = false
 var game_state_level_up_options: Array[Dictionary] = []
 var game_state_debug_level_key_down: bool = false
+
 
 
 func _ready() -> void:
@@ -42,6 +47,7 @@ func _ready() -> void:
 	game_state_experience_cap = max(1, experience_to_next_level)
 	game_state_hud = _find_hud()
 	_refresh_hud()
+	_apply_enemy_health_bar_visibility()
 
 
 func _process(delta: float) -> void:
@@ -49,6 +55,7 @@ func _process(delta: float) -> void:
 	_handle_debug_level_up_input()
 	_ensure_hud()
 	_update_time_hud()
+	_handle_enemy_health_toggle()
 
 
 func add_experience(amount: int) -> void:
@@ -71,6 +78,10 @@ func add_experience(amount: int) -> void:
 
 func get_elapsed_time() -> float:
 	return game_state_elapsed_time
+
+
+func are_enemy_health_bars_visible() -> bool:
+	return game_state_show_enemy_health_bars
 
 
 func get_experience_progress() -> float:
@@ -126,6 +137,20 @@ func _update_time_hud() -> void:
 		push_warning("GameState: HUD missing update_time; skipping timer UI update.")
 
 
+func _handle_enemy_health_toggle() -> void:
+	if Input.is_action_just_pressed("p1_toggle_enemy_health_bars"):
+		game_state_show_enemy_health_bars = not game_state_show_enemy_health_bars
+		_apply_enemy_health_bar_visibility()
+
+
+func _apply_enemy_health_bar_visibility() -> void:
+	var health_bars := get_tree().get_nodes_in_group("enemy_health_bars")
+	for health_bar in health_bars:
+		if health_bar is Node3D:
+			health_bar.visible = game_state_show_enemy_health_bars
+		elif health_bar is CanvasItem:
+			health_bar.visible = game_state_show_enemy_health_bars
+
 func _handle_debug_level_up_input() -> void:
 	var is_pressed := Input.is_key_pressed(KEY_L)
 	if is_pressed and not game_state_debug_level_key_down:
@@ -173,3 +198,4 @@ func _request_level_up_if_needed() -> void:
 		game_state_hud.show_level_up_choices(options)
 	else:
 		push_warning("GameState: HUD missing show_level_up_choices; cannot show upgrades.")
+
