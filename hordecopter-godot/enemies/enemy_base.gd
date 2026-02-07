@@ -20,7 +20,7 @@
 ###############################################################
 
 class_name EnemyBase
-extends CharacterBody3D
+extends RigidBody3D
 
 const ENEMY_HIT_SFX: AudioStream = preload("res://sfx/monster_hit.sfxr")
 
@@ -47,6 +47,9 @@ var enemy_base_health_bar: EnemyHealthBar3D = get_node_or_null("HealthBar3D") as
 
 func _ready() -> void:
 	add_to_group("enemies")
+	lock_rotation = true
+	if is_flying:
+		gravity_scale = 0.0
 	base_health = max(1.0, base_health)
 	enemy_base_max_health = max(1.0, health)
 	_apply_initial_scaling()

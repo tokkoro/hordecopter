@@ -1,21 +1,21 @@
-[gd_scene format=3 uid="uid://h6cqgy8spyx5"]
+[gd_scene format=3]
 
-[ext_resource type="Script" uid="uid://dneu0dj455uuu" path="res://enemies/medusa_flyer.gd" id="1_medusa_flyer"]
-[ext_resource type="PackedScene" uid="uid://dbhy7ufb4wrd5" path="res://models/medusa_head_shaded.glb" id="2_medusa_head"]
+[ext_resource type="Script" path="res://enemies/medusa_flyer.gd" id="1_medusa_flyer"]
+[ext_resource type="PackedScene" path="res://models/medusa_head_shaded.glb" id="2_medusa_head"]
 [ext_resource type="PackedScene" path="res://enemies/enemy_health_bar.tscn" id="3_enemy_health_bar"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_medusa_flyer"]
 radius = 0.9
 
-[node name="MedusaFlyer" type="CharacterBody3D" unique_id=984035628]
+[node name="MedusaFlyer" type="RigidBody3D"]
 script = ExtResource("1_medusa_flyer")
 is_flying = true
 
-[node name="MedusaHead" parent="." unique_id=1094709947 instance=ExtResource("2_medusa_head")]
+[node name="MedusaHead" parent="." instance=ExtResource("2_medusa_head")]
 transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 0, 0)
 
-[node name="HealthBar3D" parent="." unique_id=888655323 instance=ExtResource("3_enemy_health_bar")]
+[node name="HealthBar3D" parent="." instance=ExtResource("3_enemy_health_bar")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=245750138]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("SphereShape3D_medusa_flyer")

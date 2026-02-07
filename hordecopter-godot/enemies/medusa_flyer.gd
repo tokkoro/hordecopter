@@ -38,8 +38,8 @@ func _ready() -> void:
 
 func _physics_process(delta: float) -> void:
 	if is_time_stopped():
-		velocity = Vector3.ZERO
-		move_and_slide()
+		linear_velocity = Vector3.ZERO
+		angular_velocity = Vector3.ZERO
 		return
 	medusa_flyer_time += delta
 	if medusa_flyer_target == null:
@@ -58,9 +58,8 @@ func _physics_process(delta: float) -> void:
 	var medusa_flyer_vertical_velocity: float = (
 		(medusa_flyer_desired_y - global_position.y) / max(delta, 0.000001)
 	)
-	velocity = medusa_flyer_move_direction * move_speed
-	velocity.y = medusa_flyer_vertical_velocity
-	move_and_slide()
+	linear_velocity = medusa_flyer_move_direction * move_speed
+	linear_velocity.y = medusa_flyer_vertical_velocity
 
 
 func configure_spawn_direction(direction: Vector3) -> void:

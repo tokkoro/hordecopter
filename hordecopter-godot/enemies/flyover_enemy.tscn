@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://ctplrlpxwk0s1"]
+[gd_scene format=3]
 
-[ext_resource type="Script" uid="uid://besciewginhbn" path="res://enemies/flyover_enemy.gd" id="1_flyover_enemy"]
+[ext_resource type="Script" path="res://enemies/flyover_enemy.gd" id="1_flyover_enemy"]
 [ext_resource type="PackedScene" path="res://enemies/enemy_health_bar.tscn" id="2_enemy_health_bar"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_flyover"]
@@ -9,15 +9,15 @@ size = Vector3(1, 0.6, 2)
 [sub_resource type="BoxShape3D" id="BoxShape3D_flyover"]
 size = Vector3(1, 0.6, 2)
 
-[node name="FlyoverEnemy" type="CharacterBody3D" unique_id=672032471]
+[node name="FlyoverEnemy" type="RigidBody3D"]
 script = ExtResource("1_flyover_enemy")
 is_flying = true
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=882611569]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_flyover")
 
-[node name="HealthBar3D" parent="." unique_id=719602619 instance=ExtResource("2_enemy_health_bar")]
+[node name="HealthBar3D" parent="." instance=ExtResource("2_enemy_health_bar")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=82318777]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_flyover")
