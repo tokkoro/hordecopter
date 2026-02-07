@@ -59,8 +59,8 @@ func _can_spawn() -> bool:
 func _spawn_enemy() -> void:
 	var enemy_spawner_instance: Node3D = enemy_scene.instantiate()
 	var enemy_spawner_offset: Vector3 = _random_offset()
-	enemy_spawner_instance.global_position = global_position + enemy_spawner_offset
 	get_tree().current_scene.add_child(enemy_spawner_instance)
+	enemy_spawner_instance.global_position = global_position + enemy_spawner_offset
 	_apply_time_scaling(enemy_spawner_instance)
 
 
