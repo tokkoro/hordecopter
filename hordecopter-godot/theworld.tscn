@@ -3,11 +3,15 @@
 [ext_resource type="PackedScene" uid="uid://ddo5hf3gvff11" path="res://hordecopter.tscn" id="2_qn30u"]
 [ext_resource type="Texture2D" uid="uid://cvmso3ruvike3" path="res://ground_gpt.png" id="2_wkxu0"]
 [ext_resource type="Script" uid="uid://c5ovtis2odund" path="res://camera_3d.gd" id="3_qn30u"]
-[ext_resource type="PackedScene" uid="uid://dtvm5nkvy8k57" path="res://enemies/test_enemy.tscn" id="4_test_enemy"]
+[ext_resource type="PackedScene" uid="uid://dtvm5nkvy8k57" path="res://enemies/basic_enemy.tscn" id="4_test_enemy"]
 [ext_resource type="Script" uid="uid://byuj30fao1rua" path="res://enemies/enemy_spawner.gd" id="5_enemy_spawner"]
-[ext_resource type="PackedScene" path="res://enemies/flyover_enemy.tscn" id="6_flyover_enemy"]
+[ext_resource type="PackedScene" uid="uid://ctplrlpxwk0s1" path="res://enemies/flyover_enemy.tscn" id="6_flyover_enemy"]
 [ext_resource type="Script" uid="uid://ccyrihhmixdf4" path="res://game_state.gd" id="6_game_state"]
+[ext_resource type="PackedScene" uid="uid://d2cdqe6qgyl6g" path="res://enemies/basic_enemy_2.tscn" id="6_jayf2"]
+[ext_resource type="PackedScene" uid="uid://do8gnfg2f1ugc" path="res://enemies/basic_enemy_3.tscn" id="7_7qrhf"]
+[ext_resource type="PackedScene" uid="uid://h6cqgy8spyx5" path="res://enemies/medusa_flyer.tscn" id="7_e7tll"]
 [ext_resource type="Script" uid="uid://ltl7lenutetf" path="res://ui/hud.gd" id="7_hud"]
+[ext_resource type="PackedScene" uid="uid://w3hpnwwdljwl" path="res://enemies/basic_enemy_4.tscn" id="8_ctu57"]
 [ext_resource type="Script" uid="uid://5y4lu84m00fd" path="res://props/prop_spawner.gd" id="8_prop_spawner"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qn30u"]
@@ -53,8 +57,8 @@ script = ExtResource("3_qn30u")
 
 [node name="EnemySpawner" type="Node3D" parent="." unique_id=1364854204]
 script = ExtResource("5_enemy_spawner")
-ground_enemy_scenes = Array[PackedScene]([ExtResource("4_test_enemy")])
-flyover_enemy_scenes = Array[PackedScene]([ExtResource("6_flyover_enemy")])
+ground_enemy_scenes = Array[PackedScene]([ExtResource("4_test_enemy"), ExtResource("6_jayf2"), ExtResource("7_7qrhf"), ExtResource("8_ctu57")])
+flyover_enemy_scenes = Array[PackedScene]([ExtResource("6_flyover_enemy"), ExtResource("7_e7tll")])
 
 [node name="PropSpawner" type="Node3D" parent="." unique_id=1101542793]
 script = ExtResource("8_prop_spawner")

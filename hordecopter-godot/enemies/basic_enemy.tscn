@@ -1,8 +1,14 @@
 [gd_scene format=3 uid="uid://dtvm5nkvy8k57"]
 
-[ext_resource type="Script" uid="uid://didoxsqy6ljic" path="res://enemies/test_enemy.gd" id="1_test_enemy"]
+[ext_resource type="Script" uid="uid://didoxsqy6ljic" path="res://enemies/basic_enemy.gd" id="1_test_enemy"]
 [ext_resource type="PackedScene" path="res://items/experience_token.tscn" id="2_experience_token"]
 [ext_resource type="PackedScene" path="res://enemies/enemy_health_bar.tscn" id="3_enemy_health_bar"]
+[ext_resource type="Texture2D" uid="uid://c5t41sh85ds4r" path="res://enemies/images/enemy_mechanic.png" id="3_li1hj"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qjw0p"]
+albedo_texture = ExtResource("3_li1hj")
+uv1_scale = Vector3(3.03, 1.525, 3.03)
+uv1_offset = Vector3(0, 0.115, 0)
 
 [sub_resource type="BoxMesh" id="BoxMesh_7dgk3"]
 size = Vector3(1.2, 1.2, 1.2)
@@ -15,6 +21,7 @@ script = ExtResource("1_test_enemy")
 experience_token_scene = ExtResource("2_experience_token")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=309156588]
+material_override = SubResource("StandardMaterial3D_qjw0p")
 mesh = SubResource("BoxMesh_7dgk3")
 
 [node name="HealthBar3D" parent="." unique_id=419946373 instance=ExtResource("3_enemy_health_bar")]

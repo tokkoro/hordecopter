@@ -32,6 +32,8 @@ const ENEMY_HIT_SFX: AudioStream = preload("res://sfx/monster_hit.sfxr")
 @export var has_elite_form: bool = true
 @export var damage_label_scene: PackedScene = preload("res://ui/damage_label_3d.tscn")
 
+@export var is_flying: bool = false
+
 var enemy_base_max_health: float = 1.0
 var enemy_base_is_elite: bool = false
 var enemy_base_experience_reward: int = 1
@@ -97,6 +99,7 @@ func _on_death() -> void:
 
 func _update_health_bar() -> void:
 	if enemy_base_health_bar == null:
+		push_warning("No health bar on enemy")
 		return
 	enemy_base_health_bar.set_health(health, enemy_base_max_health)
 

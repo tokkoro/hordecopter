@@ -1,0 +1,31 @@
+[gd_scene format=3 uid="uid://do8gnfg2f1ugc"]
+
+[ext_resource type="Script" uid="uid://didoxsqy6ljic" path="res://enemies/basic_enemy.gd" id="1_7j1bf"]
+[ext_resource type="PackedScene" path="res://items/experience_token.tscn" id="2_sc6mg"]
+[ext_resource type="Texture2D" uid="uid://c5uam8tsbksts" path="res://enemies/images/enemy_wolffi.png" id="3_7j1bf"]
+[ext_resource type="PackedScene" path="res://enemies/enemy_health_bar.tscn" id="4_mfrr7"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sc6mg"]
+albedo_texture = ExtResource("3_7j1bf")
+uv1_scale = Vector3(3.025, 1.45, 3.025)
+uv1_offset = Vector3(0, 0.155, 0)
+
+[sub_resource type="BoxMesh" id="BoxMesh_7dgk3"]
+size = Vector3(1.2, 1.2, 1.2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4b8bn"]
+size = Vector3(1.2, 1.2, 1.2)
+
+[node name="TestEnemy" type="CharacterBody3D" unique_id=515240342]
+script = ExtResource("1_7j1bf")
+experience_token_scene = ExtResource("2_sc6mg")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=309156588]
+material_override = SubResource("StandardMaterial3D_sc6mg")
+mesh = SubResource("BoxMesh_7dgk3")
+
+[node name="HealthBar3D" parent="." unique_id=419946373 instance=ExtResource("4_mfrr7")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=233246378]
+shape = SubResource("BoxShape3D_4b8bn")

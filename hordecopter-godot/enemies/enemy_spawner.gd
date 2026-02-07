@@ -42,6 +42,7 @@ var enemy_spawner_rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var enemy_spawner_warned_missing_scene: bool = false
 var enemy_spawner_warned_bad_interval: bool = false
 
+var enemy_pool
 
 func _ready() -> void:
 	enemy_spawner_rng.randomize()
