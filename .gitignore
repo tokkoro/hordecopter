@@ -11,6 +11,9 @@ export_presets.cfg
 *.tmp
 *.log
 
+# Godot 4 uid
+*.uid
+
 # Mono / C#
 .mono/
 data_*/
