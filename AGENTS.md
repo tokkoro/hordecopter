@@ -180,9 +180,11 @@ fix & rerun.
 5. **Language-specific tests** – run `cargo test`, `go test`, `bun test`, etc.,
    when present.
 
-6. **Efficient time use** – you *don’t* need to run .NET and Godot verify
-   commands if you haven’t changed any `.gd`/`.cs` files or their dependencies;
-   the pre-commit hooks will catch issues automatically.
+6. **Efficient time use** – you *must* run the Godot headless checks whenever
+   you change any `.gd` scripts (or their dependencies). You may skip the .NET
+   and Godot verify commands only if you haven’t changed any `.cs` files
+   or their dependencies; the pre-commit hooks will catch issues automatically.
+
 
 ---
 
