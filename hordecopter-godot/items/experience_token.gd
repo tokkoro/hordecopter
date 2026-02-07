@@ -21,6 +21,8 @@ extends Node3D
 @export var magnet_speed: float = 8.0
 
 var experience_token_target: Node3D
+var experience_token_warned_missing_target: bool = false
+var experience_token_warned_missing_scene: bool = false
 
 
 func _ready() -> void:
@@ -48,11 +50,17 @@ func _get_target() -> Node3D:
 		return experience_token_target
 	var current_scene := get_tree().current_scene
 	if current_scene == null:
+		if not experience_token_warned_missing_scene:
+			experience_token_warned_missing_scene = true
+			push_warning("ExperienceToken: current scene missing; cannot find target.")
 		return null
 	var found := current_scene.find_child("Hordecopter", true, false)
 	if found != null and found is Node3D:
 		experience_token_target = found as Node3D
 		return experience_token_target
+	if not experience_token_warned_missing_target:
+		experience_token_warned_missing_target = true
+		push_warning("ExperienceToken: Hordecopter not found; token cannot be collected.")
 	return null
 
 
@@ -60,4 +68,6 @@ func _collect() -> void:
 	var game_state := get_tree().get_first_node_in_group("game_state")
 	if game_state != null and game_state.has_method("add_experience"):
 		game_state.add_experience(experience_amount)
+	else:
+		push_warning("ExperienceToken: GameState missing add_experience; XP not granted.")
 	queue_free()

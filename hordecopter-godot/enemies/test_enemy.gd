@@ -87,10 +87,12 @@ func _apply_initial_scaling() -> void:
 
 func _drop_experience() -> void:
 	if experience_token_scene == null:
+		push_warning("TestEnemy: experience_token_scene missing; no XP drop.")
 		return
 	var token := experience_token_scene.instantiate()
 	var current_scene := get_tree().current_scene
 	if current_scene == null:
+		push_warning("TestEnemy: current scene missing; cannot drop XP token.")
 		return
 	current_scene.add_child(token)
 	if token is Node3D:

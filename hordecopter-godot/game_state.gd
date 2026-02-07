@@ -25,6 +25,7 @@ var game_state_level: int = 1
 var game_state_experience: int = 0
 var game_state_experience_cap: int = 10
 var game_state_hud: Node
+var game_state_warned_missing_hud: bool = false
 
 
 func _ready() -> void:
@@ -70,6 +71,9 @@ func _find_hud() -> Node:
 
 func _refresh_hud() -> void:
 	if game_state_hud == null:
+		if not game_state_warned_missing_hud:
+			game_state_warned_missing_hud = true
+			push_warning("GameState: HUD not found; UI will not update.")
 		return
 	if game_state_hud.has_method("update_level"):
 		game_state_hud.update_level(
@@ -78,10 +82,17 @@ func _refresh_hud() -> void:
 			game_state_experience,
 			game_state_experience_cap
 		)
+	else:
+		push_warning("GameState: HUD missing update_level; skipping level UI update.")
 
 
 func _update_time_hud() -> void:
 	if game_state_hud == null:
+		if not game_state_warned_missing_hud:
+			game_state_warned_missing_hud = true
+			push_warning("GameState: HUD not found; UI will not update.")
 		return
 	if game_state_hud.has_method("update_time"):
 		game_state_hud.update_time(game_state_elapsed_time)
+	else:
+		push_warning("GameState: HUD missing update_time; skipping timer UI update.")
