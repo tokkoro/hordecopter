@@ -1,14 +1,13 @@
-[gd_resource type="Resource" script_class="WeaponDefinition" format=3]
+[gd_resource type="Resource" script_class="WeaponDefinition" format=3 uid="uid://dtq2mw6n4aqm3"]
 
-[ext_resource type="Script" path="res://weapons/weapon_definition.gd" id="1_weapon"]
-[ext_resource type="Texture2D" path="res://weapons/plasma.png" id="2_icon"]
+[ext_resource type="Texture2D" uid="uid://b2ombl43s2xjp" path="res://weapons/force_field.png" id="1_cskxu"]
+[ext_resource type="Script" uid="uid://jw2coyki72vv" path="res://weapons/weapon_definition.gd" id="1_weapon"]
 
 [resource]
 script = ExtResource("1_weapon")
 weapon_name = "Pulse Field"
-icon = ExtResource("2_icon")
+icon = ExtResource("1_cskxu")
 fire_mode = 2
 cooldown = 1.0
 damage = 2.5
 range = 6.0
-area_radius = 6.0
