@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://bn3m1t2hpss8c"]
 
-[ext_resource type="Script" uid="uid://c7vvx8n4hlg27" path="res://weapons/grenade_projectile.gd" id="1_grenade"]
+[ext_resource type="Script" uid="uid://cjhu7dwnjfo1n" path="res://weapons/grenade_projectile.gd" id="1_grenade"]
+[ext_resource type="PackedScene" uid="uid://cddv4r2w0ojly" path="res://weapons/grenade_explosion.tscn" id="2_grenade_explosion"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_v4b7k"]
 radius = 0.25
@@ -14,6 +15,7 @@ radius = 0.3
 
 [node name="GrenadeProjectile" type="Area3D"]
 script = ExtResource("1_grenade")
+explosion_scene = ExtResource("2_grenade_explosion")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("SphereMesh_v4b7k")

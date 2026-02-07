@@ -12,12 +12,14 @@ class_name GrenadeProjectile
 extends Area3D
 
 @export var speed: float = 10.0
-#@export var gravity: float = 18.0
+@export var grenade_gravity: float = 18.0
 @export var lifetime: float = 2.2
 @export var explosion_radius: float = 2.5
+@export var explosion_scene: PackedScene
 
 var _weapon_damage: float = 0.0
 var _velocity: Vector3 = Vector3.ZERO
+var _grenade_has_exploded: bool = false
 
 
 func _ready() -> void:
@@ -39,7 +41,7 @@ func configure(weapon: WeaponDefinition, direction: Vector3) -> void:
 
 
 func _physics_process(delta: float) -> void:
-	_velocity.y -= gravity * delta
+	_velocity.y -= grenade_gravity * delta
 	global_position += _velocity * delta
 
 
@@ -48,13 +50,19 @@ func _on_body_entered(_body: Node) -> void:
 
 
 func _explode() -> void:
-	if not is_inside_tree():
+	if _grenade_has_exploded or not is_inside_tree():
 		return
-	var bodies := get_overlapping_bodies()
-	for body in bodies:
-		if body is Node3D:
-			var node := body as Node3D
-			var distance := global_position.distance_to(node.global_position)
-			if distance <= explosion_radius and node.has_method("apply_damage"):
-				node.apply_damage(_weapon_damage)
+	_grenade_has_exploded = true
+	if explosion_scene:
+		var explosion := explosion_scene.instantiate()
+		var target_parent := get_parent()
+		if target_parent == null:
+			target_parent = get_tree().current_scene
+		if target_parent:
+			target_parent.add_child(explosion)
+		if explosion is Node3D:
+			var explosion_node := explosion as Node3D
+			explosion_node.global_position = global_position
+		if explosion.has_method("configure"):
+			explosion.configure(_weapon_damage, explosion_radius)
 	queue_free()
