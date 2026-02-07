@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://bn3m1t2hpss8c"]
+
+[ext_resource type="Script" uid="uid://c7vvx8n4hlg27" path="res://weapons/grenade_projectile.gd" id="1_grenade"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_v4b7k"]
+radius = 0.25
+height = 0.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_dgqk2"]
+albedo_color = Color(0.4, 0.85, 0.2, 1)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_d2n3f"]
+radius = 0.3
+
+[node name="GrenadeProjectile" type="Area3D"]
+script = ExtResource("1_grenade")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_v4b7k")
+material_override = SubResource("StandardMaterial3D_dgqk2")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_d2n3f")

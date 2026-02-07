@@ -28,8 +28,7 @@ func _ready() -> void:
 func _physics_process(_delta: float) -> void:
 	if weapon == null:
 		return
-	if Input.is_action_pressed("p1_shoot"):
-		try_fire()
+	try_fire()
 
 
 func try_fire() -> void:

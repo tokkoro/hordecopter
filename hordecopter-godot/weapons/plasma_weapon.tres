@@ -1,0 +1,13 @@
+[gd_resource type="Resource" script_class="WeaponDefinition" load_steps=3 format=3 uid="uid://dt0k4w5o2t6ug"]
+
+[ext_resource type="Script" uid="uid://jw2coyki72vv" path="res://weapons/weapon_definition.gd" id="1_weapon"]
+[ext_resource type="PackedScene" uid="uid://b3v21kyy7e5kl" path="res://weapons/plasma_ball.tscn" id="2_plasma"]
+
+[resource]
+script = ExtResource("1_weapon")
+weapon_name = "Plasma Ball"
+fire_mode = 1
+cooldown = 1.0
+damage = 5.0
+range = 45.0
+projectile_scene = ExtResource("2_plasma")

@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://b3v21kyy7e5kl"]
+
+[ext_resource type="Script" uid="uid://c5ttq1xg4d1l0" path="res://weapons/plasma_ball.gd" id="1_plasma"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_x0p6b"]
+radius = 0.22
+height = 0.44
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7g8u2"]
+albedo_color = Color(0.35, 0.75, 1, 1)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_7qv5a"]
+radius = 0.25
+
+[node name="PlasmaBall" type="Area3D"]
+script = ExtResource("1_plasma")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_x0p6b")
+material_override = SubResource("StandardMaterial3D_7g8u2")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_7qv5a")
