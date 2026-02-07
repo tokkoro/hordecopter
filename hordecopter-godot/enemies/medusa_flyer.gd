@@ -28,6 +28,7 @@ var medusa_flyer_target: Node3D
 var medusa_flyer_time: float = 0.0
 var medusa_flyer_base_height: float = 0.0
 var medusa_flyer_max_health: float = 1.0
+var medusa_flyer_is_elite: bool = false
 
 @onready
 var medusa_flyer_health_bar: EnemyHealthBar3D = get_node_or_null("HealthBar3D") as EnemyHealthBar3D
@@ -78,6 +79,16 @@ func apply_damage(amount: float) -> void:
 	_update_health_bar()
 	if health <= 0.0:
 		queue_free()
+
+
+func configure_elite() -> void:
+	if medusa_flyer_is_elite:
+		return
+	medusa_flyer_is_elite = true
+	scale *= 2.0
+	health *= 8.0
+	medusa_flyer_max_health = max(1.0, health)
+	_update_health_bar()
 
 
 func _update_health_bar() -> void:

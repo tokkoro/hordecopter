@@ -35,6 +35,7 @@ extends CharacterBody3D
 var test_enemy_experience_reward: int = 1
 var test_enemy_configured: bool = false
 var test_enemy_is_dead: bool = false
+var test_enemy_is_elite: bool = false
 var test_enemy_wander_direction: Vector3 = Vector3.ZERO
 var test_enemy_wander_elapsed: float = 0.0
 var test_enemy_rng: RandomNumberGenerator = RandomNumberGenerator.new()
@@ -113,6 +114,17 @@ func configure_from_time(time_seconds: float) -> void:
 		base_experience_reward, health, base_health
 	)
 	test_enemy_configured = true
+	_update_health_bar()
+
+
+func configure_elite() -> void:
+	if test_enemy_is_elite:
+		return
+	test_enemy_is_elite = true
+	scale *= 2.0
+	health *= 8.0
+	test_enemy_max_health = max(1.0, health)
+	test_enemy_experience_reward = max(1, test_enemy_experience_reward * 2)
 	_update_health_bar()
 
 
