@@ -1,6 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://enemies/test_enemy.gd" id="1_test_enemy"]
+[ext_resource type="PackedScene" path="res://items/experience_token.tscn" id="2_experience_token"]
 
 [sub_resource type="BoxMesh" id="BoxMesh_7dgk3"]
 size = Vector3(1.2, 1.2, 1.2)
@@ -10,6 +11,7 @@ size = Vector3(1.2, 1.2, 1.2)
 
 [node name="TestEnemy" type="CharacterBody3D"]
 script = ExtResource("1_test_enemy")
+experience_token_scene = ExtResource("2_experience_token")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 mesh = SubResource("BoxMesh_7dgk3")
