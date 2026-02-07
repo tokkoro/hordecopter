@@ -5,8 +5,9 @@
 # Critical Consts  • n/a
 # Editor Exports   • weapon_name: String – display label
 #                 • icon: Texture2D – HUD icon
+#                 • area_radius: float – radius for area weapons
 # Dependencies     • n/a
-# Last Major Rev   • 25-09-20 – initial data-driven weapon model
+# Last Major Rev   • 25-09-27 – add area fire mode data
 ###############################################################
 
 class_name WeaponDefinition
@@ -15,6 +16,7 @@ extends Resource
 enum FireMode {
 	HITSCAN,
 	PROJECTILE,
+	AREA,
 }
 
 @export var weapon_name: String = "Weapon"
@@ -23,6 +25,7 @@ enum FireMode {
 @export var cooldown: float = 0.2
 @export var damage: float = 5.0
 @export var range: float = 50.0
+@export var area_radius: float = 6.0
 @export var projectile_scene: PackedScene
 @export var beam_scene: PackedScene
 @export var beam_color: Color = Color(1.0, 0.2, 0.2, 1.0)

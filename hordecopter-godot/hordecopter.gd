@@ -36,10 +36,14 @@ var max_x_speed: float = 10.0
 var max_z_speed: float = 10.0
 var hc_weapon_systems: Array[WeaponSystem] = []
 var hc_weapon_system_names: Array[StringName] = [
-	&"WeaponSystem", &"MissileWeaponSystem", &"GrenadeWeaponSystem", &"PlasmaWeaponSystem"
+	&"WeaponSystem",
+	&"MissileWeaponSystem",
+	&"GrenadeWeaponSystem",
+	&"PlasmaWeaponSystem",
+	&"AreaWeaponSystem"
 ]
 var hc_weapon_input_actions: Array[StringName] = [
-	&"p1_weapon_1", &"p1_weapon_2", &"p1_weapon_3", &"p1_weapon_4"
+	&"p1_weapon_1", &"p1_weapon_2", &"p1_weapon_3", &"p1_weapon_4", &"p1_weapon_5"
 ]
 var hc_weapon_levels: Array[int] = []
 var hc_weapon_base_damage: Array[float] = []

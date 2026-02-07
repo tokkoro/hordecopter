@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="WeaponDefinition" format=3]
+
+[ext_resource type="Script" path="res://weapons/weapon_definition.gd" id="1_weapon"]
+[ext_resource type="Texture2D" path="res://weapons/plasma.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_weapon")
+weapon_name = "Pulse Field"
+icon = ExtResource("2_icon")
+fire_mode = 2
+cooldown = 1.0
+damage = 2.5
+range = 6.0
+area_radius = 6.0

@@ -1,55 +1,78 @@
-[gd_scene format=3 uid="uid://vw7a3bje77ju"]
+[gd_scene format=3]
 
-[ext_resource type="Script" uid="uid://cjcl4isvop3nb" path="res://hordecopter.gd" id="1_eifgo"]
-[ext_resource type="Script" uid="uid://bwc8b66rmbyph" path="res://weapons/weapon_system.gd" id="2_weapon_system"]
-[ext_resource type="PackedScene" uid="uid://d25k72efcjldo" path="res://vain_body.glb" id="3_7mbbw"]
-[ext_resource type="Resource" uid="uid://b26uwna5dssms" path="res://weapons/laser_weapon.tres" id="3_laser_weapon"]
-[ext_resource type="Resource" uid="uid://dqlqfh7fx2lhv" path="res://weapons/homing_missile_weapon.tres" id="4_missile_weapon"]
-[ext_resource type="Script" uid="uid://nmj5je32etrs" path="res://rollaus_pivot_piste.gd" id="4_qxvvh"]
-[ext_resource type="Resource" uid="uid://bar0g1efnvqlw" path="res://weapons/grenade_weapon.tres" id="5_grenade_weapon"]
-[ext_resource type="PackedScene" uid="uid://yksjed5m5v1b" path="res://vain_ropeli.glb" id="5_ka8e6"]
-[ext_resource type="Resource" uid="uid://dsadsb2eao25f" path="res://weapons/plasma_weapon.tres" id="6_plasma_weapon"]
+[ext_resource type="Script" path="res://hordecopter.gd" id="1_hordecopter"]
+[ext_resource type="Script" path="res://weapons/weapon_system.gd" id="2_weapon_system"]
+[ext_resource type="Script" path="res://weapons/area_weapon_system.gd" id="3_area_weapon_system"]
+[ext_resource type="PackedScene" path="res://vain_body.glb" id="4_body"]
+[ext_resource type="Resource" path="res://weapons/laser_weapon.tres" id="5_laser_weapon"]
+[ext_resource type="Resource" path="res://weapons/homing_missile_weapon.tres" id="6_missile_weapon"]
+[ext_resource type="Script" path="res://rollaus_pivot_piste.gd" id="7_rollaus_pivot"]
+[ext_resource type="Resource" path="res://weapons/grenade_weapon.tres" id="8_grenade_weapon"]
+[ext_resource type="PackedScene" path="res://vain_ropeli.glb" id="9_ropeli"]
+[ext_resource type="Resource" path="res://weapons/plasma_weapon.tres" id="10_plasma_weapon"]
+[ext_resource type="Resource" path="res://weapons/area_weapon.tres" id="11_area_weapon"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_eifgo"]
 
-[node name="Hordecopter" type="RigidBody3D" unique_id=648785908]
+[sub_resource type="CylinderMesh" id="CylinderMesh_area_indicator"]
+top_radius = 1.0
+bottom_radius = 1.0
+height = 0.05
+radial_segments = 64
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_area_indicator"]
+albedo_color = Color(0.2, 0.8, 0.4, 0.25)
+emission = Color(0.2, 0.8, 0.4, 1)
+emission_energy = 1.4
+transparency = 1
+
+[node name="Hordecopter" type="RigidBody3D"]
 mass = 100.0
-script = ExtResource("1_eifgo")
+script = ExtResource("1_hordecopter")
 kp = 250.0
 ki = 10.0
 kd = 100.0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1275976041]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_eifgo")
 
-[node name="infotext" type="Label3D" parent="." unique_id=677977877]
+[node name="infotext" type="Label3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1138026, 0.41907665, 0)
 
-[node name="Muzzle" type="Node3D" parent="." unique_id=902515710]
+[node name="Muzzle" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, -1.4)
 
-[node name="WeaponSystem" type="Node3D" parent="." unique_id=1043655249]
+[node name="WeaponSystem" type="Node3D" parent="."]
 script = ExtResource("2_weapon_system")
-weapon = ExtResource("3_laser_weapon")
+weapon = ExtResource("5_laser_weapon")
 
-[node name="MissileWeaponSystem" type="Node3D" parent="." unique_id=1021353351]
+[node name="MissileWeaponSystem" type="Node3D" parent="."]
 script = ExtResource("2_weapon_system")
-weapon = ExtResource("4_missile_weapon")
+weapon = ExtResource("6_missile_weapon")
 
-[node name="GrenadeWeaponSystem" type="Node3D" parent="." unique_id=1350451225]
+[node name="GrenadeWeaponSystem" type="Node3D" parent="."]
 script = ExtResource("2_weapon_system")
-weapon = ExtResource("5_grenade_weapon")
+weapon = ExtResource("8_grenade_weapon")
 
-[node name="PlasmaWeaponSystem" type="Node3D" parent="." unique_id=456455275]
+[node name="PlasmaWeaponSystem" type="Node3D" parent="."]
 script = ExtResource("2_weapon_system")
-weapon = ExtResource("6_plasma_weapon")
+weapon = ExtResource("10_plasma_weapon")
 
-[node name="vain_body" parent="." unique_id=1179742415 instance=ExtResource("3_7mbbw")]
+[node name="AreaWeaponSystem" type="Node3D" parent="."]
+script = ExtResource("3_area_weapon_system")
+weapon = ExtResource("11_area_weapon")
+
+[node name="AreaIndicator" type="MeshInstance3D" parent="AreaWeaponSystem"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.55, 0)
+mesh = SubResource("CylinderMesh_area_indicator")
+material_override = SubResource("StandardMaterial3D_area_indicator")
+
+[node name="vain_body" parent="." instance=ExtResource("4_body")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, -0.45981646, 0)
 
-[node name="rollaus_pivot_piste" type="Node3D" parent="." unique_id=536056627]
+[node name="rollaus_pivot_piste" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.18035194)
-script = ExtResource("4_qxvvh")
+script = ExtResource("7_rollaus_pivot")
 
-[node name="vain_ropeli" parent="rollaus_pivot_piste" unique_id=1203383160 instance=ExtResource("5_ka8e6")]
+[node name="vain_ropeli" parent="rollaus_pivot_piste" instance=ExtResource("9_ropeli")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.45494208, -0.20959833)
