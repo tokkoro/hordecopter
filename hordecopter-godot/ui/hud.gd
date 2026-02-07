@@ -211,6 +211,7 @@ func _build_weapon_slots() -> void:
 		icon.offset_top = 0.0
 		icon.offset_right = 0.0
 		icon.offset_bottom = 0.0
+		icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH_PROPORTIONAL
 		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		slot_root.add_child(icon)
 
