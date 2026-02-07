@@ -29,6 +29,7 @@
 >
 > * **Indentation:** Use tabs in `.gd`, `.gdshader`, `.cs` files. Do not use spaces.
 > * `gdlint` expects `class_name` **before** `extends`.
+> * Never include `uid` fields anywhere (scenes, scripts, or other files); they are not readable or debuggable.
 
 > \[!IMPORTANT]
 > Your tools might let you create a PR that includes a binary file, but the user
@@ -206,5 +207,3 @@ enforce them strictly.
 # End of Codex Agent Workspace Guide
 ###############################################################################
 ```
-
-
