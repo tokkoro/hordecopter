@@ -11,6 +11,8 @@
 #                 • health_per_second: float – time scaling for health
 #                 • base_experience_reward: int – base exp reward
 #                 • experience_token_scene: PackedScene – drop scene
+#                 • test_enemy_climb_speed: float – vertical climb speed
+#                 • test_enemy_climb_duration: float – climb time after bump
 # Dependencies     • res://enemies/enemy_experience_manager.gd
 #                 • res://items/experience_token.tscn
 #                 • res://enemies/enemy_health_bar.tscn
@@ -29,12 +31,15 @@ extends EnemyBase
 @export var test_enemy_seek_speed: float = 1.5
 @export var test_enemy_wander_interval: float = 1.5
 @export var test_enemy_turn_speed: float = 2.0
+@export var test_enemy_climb_speed: float = 2.0
+@export var test_enemy_climb_duration: float = 0.35
 
 var test_enemy_experience_reward: int = 1
 var test_enemy_configured: bool = false
 var test_enemy_is_dead: bool = false
 var test_enemy_wander_direction: Vector3 = Vector3.ZERO
 var test_enemy_wander_elapsed: float = 0.0
+var test_enemy_climb_timer: float = 0.0
 var test_enemy_rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var test_enemy_target: Node3D
 
@@ -78,8 +83,19 @@ func _physics_process(delta: float) -> void:
 	var test_enemy_speed: float = test_enemy_wander_speed
 	if test_enemy_has_target:
 		test_enemy_speed = test_enemy_seek_speed
+	var test_enemy_climb_velocity: float = 0.0
+	if test_enemy_climb_timer > 0.0:
+		test_enemy_climb_timer = max(0.0, test_enemy_climb_timer - delta)
+		test_enemy_climb_velocity = test_enemy_climb_speed
 	velocity = test_enemy_wander_direction * test_enemy_speed
+	velocity.y = test_enemy_climb_velocity
 	move_and_slide()
+	for test_enemy_slide_index in range(get_slide_collision_count()):
+		var test_enemy_collision := get_slide_collision(test_enemy_slide_index)
+		var test_enemy_collider := test_enemy_collision.get_collider()
+		if test_enemy_collider != null and test_enemy_collider.is_in_group("props"):
+			test_enemy_climb_timer = test_enemy_climb_duration
+			break
 
 
 func _pick_wander_direction() -> void:
