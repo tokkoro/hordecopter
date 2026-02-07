@@ -32,6 +32,8 @@ var ohs_is_active: bool = false
 
 
 func _ready() -> void:
+	if is_ready:
+		return
 	super._ready()
 	if weapon == null:
 		weapon = WeaponDefinition.new()
@@ -46,6 +48,8 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if not is_active:
+		return
 	if weapon == null:
 		return
 	if ohs_is_active:

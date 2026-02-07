@@ -17,16 +17,32 @@ extends Node3D
 var _muzzle: Node3D
 var _next_fire_time: float = 0.0
 
+var is_ready = false
+var is_active = false
 
 func _ready() -> void:
+	if is_ready:
+		return
+	if weapon != null:
+		_next_fire_time = weapon.cooldown
 	if muzzle_path != NodePath():
 		_muzzle = get_node(muzzle_path) as Node3D
 	else:
 		_muzzle = self
+	is_ready = true
 
+func activate() -> void:
+	print("activate weapon")
+	if is_active:
+		push_warning("Reactivating active weapon 😱")
+	is_active = true
+	if not is_ready:
+		push_warning("Activating weapon that is not ready! 😱😱")
+	if weapon != null:
+		_next_fire_time = weapon.cooldown
 
 func _physics_process(_delta: float) -> void:
-	if weapon == null:
+	if weapon == null or not is_active:
 		return
 	try_fire()
 
@@ -72,6 +88,7 @@ func _fire_projectile() -> void:
 	if _muzzle == null:
 		return
 	if weapon.projectile_scene == null:
+		push_warning("Projectile weapon should have projectile_scene!")
 		return
 	var projectile := weapon.projectile_scene.instantiate()
 	get_tree().current_scene.add_child(projectile)

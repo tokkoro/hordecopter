@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cjcl4isvop3nb" path="res://hordecopter.gd" id="1_hordecopter"]
 [ext_resource type="Script" uid="uid://bwc8b66rmbyph" path="res://weapons/weapon_system.gd" id="2_weapon_system"]
-[ext_resource type="Script" path="res://weapons/area_weapon_system.gd" id="3_area_weapon_system"]
+[ext_resource type="Script" uid="uid://421udilwjuap" path="res://weapons/area_weapon_system.gd" id="3_area_weapon_system"]
 [ext_resource type="PackedScene" uid="uid://d25k72efcjldo" path="res://vain_body.glb" id="4_body"]
 [ext_resource type="Resource" uid="uid://b26uwna5dssms" path="res://weapons/laser_weapon.tres" id="5_laser_weapon"]
 [ext_resource type="Resource" uid="uid://dqlqfh7fx2lhv" path="res://weapons/homing_missile_weapon.tres" id="6_missile_weapon"]
@@ -76,6 +76,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.55, 0)
 material_override = SubResource("StandardMaterial3D_area_indicator")
 mesh = SubResource("CylinderMesh_area_indicator")
 
+[node name="OrbitingWeaponSystem" type="Node3D" parent="." unique_id=1245228016]
+script = ExtResource("12_6gtap")
+weapon = SubResource("Resource_3adfc")
+
 [node name="vain_body" parent="." unique_id=472174352 instance=ExtResource("4_body")]
 transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, -0.45981646, 0)
 
@@ -85,7 +89,3 @@ script = ExtResource("7_rollaus_pivot")
 
 [node name="vain_ropeli" parent="rollaus_pivot_piste" unique_id=1939282325 instance=ExtResource("9_ropeli")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.45494208, -0.20959833)
-
-[node name="OrbitingWeaponSystem" type="Node3D" parent="." unique_id=1245228016]
-script = ExtResource("12_6gtap")
-weapon = SubResource("Resource_3adfc")

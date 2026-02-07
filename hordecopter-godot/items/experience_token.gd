@@ -17,7 +17,7 @@ extends Node3D
 
 @export var experience_amount: int = 1
 @export var pickup_radius: float = 1.25
-@export var magnet_radius: float = 20.0
+@export var magnet_radius: float = 10.0
 @export var magnet_speed: float = 6.0
 
 var experience_token_target: Node3D

@@ -34,6 +34,8 @@ var forward_power: float = 100_000.0
 var max_y_speed: float = 10.0
 var max_x_speed: float = 10.0
 var max_z_speed: float = 10.0
+
+var hc_weapon_systems_is_initialized = false;
 var hc_weapon_systems: Array[WeaponSystem] = []
 var hc_weapon_system_names: Array[StringName] = [
 	&"WeaponSystem",
@@ -43,9 +45,7 @@ var hc_weapon_system_names: Array[StringName] = [
 	&"AreaWeaponSystem",
 	&"OrbitingWeaponSystem"
 ]
-var hc_weapon_input_actions: Array[StringName] = [
-	&"p1_weapon_1", &"p1_weapon_2", &"p1_weapon_3", &"p1_weapon_4", &"p1_weapon_5"
-]
+
 var hc_weapon_levels: Array[int] = []
 var hc_weapon_base_damage: Array[float] = []
 var hc_weapon_base_cooldown: Array[float] = []
@@ -63,10 +63,13 @@ func _ready() -> void:
 		push_error("Missä on mun kamera? %s" % [my_camera_name])
 		return
 	_ensure_orbiting_weapon_system()
-	_configure_weapon_systems()
+	# _configure_weapon_systems()
 
 
 func _physics_process(delta: float) -> void:
+	if not hc_weapon_systems_is_initialized:
+		_configure_weapon_systems()
+		hc_weapon_systems_is_initialized = true
 	# handle _p1_ inputs
 	var up_force_input = 0
 	if Input.is_action_pressed("p1_thrust_up"):
@@ -202,12 +205,14 @@ func _ensure_orbiting_weapon_system() -> void:
 func _configure_weapon_systems() -> void:
 	hc_weapon_systems = _collect_weapon_systems()
 	if hc_weapon_systems.is_empty():
+		push_warning("Didn't find any weapon systems")
 		return
 	hc_weapon_levels.clear()
 	hc_weapon_base_damage.clear()
 	hc_weapon_base_cooldown.clear()
 	for system in hc_weapon_systems:
-		system.set_physics_process(false)
+		if not system.is_ready:
+			push_warning("Weapon was not ready to be configured!")
 		hc_weapon_levels.append(0)
 		if system.weapon != null:
 			hc_weapon_base_damage.append(system.weapon.damage)
@@ -257,17 +262,16 @@ func get_level_up_options(count: int) -> Array[Dictionary]:
 
 
 func apply_level_up_choice(choice: Dictionary) -> void:
+	print("apply_level_up_choice")
 	if not choice.has("index"):
 		push_warning("Invalid level up choice: %s" % JSON.stringify(choice))
 		return
 	var system_index := int(choice["index"])
 	if system_index < 0 or system_index >= hc_weapon_systems.size():
 		return
-	if hc_weapon_levels[system_index] <= 0:
-		if _get_unlocked_weapon_count() >= HC_MAX_UNLOCKED_WEAPONS:
-			push_warning("Weapon slots full; cannot unlock more weapons.")
-			return
-		_unlock_weapon_system(system_index, false)
+	if hc_weapon_levels[system_index] <= 0 and _get_unlocked_weapon_count() >= HC_MAX_UNLOCKED_WEAPONS:
+		push_warning("Weapon slots full; cannot unlock more weapons.")
+		return
 	else:
 		hc_weapon_levels[system_index] += 1
 		var level := _apply_weapon_level(system_index)
@@ -277,28 +281,25 @@ func apply_level_up_choice(choice: Dictionary) -> void:
 
 
 func _unlock_weapon_system(index: int, make_active: bool) -> void:
+	print("_unlock_weapon_system")
 	if index < 0 or index >= hc_weapon_systems.size():
+		push_warning("Trying to activate out of range weapon!")
 		return
 	if hc_weapon_levels[index] <= 0:
 		hc_weapon_levels[index] = 1
 		_apply_weapon_level(index)
 	if make_active:
-		_disable_all_weapon_systems()
-		hc_weapon_systems[index].set_physics_process(true)
+		hc_weapon_systems[index].activate()
 	_update_weapon_hud()
-
-
-func _disable_all_weapon_systems() -> void:
-	for system in hc_weapon_systems:
-		if system != null:
-			system.set_physics_process(false)
 
 
 func _apply_weapon_level(index: int) -> int:
 	if index < 0 or index >= hc_weapon_systems.size():
+		push_warning("Trying to _apply_weapon_level out of range weapon!")
 		return 0
 	var system := hc_weapon_systems[index]
 	if system == null or system.weapon == null:
+		push_warning("Trying to _apply_weapon_level for missing weapon!")
 		return 0
 	var base_damage := hc_weapon_base_damage[index]
 	var base_cooldown := hc_weapon_base_cooldown[index]
