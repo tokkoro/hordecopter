@@ -2,17 +2,17 @@
 # enemies/test_enemy.gd
 # Key Classes      • TestEnemy – wandering target dummy
 # Key Functions    • apply_damage() – reduce health and despawn
-#                 • configure_from_time() – set health/exp scaling
+#                 • configure_from_time() – set health scaling
 #                 • _pick_wander_direction() – choose a new wander heading
 # Critical Consts  • n/a
 # Editor Exports   • health: float – hit points
 #                 • base_health: float – baseline health
 #                 • health_per_second: float – time scaling for health
 #                 • base_experience_reward: int – base exp reward
-#                 • experience_per_second: float – time scaling for exp
 #                 • experience_token_scene: PackedScene – drop scene
-# Dependencies     • res://items/experience_token.tscn
-# Last Major Rev   • 25-09-27 – add experience drops + scaling
+# Dependencies     • res://enemies/enemy_experience_manager.gd
+#                 • res://items/experience_token.tscn
+# Last Major Rev   • 25-09-27 – move XP scaling into shared manager
 ###############################################################
 
 class_name TestEnemy
@@ -22,7 +22,6 @@ extends CharacterBody3D
 @export var base_health: float = 4.0
 @export var health_per_second: float = 0.25
 @export var base_experience_reward: int = 1
-@export var experience_per_second: float = 0.1
 @export var experience_token_scene: PackedScene
 @export var test_enemy_wander_speed: float = 2.5
 @export var test_enemy_wander_interval: float = 1.5
@@ -67,8 +66,9 @@ func apply_damage(amount: float) -> void:
 func configure_from_time(time_seconds: float) -> void:
 	var scaled_health := base_health + time_seconds * health_per_second
 	health = max(1.0, scaled_health)
-	var scaled_experience := base_experience_reward + time_seconds * experience_per_second
-	test_enemy_experience_reward = max(1, int(round(scaled_experience)))
+	test_enemy_experience_reward = EnemyExperienceManager.calculate_experience_from_health(
+		base_experience_reward, health, base_health
+	)
 	test_enemy_configured = true
 
 
@@ -76,13 +76,17 @@ func _apply_initial_scaling() -> void:
 	if test_enemy_configured:
 		return
 	if not is_equal_approx(health, base_health):
-		test_enemy_experience_reward = base_experience_reward
+		test_enemy_experience_reward = EnemyExperienceManager.calculate_experience_from_health(
+			base_experience_reward, health, base_health
+		)
 		return
 	var game_state := get_tree().get_first_node_in_group("game_state")
 	if game_state != null and game_state.has_method("get_elapsed_time"):
 		configure_from_time(game_state.get_elapsed_time())
 	else:
-		test_enemy_experience_reward = base_experience_reward
+		test_enemy_experience_reward = EnemyExperienceManager.calculate_experience_from_health(
+			base_experience_reward, health, base_health
+		)
 
 
 func _drop_experience() -> void:
