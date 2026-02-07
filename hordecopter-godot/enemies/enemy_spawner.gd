@@ -2,10 +2,11 @@
 # enemies/enemy_spawner.gd
 # Key Classes      • EnemySpawner – timed enemy spawn controller
 # Key Functions    • _spawn_group() – instance and place a batch of enemies
-#                 • _spawn_flyover_enemy() – spawn a flyover enemy outside the map
+#                 • _spawn_medusa_flyer() – spawn a flying enemy outside the map
 # Critical Consts  • n/a
 # Editor Exports   • ground_enemy_scene: PackedScene – wandering enemy type
-#                 • flyover_enemy_scene: PackedScene – flyover enemy type
+#                 • medusa_flyer_scene: PackedScene – flying enemy type
+#                 • flyover_enemy_scene: PackedScene – legacy flyover type (unused)
 #                 • spawn_interval: float – time between spawns
 #                 • max_enemies: int – global enemy cap
 #                 • group_size: int – count spawned per wave
@@ -14,15 +15,16 @@
 #                 • flyover_height: float – flyover enemy height
 #                 • flyover_spawn_margin: float – extra distance from map edge
 # Dependencies     • res://enemies/test_enemy.tscn (assigned in scene)
-#                 • res://enemies/flyover_enemy.tscn (assigned in scene)
+#                 • res://enemies/medusa_flyer.tscn
 #                 • res://game_state.gd
-# Last Major Rev   • 25-09-27 – add time-based enemy scaling
+# Last Major Rev   • 25-09-27 – add medusa flyer spawns
 ###############################################################
 
 class_name EnemySpawner
 extends Node3D
 
 @export var ground_enemy_scene: PackedScene
+@export var medusa_flyer_scene: PackedScene = preload("res://enemies/medusa_flyer.tscn")
 @export var flyover_enemy_scene: PackedScene
 @export var spawn_interval: float = 5.0
 @export var max_enemies: int = 100
@@ -45,12 +47,12 @@ func _ready() -> void:
 func _process(delta: float) -> void:
 	if ground_enemy_scene == null:
 		if not enemy_spawner_warned_missing_scene:
-					enemy_spawner_warned_missing_scene = true
-					push_warning("EnemySpawner: ground_enemy_scene is missing; cannot spawn enemies.")
-	if flyover_enemy_scene == null:
+			enemy_spawner_warned_missing_scene = true
+			push_warning("EnemySpawner: ground_enemy_scene is missing; cannot spawn enemies.")
+	if medusa_flyer_scene == null:
 		if not enemy_spawner_warned_missing_scene:
-					enemy_spawner_warned_missing_scene = true
-					push_warning("EnemySpawner: flyover_enemy_scene is missing; cannot spawn enemies.")
+			enemy_spawner_warned_missing_scene = true
+			push_warning("EnemySpawner: medusa_flyer_scene is missing; cannot spawn enemies.")
 	if spawn_interval <= 0.0:
 		if not enemy_spawner_warned_bad_interval:
 			enemy_spawner_warned_bad_interval = true
@@ -75,7 +77,7 @@ func _spawn_group() -> void:
 		if enemy_spawner_pick_ground:
 			_spawn_ground_enemy()
 		else:
-			_spawn_flyover_enemy()
+			_spawn_medusa_flyer()
 
 
 func _spawn_ground_enemy() -> void:
@@ -85,8 +87,10 @@ func _spawn_ground_enemy() -> void:
 	_apply_time_scaling(enemy_spawner_instance)
 
 
-func _spawn_flyover_enemy() -> void:
-	var enemy_spawner_instance: Node3D = flyover_enemy_scene.instantiate()
+func _spawn_medusa_flyer() -> void:
+	if medusa_flyer_scene == null:
+		return
+	var enemy_spawner_instance: Node3D = medusa_flyer_scene.instantiate()
 	var enemy_spawner_side: int = enemy_spawner_rng.randi_range(0, 3)
 	var enemy_spawner_half: float = map_size * 0.5
 	var enemy_spawner_margin: float = enemy_spawner_half + flyover_spawn_margin
@@ -122,8 +126,8 @@ func _spawn_flyover_enemy() -> void:
 			)
 			enemy_spawner_direction = Vector3.BACK
 	enemy_spawner_instance.global_position = enemy_spawner_position
-	if enemy_spawner_instance.has_method("configure_flyover"):
-		enemy_spawner_instance.call("configure_flyover", enemy_spawner_direction)
+	if enemy_spawner_instance.has_method("configure_spawn_direction"):
+		enemy_spawner_instance.call("configure_spawn_direction", enemy_spawner_direction)
 	get_tree().current_scene.add_child(enemy_spawner_instance)
 
 

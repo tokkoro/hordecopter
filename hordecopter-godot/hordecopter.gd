@@ -46,6 +46,7 @@ var _d_state: float = 0.0
 
 func _ready() -> void:
 	print("hello world")
+	add_to_group("player")
 	my_camera = _find_node_by_name(get_tree().current_scene, my_camera_name)
 	if my_camera == null:
 		push_error("Missä on mun kamera? %s" % [my_camera_name])

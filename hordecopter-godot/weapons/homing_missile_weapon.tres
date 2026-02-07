@@ -1,13 +1,13 @@
 [gd_resource type="Resource" script_class="WeaponDefinition" format=3]
 
 [ext_resource type="Script" path="res://weapons/weapon_definition.gd" id="1_weapon"]
-[ext_resource type="PackedScene" path="res://weapons/grenade_projectile.tscn" id="2_grenade"]
+[ext_resource type="PackedScene" path="res://weapons/homing_missile.tscn" id="2_missile"]
 
 [resource]
 script = ExtResource("1_weapon")
-weapon_name = "Grenade"
+weapon_name = "Homing Missile"
 fire_mode = 1
-cooldown = 1.0
-damage = 8.0
-range = 35.0
-projectile_scene = ExtResource("2_grenade")
+cooldown = 1.5
+damage = 12.0
+range = 70.0
+projectile_scene = ExtResource("2_missile")
