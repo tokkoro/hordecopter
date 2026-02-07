@@ -89,9 +89,7 @@ func _ensure_hud() -> void:
 
 func _refresh_hud() -> void:
 	if game_state_hud == null:
-		if not game_state_warned_missing_hud:
-			game_state_warned_missing_hud = true
-			push_warning("GameState: HUD not found; UI will not update.")
+		# Expected while warming up a scene
 		return
 	if game_state_hud.has_method("update_level"):
 		game_state_hud.update_level(

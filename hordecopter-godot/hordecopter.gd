@@ -22,7 +22,7 @@ extends RigidBody3D
 @export var rotation_speed: float = 50.0
 
 var my_camera: Camera3D
-var auto_float_target_altitude: float = 10.0
+var auto_float_target_altitude: float = 0.5
 var show_info: bool = false
 var upward_power: float = 100_000.0
 var sideward_power: float = 100_000.0
@@ -45,7 +45,6 @@ var _d_state: float = 0.0
 
 
 func _ready() -> void:
-	print("hello world")
 	add_to_group("player")
 	my_camera = _find_node_by_name(get_tree().current_scene, my_camera_name)
 	if my_camera == null:

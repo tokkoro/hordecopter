@@ -51,7 +51,7 @@ flyover_enemy_scene = ExtResource("6_flyover_enemy")
 [node name="GameState" type="Node" parent="." unique_id=205071287]
 script = ExtResource("6_game_state")
 
-[node name="HUD" type="CanvasLayer" parent="." unique_id=1987409665 groups=["hud"]]
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1987409665]
 script = ExtResource("7_hud")
 
 [node name="MarginContainer" type="MarginContainer" parent="HUD" unique_id=426894668]
@@ -80,7 +80,3 @@ show_percentage = false
 visible = false
 layout_mode = 2
 text = "0 / 0 XP"
-
-[node name="TestEnemy" parent="." unique_id=125256021 instance=ExtResource("4_test_enemy")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, -12)
-health = 1200.0
