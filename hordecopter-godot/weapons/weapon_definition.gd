@@ -4,6 +4,7 @@
 # Key Functions    • n/a
 # Critical Consts  • n/a
 # Editor Exports   • weapon_name: String – display label
+#                 • icon: Texture2D – HUD icon
 # Dependencies     • n/a
 # Last Major Rev   • 25-09-20 – initial data-driven weapon model
 ###############################################################
@@ -17,6 +18,7 @@ enum FireMode {
 }
 
 @export var weapon_name: String = "Weapon"
+@export var icon: Texture2D
 @export var fire_mode: FireMode = FireMode.HITSCAN
 @export var cooldown: float = 0.2
 @export var damage: float = 5.0
