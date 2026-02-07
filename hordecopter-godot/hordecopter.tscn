@@ -1,8 +1,8 @@
-[gd_scene format=3 uid="uid://vw7a3bje77ju"]
+[gd_scene format=3 uid="uid://ddo5hf3gvff11"]
 
 [ext_resource type="Script" uid="uid://cjcl4isvop3nb" path="res://hordecopter.gd" id="1_hordecopter"]
 [ext_resource type="Script" uid="uid://bwc8b66rmbyph" path="res://weapons/weapon_system.gd" id="2_weapon_system"]
-[ext_resource type="Script" uid="uid://421udilwjuap" path="res://weapons/area_weapon_system.gd" id="3_area_weapon_system"]
+[ext_resource type="Script" path="res://weapons/area_weapon_system.gd" id="3_area_weapon_system"]
 [ext_resource type="PackedScene" uid="uid://d25k72efcjldo" path="res://vain_body.glb" id="4_body"]
 [ext_resource type="Resource" uid="uid://b26uwna5dssms" path="res://weapons/laser_weapon.tres" id="5_laser_weapon"]
 [ext_resource type="Resource" uid="uid://dqlqfh7fx2lhv" path="res://weapons/homing_missile_weapon.tres" id="6_missile_weapon"]
@@ -11,6 +11,9 @@
 [ext_resource type="PackedScene" uid="uid://yksjed5m5v1b" path="res://vain_ropeli.glb" id="9_ropeli"]
 [ext_resource type="Resource" uid="uid://dsadsb2eao25f" path="res://weapons/plasma_weapon.tres" id="10_plasma_weapon"]
 [ext_resource type="Resource" uid="uid://dtq2mw6n4aqm3" path="res://weapons/area_weapon.tres" id="11_area_weapon"]
+[ext_resource type="Script" path="res://weapons/orbiting_helicopter_weapon_system.gd" id="12_6gtap"]
+[ext_resource type="Texture2D" uid="uid://b0323mruxlisk" path="res://weapons/copters_around.png" id="13_8sv32"]
+[ext_resource type="Script" uid="uid://jw2coyki72vv" path="res://weapons/weapon_definition.gd" id="14_t13ue"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_eifgo"]
 
@@ -24,6 +27,13 @@ emission_energy_multiplier = 1.4
 top_radius = 1.0
 bottom_radius = 1.0
 height = 0.05
+
+[sub_resource type="Resource" id="Resource_3adfc"]
+script = ExtResource("14_t13ue")
+weapon_name = "Orbiting"
+icon = ExtResource("13_8sv32")
+fire_mode = 1
+metadata/_custom_type_script = "uid://jw2coyki72vv"
 
 [node name="Hordecopter" type="RigidBody3D" unique_id=770129423]
 mass = 100.0
@@ -75,3 +85,7 @@ script = ExtResource("7_rollaus_pivot")
 
 [node name="vain_ropeli" parent="rollaus_pivot_piste" unique_id=1939282325 instance=ExtResource("9_ropeli")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.45494208, -0.20959833)
+
+[node name="OrbitingWeaponSystem" type="Node3D" parent="." unique_id=1245228016]
+script = ExtResource("12_6gtap")
+weapon = SubResource("Resource_3adfc")
