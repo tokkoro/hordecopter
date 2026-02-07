@@ -3,8 +3,8 @@
 [ext_resource type="PackedScene" uid="uid://x4pith38mxmy" path="res://hordecopter.tscn" id="2_qn30u"]
 [ext_resource type="Texture2D" uid="uid://cvmso3ruvike3" path="res://ground_gpt.png" id="2_wkxu0"]
 [ext_resource type="Script" uid="uid://c5ovtis2odund" path="res://camera_3d.gd" id="3_qn30u"]
-[ext_resource type="PackedScene" uid="uid://c4h3jucp1x6nb" path="res://enemies/test_enemy.tscn" id="4_test_enemy"]
-[ext_resource type="Script" uid="uid://cku6avxv1kkxy" path="res://enemies/enemy_spawner.gd" id="5_enemy_spawner"]
+[ext_resource type="PackedScene" path="res://enemies/test_enemy.tscn" id="4_test_enemy"]
+[ext_resource type="Script" path="res://enemies/enemy_spawner.gd" id="5_enemy_spawner"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qn30u"]
 albedo_texture = ExtResource("2_wkxu0")
@@ -39,7 +39,7 @@ transform = Transform3D(1, 0, 0, 0, 0.19387484, 0.9810263, 0, -0.9810263, 0.1938
 transform = Transform3D(1, 0, 0, 0, 0.9583226, 0.28568837, 0, -0.28568837, 0.9583226, 0, 5.8, 5.26)
 script = ExtResource("3_qn30u")
 
-[node name="EnemySpawner" type="Node3D" parent="."]
+[node name="EnemySpawner" type="Node3D" parent="." unique_id=617229623]
 script = ExtResource("5_enemy_spawner")
 enemy_scene = ExtResource("4_test_enemy")
 
