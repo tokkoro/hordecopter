@@ -23,8 +23,8 @@ var _grenade_has_exploded: bool = false
 
 
 func _ready() -> void:
-	monitoring = true
-	monitorable = true
+	set_deferred("monitoring", true)
+	set_deferred("monitorable", true)
 	body_entered.connect(_on_body_entered)
 	var timer := get_tree().create_timer(lifetime)
 	timer.timeout.connect(_explode)
