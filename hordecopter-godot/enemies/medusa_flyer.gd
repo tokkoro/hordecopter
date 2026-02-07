@@ -25,6 +25,7 @@ var medusa_flyer_direction: Vector3 = Vector3.FORWARD
 var medusa_flyer_target: Node3D
 var medusa_flyer_time: float = 0.0
 var medusa_flyer_base_height: float = 0.0
+@onready var medusa_flyer_head: Node3D = $MedusaHead
 
 
 func _ready() -> void:
@@ -60,8 +61,19 @@ func _physics_process(delta: float) -> void:
 	)
 	linear_velocity = medusa_flyer_move_direction * move_speed
 	linear_velocity.y = medusa_flyer_vertical_velocity
+	_update_facing(medusa_flyer_move_direction)
+
 
 
 func configure_spawn_direction(direction: Vector3) -> void:
 	if direction != Vector3.ZERO:
 		medusa_flyer_direction = direction.normalized()
+
+
+func _update_facing(direction: Vector3) -> void:
+	if medusa_flyer_head == null:
+		return
+	if direction.length() <= 0.01:
+		return
+	medusa_flyer_head.look_at(medusa_flyer_head.global_position + direction, Vector3.UP)
+	medusa_flyer_head.rotate_y(PI)
