@@ -10,7 +10,7 @@
 [ext_resource type="Resource" uid="uid://bar0g1efnvqlw" path="res://weapons/grenade_weapon.tres" id="8_grenade_weapon"]
 [ext_resource type="PackedScene" uid="uid://yksjed5m5v1b" path="res://vain_ropeli.glb" id="9_ropeli"]
 [ext_resource type="Resource" uid="uid://dsadsb2eao25f" path="res://weapons/plasma_weapon.tres" id="10_plasma_weapon"]
-[ext_resource type="Resource" path="res://weapons/area_weapon.tres" id="11_area_weapon"]
+[ext_resource type="Resource" uid="uid://dtq2mw6n4aqm3" path="res://weapons/area_weapon.tres" id="11_area_weapon"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_eifgo"]
 

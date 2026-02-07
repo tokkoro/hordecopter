@@ -16,9 +16,9 @@ class_name ExperienceToken
 extends Node3D
 
 @export var experience_amount: int = 1
-@export var pickup_radius: float = 4.5
-@export var magnet_radius: float = 6.0
-@export var magnet_speed: float = 8.0
+@export var pickup_radius: float = 1.25
+@export var magnet_radius: float = 20.0
+@export var magnet_speed: float = 6.0
 
 var experience_token_target: Node3D
 var experience_token_warned_missing_target: bool = false
