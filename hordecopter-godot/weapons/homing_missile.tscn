@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://cqs33fbdyn8gr"]
+
+[ext_resource type="Script" uid="uid://cv1xcl1f2cxtd" path="res://weapons/homing_missile.gd" id="1_missile"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_4v6q1"]
+radius = 0.2
+height = 0.4
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_j1o65"]
+albedo_color = Color(1, 0.6, 0.2, 1)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_3k2rc"]
+radius = 0.25
+
+[node name="HomingMissile" type="Area3D"]
+script = ExtResource("1_missile")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_4v6q1")
+material_override = SubResource("StandardMaterial3D_j1o65")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_3k2rc")

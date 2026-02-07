@@ -7,7 +7,7 @@
 script = ExtResource("1_weapon")
 weapon_name = "Laser"
 fire_mode = 0
-cooldown = 0.15
+cooldown = 1.0
 damage = 4.0
 range = 60.0
 beam_scene = ExtResource("2_beam")

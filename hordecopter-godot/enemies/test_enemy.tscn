@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://c4h3jucp1x6nb"]
+
+[ext_resource type="Script" uid="uid://baf3k2kpo6n8x" path="res://enemies/test_enemy.gd" id="1_test_enemy"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_7dgk3"]
+size = Vector3(1.2, 1.2, 1.2)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_4b8bn"]
+size = Vector3(1.2, 1.2, 1.2)
+
+[node name="TestEnemy" type="StaticBody3D"]
+script = ExtResource("1_test_enemy")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_7dgk3")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_4b8bn")
