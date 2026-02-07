@@ -165,6 +165,8 @@ func _build_level_up_menu() -> void:
 		button.text = "Option %d" % [index + 1]
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		button.icon_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		button.expand_icon = true
+		button.custom_minimum_size = Vector2(0, 100)
 		button.pressed.connect(_on_level_up_option_pressed.bind(index))
 		hud_level_up_buttons.append(button)
 		vbox.add_child(button)
