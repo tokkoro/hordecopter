@@ -139,9 +139,10 @@ func _build_level_up_menu() -> void:
 func _on_level_up_option_pressed(index: int) -> void:
 	if index < 0 or index >= hud_level_up_options.size():
 		return
+	var choice := hud_level_up_options[index]
 	hide_level_up_choices()
 	var game_state := get_tree().get_first_node_in_group("game_state")
 	if game_state != null and game_state.has_method("resolve_level_up_choice"):
-		game_state.resolve_level_up_choice(hud_level_up_options[index])
+		game_state.resolve_level_up_choice(choice)
 	else:
 		push_warning("GameHud: GameState missing resolve_level_up_choice; cannot apply upgrade.")
