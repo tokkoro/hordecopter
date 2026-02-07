@@ -14,18 +14,6 @@ repos:
 
   - repo: local
     hooks:
-      - id: strip-uid-files
-        name: Remove Godot UID artifacts
-        description: |
-          1) Delete any tracked *.uid files
-          2) Strip uid fields from scenes/resources/project config
-          3) Fail if uid:// references remain outside .import files
-        entry: >-
-          ./.codex/remove_uid_files.sh --stage
-        language: system
-        pass_filenames: false
-        stages: [pre-commit]
-        always_run: true
       - id: gdscript-precommit
         name: Lint & format GDScript
         description: |
