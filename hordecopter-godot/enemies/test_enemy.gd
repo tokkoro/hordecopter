@@ -21,6 +21,8 @@
 class_name TestEnemy
 extends CharacterBody3D
 
+const TEST_ENEMY_HIT_SFX: AudioStream = preload("res://sfx/monster_hit.sfxr")
+
 @export var health: float = 4.0
 @export var base_health: float = 4.0
 @export var health_per_second: float = 0.25
@@ -96,6 +98,7 @@ func _pick_wander_direction() -> void:
 
 
 func apply_damage(amount: float) -> void:
+	_play_hit_sfx()
 	_spawn_damage_label(amount)
 	health -= amount
 	_update_health_bar()
@@ -188,3 +191,21 @@ func _find_player() -> Node3D:
 	if test_enemy_player is Node3D:
 		return test_enemy_player
 	return null
+
+
+func _play_hit_sfx() -> void:
+	_play_sfx_at(TEST_ENEMY_HIT_SFX, global_position)
+
+
+func _play_sfx_at(stream: AudioStream, position: Vector3) -> void:
+	if stream == null:
+		return
+	var current_scene := get_tree().current_scene
+	if current_scene == null:
+		return
+	var player := AudioStreamPlayer3D.new()
+	player.stream = stream
+	player.global_position = position
+	player.finished.connect(player.queue_free)
+	current_scene.add_child(player)
+	player.play()

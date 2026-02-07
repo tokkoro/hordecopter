@@ -18,6 +18,10 @@ const HC_MAX_UNLOCKED_WEAPONS: int = 6
 @export var auto_float: bool = true
 @export var my_camera_name: StringName = &"Camera3D"
 @export var auto_float_power_max: float = 2000.0
+@export var rotor_swosh_sound: AudioStream = preload("res://sfx/rotor_blade_swosh.sfxr")
+@export var rotor_swosh_interval: float = 0.6
+@export var rotor_swosh_speed_threshold: float = 2.0
+@export var player_hit_sound: AudioStream = preload("res://sfx/player_hit.sfxr")
 # PID multipliers
 @export var kp: float = 25.0
 @export var ki: float = 2.0
@@ -35,7 +39,7 @@ var max_y_speed: float = 10.0
 var max_x_speed: float = 10.0
 var max_z_speed: float = 10.0
 
-var hc_weapon_systems_is_initialized = false;
+var hc_weapon_systems_is_initialized = false
 var hc_weapon_systems: Array[WeaponSystem] = []
 var hc_weapon_system_names: Array[StringName] = [
 	&"WeaponSystem",
@@ -49,6 +53,7 @@ var hc_weapon_system_names: Array[StringName] = [
 var hc_weapon_levels: Array[int] = []
 var hc_weapon_base_damage: Array[float] = []
 var hc_weapon_base_cooldown: Array[float] = []
+var hc_rotor_swosh_timer: float = 0.0
 var _i: float = 0.0
 var _prev_error: float = 0.0
 var _d_state: float = 0.0
@@ -157,6 +162,7 @@ func _physics_process(delta: float) -> void:
 		clamp(linear_velocity.z * 0.95, -max_z_speed, max_z_speed)
 	)
 	propellit.set_speeds(abs(linear_velocity.length() * 0.5) + 3)
+	_update_rotor_swosh(delta)
 
 	if Input.is_action_just_pressed("p1_show_info_toggle"):
 		show_info = not show_info
@@ -172,6 +178,38 @@ func _physics_process(delta: float) -> void:
 		)
 	else:
 		infotext.text = ""
+
+
+func apply_damage(amount: float) -> void:
+	if amount <= 0.0:
+		return
+	_play_sfx_at(player_hit_sound, global_position)
+
+
+func _update_rotor_swosh(delta: float) -> void:
+	hc_rotor_swosh_timer = max(0.0, hc_rotor_swosh_timer - delta)
+	if rotor_swosh_sound == null:
+		return
+	if linear_velocity.length() < rotor_swosh_speed_threshold:
+		return
+	if hc_rotor_swosh_timer > 0.0:
+		return
+	hc_rotor_swosh_timer = max(0.1, rotor_swosh_interval)
+	_play_sfx_at(rotor_swosh_sound, global_position)
+
+
+func _play_sfx_at(stream: AudioStream, position: Vector3) -> void:
+	if stream == null:
+		return
+	var current_scene := get_tree().current_scene
+	if current_scene == null:
+		return
+	var player := AudioStreamPlayer3D.new()
+	player.stream = stream
+	player.global_position = position
+	player.finished.connect(player.queue_free)
+	current_scene.add_child(player)
+	player.play()
 
 
 func _find_node_by_name(root: Node, name: StringName) -> Node3D:
@@ -269,14 +307,16 @@ func apply_level_up_choice(choice: Dictionary) -> void:
 	var system_index := int(choice["index"])
 	if system_index < 0 or system_index >= hc_weapon_systems.size():
 		return
-	if hc_weapon_levels[system_index] <= 0 and _get_unlocked_weapon_count() >= HC_MAX_UNLOCKED_WEAPONS:
+	if (
+		hc_weapon_levels[system_index] <= 0
+		and _get_unlocked_weapon_count() >= HC_MAX_UNLOCKED_WEAPONS
+	):
 		push_warning("Weapon slots full; cannot unlock more weapons.")
 		return
-	else:
-		hc_weapon_levels[system_index] += 1
-		var level := _apply_weapon_level(system_index)
-		if level == 1:
-			_unlock_weapon_system(system_index, true)
+	hc_weapon_levels[system_index] += 1
+	var level := _apply_weapon_level(system_index)
+	if level == 1:
+		_unlock_weapon_system(system_index, true)
 	_update_weapon_hud()
 
 

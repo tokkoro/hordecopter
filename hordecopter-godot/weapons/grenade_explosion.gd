@@ -11,6 +11,8 @@
 class_name GrenadeExplosion
 extends Area3D
 
+const GRENADE_EXPLOSION_SFX: AudioStream = preload("res://sfx/grenade_exposion.sfxr")
+
 @export var explosion_radius: float = 2.5
 @export var explosion_damage: float = 10.0
 @export var expansion_time: float = 0.18
@@ -35,6 +37,7 @@ func _ready() -> void:
 	_apply_radius()
 	_prepare_material()
 	_play_burst()
+	_play_explosion_sfx()
 	call_deferred("_apply_damage")
 	var timer := get_tree().create_timer(expansion_time + linger_time)
 	timer.timeout.connect(queue_free)
@@ -87,3 +90,21 @@ func _apply_damage() -> void:
 			var distance := global_position.distance_to(node.global_position)
 			if distance <= explosion_radius and node.has_method("apply_damage"):
 				node.apply_damage(explosion_damage)
+
+
+func _play_explosion_sfx() -> void:
+	_play_sfx_at(GRENADE_EXPLOSION_SFX, global_position)
+
+
+func _play_sfx_at(stream: AudioStream, position: Vector3) -> void:
+	if stream == null:
+		return
+	var current_scene := get_tree().current_scene
+	if current_scene == null:
+		return
+	var player := AudioStreamPlayer3D.new()
+	player.stream = stream
+	player.global_position = position
+	player.finished.connect(player.queue_free)
+	current_scene.add_child(player)
+	player.play()
