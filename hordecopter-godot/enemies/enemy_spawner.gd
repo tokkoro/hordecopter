@@ -201,6 +201,8 @@ func _spawn_enemy_instance(
 
 
 func _apply_elite_roll(enemy_instance: Node3D) -> void:
+	if not _can_apply_elite(enemy_instance):
+		return
 	var enemy_spawner_is_elite: bool = enemy_spawner_rng.randf() <= enemy_spawner_elite_chance
 	if enemy_spawner_is_elite:
 		enemy_spawner_elite_chance = enemy_spawner_elite_chance_step
@@ -210,6 +212,12 @@ func _apply_elite_roll(enemy_instance: Node3D) -> void:
 		enemy_spawner_elite_chance = min(
 			1.0, enemy_spawner_elite_chance + enemy_spawner_elite_chance_step
 		)
+
+
+func _can_apply_elite(enemy_instance: Node3D) -> bool:
+	if enemy_instance.has_method("get_has_elite_form"):
+		return enemy_instance.call("get_has_elite_form")
+	return true
 
 
 func _configure_flyover_enemy(enemy_instance: Node3D, travel_direction: Vector3) -> void:
