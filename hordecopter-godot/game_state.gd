@@ -32,6 +32,7 @@ var game_state_warned_missing_hud: bool = false
 var game_state_pending_level_ups: int = 0
 var game_state_level_up_active: bool = false
 var game_state_level_up_options: Array[Dictionary] = []
+var game_state_debug_level_key_down: bool = false
 
 
 func _ready() -> void:
@@ -45,6 +46,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	game_state_elapsed_time += delta
+	_handle_debug_level_up_input()
 	_ensure_hud()
 	_update_time_hud()
 
@@ -122,6 +124,15 @@ func _update_time_hud() -> void:
 		game_state_hud.update_time(game_state_elapsed_time)
 	else:
 		push_warning("GameState: HUD missing update_time; skipping timer UI update.")
+
+
+func _handle_debug_level_up_input() -> void:
+	var is_pressed := Input.is_key_pressed(KEY_L)
+	if is_pressed and not game_state_debug_level_key_down:
+		var needed := game_state_experience_cap - game_state_experience
+		if needed > 0:
+			add_experience(needed)
+	game_state_debug_level_key_down = is_pressed
 
 
 func resolve_level_up_choice(choice: Dictionary) -> void:
