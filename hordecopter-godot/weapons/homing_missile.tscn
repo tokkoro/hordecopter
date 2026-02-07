@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://cqs33fbdyn8gr"]
+[gd_scene format=3]
 
-[ext_resource type="Script" uid="uid://cv1xcl1f2cxtd" path="res://weapons/homing_missile.gd" id="1_missile"]
+[ext_resource type="Script" path="res://weapons/homing_missile.gd" id="1_missile"]
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_rocket_body"]
 top_radius = 0.09

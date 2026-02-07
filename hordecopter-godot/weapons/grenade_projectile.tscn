@@ -1,7 +1,7 @@
-[gd_scene format=3 uid="uid://bn3m1t2hpss8c"]
+[gd_scene format=3]
 
-[ext_resource type="Script" uid="uid://cjhu7dwnjfo1n" path="res://weapons/grenade_projectile.gd" id="1_grenade"]
-[ext_resource type="PackedScene" uid="uid://cddv4r2w0ojly" path="res://weapons/grenade_explosion.tscn" id="2_grenade_explosion"]
+[ext_resource type="Script" path="res://weapons/grenade_projectile.gd" id="1_grenade"]
+[ext_resource type="PackedScene" path="res://weapons/grenade_explosion.tscn" id="2_grenade_explosion"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_v4b7k"]
 radius = 0.25

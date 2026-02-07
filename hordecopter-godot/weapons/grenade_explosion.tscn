@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://cddv4r2w0ojly"]
+[gd_scene format=3]
 
-[ext_resource type="Script" uid="uid://b1kwnd8wlru2h" path="res://weapons/grenade_explosion.gd" id="1_grenade_explosion"]
+[ext_resource type="Script" path="res://weapons/grenade_explosion.gd" id="1_grenade_explosion"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_w4c0k"]
 radius = 0.5
