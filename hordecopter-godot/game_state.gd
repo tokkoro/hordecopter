@@ -52,7 +52,10 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	game_state_elapsed_time += delta * clock_speed
+	var extra_speed = 1.0
+	if Input.is_action_pressed("overclock"):
+		extra_speed = 100.0
+	game_state_elapsed_time += delta * clock_speed * extra_speed
 	_handle_debug_level_up_input()
 	_ensure_hud()
 	_update_time_hud()
