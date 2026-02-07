@@ -46,8 +46,11 @@ func _ready() -> void:
 	test_enemy_gravity = float(ProjectSettings.get_setting("physics/3d/default_gravity"))
 
 
-
 func _physics_process(delta: float) -> void:
+	if is_time_stopped():
+		velocity = Vector3.ZERO
+		move_and_slide()
+		return
 	if test_enemy_target == null:
 		test_enemy_target = _find_player()
 	var test_enemy_has_target: bool = test_enemy_target != null

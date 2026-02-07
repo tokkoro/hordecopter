@@ -1,0 +1,20 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://items/bomb_pickup.gd" id="1_bomb_pickup"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_bomb"]
+radius = 0.25
+height = 0.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bomb"]
+albedo_color = Color(0.9, 0.2, 0.2, 1)
+emission_enabled = true
+emission = Color(0.9, 0.2, 0.2, 1)
+emission_energy = 1.2
+
+[node name="BombPickup" type="Node3D"]
+script = ExtResource("1_bomb_pickup")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_bomb")
+material_override = SubResource("StandardMaterial3D_bomb")

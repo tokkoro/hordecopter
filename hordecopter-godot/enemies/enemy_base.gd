@@ -39,6 +39,7 @@ var enemy_base_is_elite: bool = false
 var enemy_base_experience_reward: int = 1
 var enemy_base_configured: bool = false
 var enemy_base_is_dead: bool = false
+var enemy_base_time_stop_remaining: float = 0.0
 
 @onready
 var enemy_base_health_bar: EnemyHealthBar3D = get_node_or_null("HealthBar3D") as EnemyHealthBar3D
@@ -50,6 +51,12 @@ func _ready() -> void:
 	enemy_base_max_health = max(1.0, health)
 	_apply_initial_scaling()
 	set_max_health(health)
+
+
+func _process(delta: float) -> void:
+	if enemy_base_time_stop_remaining <= 0.0:
+		return
+	enemy_base_time_stop_remaining = max(0.0, enemy_base_time_stop_remaining - delta)
 
 
 func apply_damage(amount: float) -> void:
@@ -74,6 +81,16 @@ func configure_elite() -> void:
 
 func get_has_elite_form() -> bool:
 	return has_elite_form
+
+
+func apply_time_stop(duration: float) -> void:
+	if duration <= 0.0:
+		return
+	enemy_base_time_stop_remaining = max(enemy_base_time_stop_remaining, duration)
+
+
+func is_time_stopped() -> bool:
+	return enemy_base_time_stop_remaining > 0.0
 
 
 func configure_from_time(time_seconds: float) -> void:

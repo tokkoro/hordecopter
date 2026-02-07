@@ -1,0 +1,19 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://items/health_pack.gd" id="1_health_pack"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_health_pack"]
+size = Vector3(0.4, 0.2, 0.4)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_health_pack"]
+albedo_color = Color(0.2, 0.9, 0.4, 1)
+emission_enabled = true
+emission = Color(0.2, 0.9, 0.4, 1)
+emission_energy = 1.2
+
+[node name="HealthPack" type="Node3D"]
+script = ExtResource("1_health_pack")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_health_pack")
+material_override = SubResource("StandardMaterial3D_health_pack")

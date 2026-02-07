@@ -37,6 +37,10 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
+	if is_time_stopped():
+		velocity = Vector3.ZERO
+		move_and_slide()
+		return
 	medusa_flyer_time += delta
 	if medusa_flyer_target == null:
 		medusa_flyer_target = _find_player()
