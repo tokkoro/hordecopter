@@ -215,6 +215,22 @@ func _build_weapon_slots() -> void:
 		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		slot_root.add_child(icon)
 
+		var slot_label := Label.new()
+		slot_label.name = "SlotLabel"
+		slot_label.text = "%d" % [index + 1]
+		slot_label.anchor_left = 0.0
+		slot_label.anchor_top = 0.0
+		slot_label.anchor_right = 0.0
+		slot_label.anchor_bottom = 0.0
+		slot_label.offset_left = 4.0
+		slot_label.offset_top = 2.0
+		slot_label.offset_right = 20.0
+		slot_label.offset_bottom = 18.0
+		slot_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		slot_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+		slot_label.add_theme_font_size_override("font_size", 12)
+		slot_root.add_child(slot_label)
+
 		var level_label := Label.new()
 		level_label.name = "LevelLabel"
 		level_label.anchor_left = 0.0
