@@ -7,6 +7,7 @@
 # Editor Exports   • health: float – hit points
 #                 • flyover_speed: float – travel speed
 # Dependencies     • res://enemies/enemy_health_bar.tscn
+#                 • res://ui/damage_label_3d.tscn
 # Last Major Rev   • 25-09-27 – add toggleable enemy health bar
 ###############################################################
 
@@ -15,6 +16,7 @@ extends CharacterBody3D
 
 @export var health: float = 4.0
 @export var flyover_speed: float = 4.0
+@export var flyover_enemy_damage_label_scene: PackedScene = preload("res://ui/damage_label_3d.tscn")
 
 var flyover_enemy_direction: Vector3 = Vector3.FORWARD
 var flyover_enemy_max_health: float = 1.0
@@ -41,6 +43,7 @@ func configure_flyover(direction: Vector3) -> void:
 
 
 func apply_damage(amount: float) -> void:
+	_spawn_damage_label(amount)
 	health -= amount
 	_update_health_bar()
 	if health <= 0.0:
@@ -51,3 +54,18 @@ func _update_health_bar() -> void:
 	if flyover_enemy_health_bar == null:
 		return
 	flyover_enemy_health_bar.set_health(health, flyover_enemy_max_health)
+
+
+func _spawn_damage_label(amount: float) -> void:
+	if flyover_enemy_damage_label_scene == null:
+		return
+	var flyover_enemy_label_instance := flyover_enemy_damage_label_scene.instantiate()
+	var flyover_enemy_scene := get_tree().current_scene
+	if flyover_enemy_scene == null:
+		return
+	flyover_enemy_scene.add_child(flyover_enemy_label_instance)
+	if flyover_enemy_label_instance is Node3D:
+		var flyover_enemy_label_node := flyover_enemy_label_instance as Node3D
+		flyover_enemy_label_node.global_position = global_position + Vector3(0.0, 1.5, 0.0)
+	if flyover_enemy_label_instance.has_method("set_damage"):
+		flyover_enemy_label_instance.set_damage(amount)

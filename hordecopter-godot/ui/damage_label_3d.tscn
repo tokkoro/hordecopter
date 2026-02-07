@@ -1,0 +1,11 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://ui/damage_label_3d.gd" id="1_damage_label_3d"]
+
+[node name="DamageLabel3D" type="Node3D"]
+script = ExtResource("1_damage_label_3d")
+
+[node name="Label3D" type="Label3D" parent="."]
+text = "0"
+billboard = 1
+pixel_size = 0.01

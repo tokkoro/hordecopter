@@ -14,6 +14,7 @@
 # Dependencies     • res://enemies/enemy_experience_manager.gd
 #                 • res://items/experience_token.tscn
 #                 • res://enemies/enemy_health_bar.tscn
+#                 • res://ui/damage_label_3d.tscn
 # Last Major Rev   • 25-09-27 – add toggleable enemy health bar
 ###############################################################
 
@@ -25,6 +26,7 @@ extends CharacterBody3D
 @export var health_per_second: float = 0.25
 @export var base_experience_reward: int = 1
 @export var experience_token_scene: PackedScene
+@export var test_enemy_damage_label_scene: PackedScene = preload("res://ui/damage_label_3d.tscn")
 @export var test_enemy_wander_speed: float = 2.5
 @export var test_enemy_seek_speed: float = 1.5
 @export var test_enemy_wander_interval: float = 1.5
@@ -93,6 +95,7 @@ func _pick_wander_direction() -> void:
 
 
 func apply_damage(amount: float) -> void:
+	_spawn_damage_label(amount)
 	health -= amount
 	_update_health_bar()
 	if health <= 0.0 and not test_enemy_is_dead:
@@ -151,6 +154,21 @@ func _drop_experience() -> void:
 		token_node.global_position = global_position
 	if token.has_method("configure_amount"):
 		token.configure_amount(test_enemy_experience_reward)
+
+
+func _spawn_damage_label(amount: float) -> void:
+	if test_enemy_damage_label_scene == null:
+		return
+	var test_enemy_label_instance := test_enemy_damage_label_scene.instantiate()
+	var test_enemy_scene := get_tree().current_scene
+	if test_enemy_scene == null:
+		return
+	test_enemy_scene.add_child(test_enemy_label_instance)
+	if test_enemy_label_instance is Node3D:
+		var test_enemy_label_node := test_enemy_label_instance as Node3D
+		test_enemy_label_node.global_position = global_position + Vector3(0.0, 1.5, 0.0)
+	if test_enemy_label_instance.has_method("set_damage"):
+		test_enemy_label_instance.set_damage(amount)
 
 
 func _find_player() -> Node3D:
