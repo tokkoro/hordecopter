@@ -40,6 +40,8 @@ var test_enemy_is_dead: bool = false
 var test_enemy_wander_direction: Vector3 = Vector3.ZERO
 var test_enemy_wander_elapsed: float = 0.0
 var test_enemy_climb_timer: float = 0.0
+var test_enemy_vertical_velocity: float = 0.0
+var test_enemy_gravity: float = 0.0
 var test_enemy_rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var test_enemy_target: Node3D
 
@@ -51,6 +53,7 @@ func _ready() -> void:
 	test_enemy_target = _find_player()
 	_apply_initial_scaling()
 	set_max_health(health)
+	test_enemy_gravity = float(ProjectSettings.get_setting("physics/3d/default_gravity"))
 
 
 func _physics_process(delta: float) -> void:
@@ -83,19 +86,27 @@ func _physics_process(delta: float) -> void:
 	var test_enemy_speed: float = test_enemy_wander_speed
 	if test_enemy_has_target:
 		test_enemy_speed = test_enemy_seek_speed
-	var test_enemy_climb_velocity: float = 0.0
 	if test_enemy_climb_timer > 0.0:
 		test_enemy_climb_timer = max(0.0, test_enemy_climb_timer - delta)
-		test_enemy_climb_velocity = test_enemy_climb_speed
+		test_enemy_vertical_velocity = test_enemy_climb_speed
+	else:
+		test_enemy_vertical_velocity -= test_enemy_gravity * delta
 	velocity = test_enemy_wander_direction * test_enemy_speed
-	velocity.y = test_enemy_climb_velocity
+	velocity.y = test_enemy_vertical_velocity
 	move_and_slide()
+	if is_on_floor() and test_enemy_climb_timer <= 0.0:
+		test_enemy_vertical_velocity = 0.0
+	var test_enemy_touching_prop: bool = false
 	for test_enemy_slide_index in range(get_slide_collision_count()):
 		var test_enemy_collision := get_slide_collision(test_enemy_slide_index)
 		var test_enemy_collider := test_enemy_collision.get_collider()
 		if test_enemy_collider != null and test_enemy_collider.is_in_group("props"):
-			test_enemy_climb_timer = test_enemy_climb_duration
+			test_enemy_touching_prop = true
 			break
+	if test_enemy_touching_prop:
+		test_enemy_climb_timer = test_enemy_climb_duration
+	else:
+		test_enemy_climb_timer = 0.0
 
 
 func _pick_wander_direction() -> void:
