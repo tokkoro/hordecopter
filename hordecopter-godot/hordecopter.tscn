@@ -11,7 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://yksjed5m5v1b" path="res://vain_ropeli.glb" id="9_ropeli"]
 [ext_resource type="Resource" uid="uid://dsadsb2eao25f" path="res://weapons/plasma_weapon.tres" id="10_plasma_weapon"]
 [ext_resource type="Resource" uid="uid://dtq2mw6n4aqm3" path="res://weapons/area_weapon.tres" id="11_area_weapon"]
-[ext_resource type="Script" path="res://weapons/orbiting_helicopter_weapon_system.gd" id="12_6gtap"]
+[ext_resource type="Script" uid="uid://4tcllulb563i" path="res://weapons/orbiting_helicopter_weapon_system.gd" id="12_6gtap"]
 [ext_resource type="Texture2D" uid="uid://b0323mruxlisk" path="res://weapons/copters_around.png" id="13_8sv32"]
 [ext_resource type="Script" uid="uid://jw2coyki72vv" path="res://weapons/weapon_definition.gd" id="14_t13ue"]
 
