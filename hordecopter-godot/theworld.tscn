@@ -24,6 +24,11 @@ size = Vector3(100, 1, 100)
 [sub_resource type="BoxShape3D" id="BoxShape3D_4jg3y"]
 size = Vector3(100, 1, 100)
 
+[sub_resource type="Environment" id="Environment_jayf2"]
+ambient_light_source = 3
+ambient_light_color = Color(0.7735279, 0.7565761, 0, 1)
+ambient_light_energy = 0.2
+
 [sub_resource type="LabelSettings" id="LabelSettings_lrgam"]
 font_size = 28
 
@@ -53,18 +58,19 @@ shadow_enabled = true
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1177538808]
 transform = Transform3D(1, 0, 0, 0, 0.9583226, 0.28568837, 0, -0.28568837, 0.9583226, 0, 5.8, 5.26)
+environment = SubResource("Environment_jayf2")
 script = ExtResource("3_qn30u")
 
 [node name="EnemySpawner" type="Node3D" parent="." unique_id=1364854204]
 script = ExtResource("5_enemy_spawner")
-ground_enemy_scenes = Array[PackedScene]([ExtResource("4_test_enemy"), ExtResource("6_jayf2"), ExtResource("7_7qrhf"), ExtResource("8_ctu57")])
-flyover_enemy_scenes = Array[PackedScene]([ExtResource("6_flyover_enemy"), ExtResource("7_e7tll")])
+ground_enemy_scenes = Array[PackedScene]([ExtResource("4_test_enemy"), ExtResource("6_jayf2"), ExtResource("7_7qrhf"), ExtResource("8_ctu57"), ExtResource("7_e7tll"), ExtResource("6_flyover_enemy")])
 
 [node name="PropSpawner" type="Node3D" parent="." unique_id=1101542793]
 script = ExtResource("8_prop_spawner")
 
 [node name="GameState" type="Node" parent="." unique_id=554225321]
 script = ExtResource("6_game_state")
+clock_speed = 50.0
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=542620325]
 script = ExtResource("7_hud")

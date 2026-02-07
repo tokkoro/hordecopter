@@ -23,6 +23,7 @@ signal level_up_requested(options: Array)
 @export var experience_start: int = 0
 @export var experience_to_next_level: int = 10
 @export var experience_growth: float = 1.35
+@export var clock_speed: float = 1.01
 
 var game_state_elapsed_time: float = 0.0
 var game_state_level: int = 1
@@ -51,7 +52,7 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	game_state_elapsed_time += delta
+	game_state_elapsed_time += delta * clock_speed
 	_handle_debug_level_up_input()
 	_ensure_hud()
 	_update_time_hud()

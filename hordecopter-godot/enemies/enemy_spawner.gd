@@ -24,8 +24,9 @@
 class_name EnemySpawner
 extends Node3D
 
+@onready var game_state: GameState = get_node("../GameState")
+
 @export var ground_enemy_scenes: Array[PackedScene] = []
-@export var flyover_enemy_scenes: Array[PackedScene] = [preload("res://enemies/medusa_flyer.tscn")]
 @export var spawn_effect_scene: PackedScene = preload("res://enemies/enemy_spawn_effect.tscn")
 @export var spawn_interval: float = 5.0
 @export var max_enemies: int = 100
@@ -49,16 +50,15 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	if not _has_any_scene():
+	if ground_enemy_scenes.is_empty():
 		if not enemy_spawner_warned_missing_scene:
 			enemy_spawner_warned_missing_scene = true
 			push_warning("EnemySpawner: no enemy scenes assigned; cannot spawn enemies.")
+			return
 	if spawn_interval <= 0.0:
 		if not enemy_spawner_warned_bad_interval:
 			enemy_spawner_warned_bad_interval = true
 			push_warning("EnemySpawner: spawn_interval must be > 0 to spawn enemies.")
-		return
-	if not _has_any_scene():
 		return
 	enemy_spawner_elapsed += delta
 	while enemy_spawner_elapsed >= spawn_interval:
@@ -74,24 +74,18 @@ func _can_spawn(requested_count: int) -> bool:
 
 
 func _spawn_group() -> void:
+	var enemy := _pick_enemy_scene(ground_enemy_scenes)
 	for enemy_spawner_index in range(group_size):
-		var enemy_spawner_spawn_flyover := _should_spawn_flyover()
-		if enemy_spawner_spawn_flyover:
-			var enemy_spawner_flyover_scene := _pick_enemy_scene(flyover_enemy_scenes)
-			if enemy_spawner_flyover_scene != null:
-				_spawn_flyover_enemy(enemy_spawner_flyover_scene)
-			else:
-				_spawn_random_ground_enemy()
+		print("Spawn " + enemy.get_state().get_node_name(0))
+		if "fly" in enemy.get_state().get_node_name(0):
+			_spawn_flyover_enemy(enemy)
 		else:
-			_spawn_random_ground_enemy()
+			_spawn_ground_enemy(enemy)
 
 
-func _spawn_random_ground_enemy() -> void:
-	var enemy_spawner_ground_scene := _pick_enemy_scene(ground_enemy_scenes)
-	if enemy_spawner_ground_scene == null:
-		return
+func _spawn_ground_enemy(enemy_scene: PackedScene) -> void:
 	var enemy_spawner_position := _random_ground_position()
-	_spawn_with_effect(enemy_spawner_ground_scene, enemy_spawner_position, Callable())
+	_spawn_with_effect(enemy_scene, enemy_spawner_position, Callable())
 
 
 func _spawn_flyover_enemy(enemy_scene: PackedScene) -> void:
@@ -147,7 +141,6 @@ func _random_ground_position() -> Vector3:
 
 
 func _apply_time_scaling(enemy_instance: Node) -> void:
-	var game_state := get_tree().get_first_node_in_group("game_state")
 	if game_state == null:
 		push_warning("EnemySpawner: GameState not found; skipping time scaling.")
 		return
@@ -228,10 +221,6 @@ func _configure_flyover_enemy(enemy_instance: Node3D, travel_direction: Vector3)
 		enemy_instance.call("configure_flyover", travel_direction)
 
 
-func _has_any_scene() -> bool:
-	return _has_valid_scene(ground_enemy_scenes) or _has_valid_scene(flyover_enemy_scenes)
-
-
 func _has_valid_scene(enemy_scenes: Array[PackedScene]) -> bool:
 	for enemy_spawner_scene in enemy_scenes:
 		if enemy_spawner_scene != null:
@@ -243,20 +232,24 @@ func _pick_enemy_scene(enemy_scenes: Array[PackedScene]) -> PackedScene:
 	if enemy_scenes.is_empty():
 		return null
 	var enemy_spawner_candidates: Array[PackedScene] = []
+	# time per 2min on max index
+	var time_based_max_size = int(game_state.get_elapsed_time() / 120)
+	
 	for enemy_spawner_scene in enemy_scenes:
 		if enemy_spawner_scene != null:
 			enemy_spawner_candidates.append(enemy_spawner_scene)
+		else:
+			push_warning("Sun vihu puuttuu!")
+		if enemy_spawner_candidates.size() >= time_based_max_size:
+			break
+			
 	if enemy_spawner_candidates.is_empty():
+		push_warning("Sun vihu vaihtoehdot puuttuu!")
 		return null
-	var enemy_spawner_pick_index := enemy_spawner_rng.randi_range(
-		0, enemy_spawner_candidates.size() - 1
-	)
-	return enemy_spawner_candidates[enemy_spawner_pick_index]
-
-
-func _should_spawn_flyover() -> bool:
-	var enemy_spawner_has_ground: bool = _has_valid_scene(ground_enemy_scenes)
-	var enemy_spawner_has_flyover: bool = _has_valid_scene(flyover_enemy_scenes)
-	if enemy_spawner_has_ground and enemy_spawner_has_flyover:
-		return enemy_spawner_rng.randf() < 0.5
-	return enemy_spawner_has_flyover and not enemy_spawner_has_ground
+	
+	var index = enemy_spawner_candidates.size() - 1
+	while(index > 0):
+		if randf() > 0.5:
+			return enemy_spawner_candidates[index]
+		index -= 1
+	return enemy_spawner_candidates[0]
