@@ -96,8 +96,8 @@ func _play_sfx_at(stream: AudioStream, position: Vector3) -> void:
 	if current_scene == null:
 		return
 	var player := AudioStreamPlayer3D.new()
+	current_scene.add_child(player)
 	player.stream = stream
 	player.global_position = position
 	player.finished.connect(player.queue_free)
-	current_scene.add_child(player)
 	player.play()
