@@ -21,19 +21,24 @@ class_name PropSpawner
 extends Node3D
 
 const PROP_DEFAULT_PATHS: Array[String] = [
-	"res://models/tree.glb", "res://models/rock.glb", "res://models/bush.glb"
+	"res://models/tree.glb",
+	"res://models/rock.glb",
+	"res://models/bush.glb",
+	"res://props/loot_crate.tscn"
 ]
 
 const PROP_COLLISION_SIZES := {
 	"res://models/tree.glb": Vector3(1.3, 2.0, 1.3),
 	"res://models/rock.glb": Vector3(1.7, 0.9, 1.7),
-	"res://models/bush.glb": Vector3(1.3, 1.7, 1.3)
+	"res://models/bush.glb": Vector3(1.3, 1.7, 1.3),
+	"res://props/loot_crate.tscn": Vector3(1.2, 1.2, 1.2)
 }
 
 const PROP_SCALE_RANGES := {
 	"res://models/tree.glb": Vector2(1.9, 2.6),
 	"res://models/rock.glb": Vector2(0.8, 1.8),
-	"res://models/bush.glb": Vector2(0.9, 1.9)
+	"res://models/bush.glb": Vector2(0.9, 1.9),
+	"res://props/loot_crate.tscn": Vector2(1.0, 1.0)
 }
 
 @export var prop_paths: Array[String] = PROP_DEFAULT_PATHS.duplicate()
@@ -129,25 +134,42 @@ func _make_prop_definition(
 
 
 func _spawn_prop(prop_spawner_definition: Dictionary, position: Vector3) -> void:
+	var prop_spawner_scene := prop_spawner_definition["scene"] as PackedScene
+	var prop_spawner_instance := prop_spawner_scene.instantiate()
+	var prop_spawner_scale_value := _resolve_scale_value(prop_spawner_definition)
+	if prop_spawner_instance is StaticBody3D:
+		var prop_spawner_body := prop_spawner_instance as StaticBody3D
+		add_child(prop_spawner_body)
+		prop_spawner_body.global_position = position
+		prop_spawner_body.add_to_group("props")
+		_apply_prop_transform(prop_spawner_body, prop_spawner_scale_value)
+		return
 	var prop_spawner_body := StaticBody3D.new()
 	add_child(prop_spawner_body)
 	prop_spawner_body.global_position = position
 	prop_spawner_body.add_to_group("props")
-	var prop_spawner_scene := prop_spawner_definition["scene"] as PackedScene
-	var prop_spawner_instance := prop_spawner_scene.instantiate()
 	prop_spawner_body.add_child(prop_spawner_instance)
 
-	var prop_spawner_node := prop_spawner_instance as Node3D
-	var prop_spawner_scale_range: Vector2 = prop_spawner_definition["scale_range"]
-	var prop_spawner_scale_value := prop_spawner_rng.randf_range(
-		prop_spawner_scale_range.x, prop_spawner_scale_range.y
+	_apply_prop_transform(prop_spawner_instance, prop_spawner_scale_value)
+	var prop_spawner_collision_size: Vector3 = (
+		prop_spawner_definition["collision_size"] * prop_spawner_scale_value
 	)
-	prop_spawner_node.scale = Vector3.ONE * prop_spawner_scale_value
-	prop_spawner_node.rotation.y = prop_spawner_rng.randf_range(0.0, TAU)
-	var prop_spawner_collision_size: Vector3 = prop_spawner_definition["collision_size"] * prop_spawner_scale_value
 	var prop_spawner_shape := BoxShape3D.new()
 	prop_spawner_shape.size = prop_spawner_collision_size
 	var prop_spawner_collision := CollisionShape3D.new()
 	prop_spawner_collision.shape = prop_spawner_shape
 	prop_spawner_collision.position = Vector3(0.0, prop_spawner_collision_size.y * 0.5, 0.0)
 	prop_spawner_body.add_child(prop_spawner_collision)
+
+
+func _apply_prop_transform(prop_spawner_node: Node, prop_spawner_scale_value: float) -> void:
+	if not prop_spawner_node is Node3D:
+		return
+	var prop_spawner_node_3d := prop_spawner_node as Node3D
+	prop_spawner_node_3d.scale = Vector3.ONE * prop_spawner_scale_value
+	prop_spawner_node_3d.rotation.y = prop_spawner_rng.randf_range(0.0, TAU)
+
+
+func _resolve_scale_value(prop_spawner_definition: Dictionary) -> float:
+	var prop_spawner_scale_range: Vector2 = prop_spawner_definition["scale_range"]
+	return prop_spawner_rng.randf_range(prop_spawner_scale_range.x, prop_spawner_scale_range.y)

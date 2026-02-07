@@ -25,6 +25,10 @@ func _ready() -> void:
 
 
 func _physics_process(_delta: float) -> void:
+	if is_time_stopped():
+		velocity = Vector3.ZERO
+		move_and_slide()
+		return
 	velocity = flyover_enemy_direction * flyover_speed
 	move_and_slide()
 
