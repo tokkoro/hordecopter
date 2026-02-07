@@ -13,7 +13,7 @@
 class_name FlyoverEnemy
 extends CharacterBody3D
 
-@export var health: float = 10.0
+@export var health: float = 4.0
 @export var flyover_speed: float = 18.0
 
 var flyover_enemy_direction: Vector3 = Vector3.FORWARD

@@ -18,8 +18,8 @@
 class_name TestEnemy
 extends CharacterBody3D
 
-@export var health: float = 12.0
-@export var base_health: float = 12.0
+@export var health: float = 4.0
+@export var base_health: float = 4.0
 @export var health_per_second: float = 0.25
 @export var base_experience_reward: int = 1
 @export var experience_per_second: float = 0.1

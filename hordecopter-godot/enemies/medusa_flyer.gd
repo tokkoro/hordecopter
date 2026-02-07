@@ -16,7 +16,7 @@
 class_name MedusaFlyer
 extends CharacterBody3D
 
-@export var health: float = 12.0
+@export var health: float = 4.0
 @export var move_speed: float = 16.0
 @export var wave_amplitude: float = 1.6
 @export var wave_frequency: float = 0.8
