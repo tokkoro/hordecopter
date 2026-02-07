@@ -172,7 +172,7 @@ func _find_node_by_name(root: Node, name: StringName) -> Node3D:
 func _collect_weapon_systems() -> Array[WeaponSystem]:
 	var systems: Array[WeaponSystem] = []
 	for system_name in hc_weapon_system_names:
-		var system := get_node_or_null(system_name) as WeaponSystem
+		var system := get_node_or_null(NodePath(system_name)) as WeaponSystem
 		if system != null:
 			systems.append(system)
 	return systems
@@ -191,8 +191,8 @@ func _configure_weapon_systems() -> void:
 
 
 func _handle_weapon_toggles() -> void:
-	var action_count := min(hc_weapon_input_actions.size(), hc_weapon_systems.size())
-	for index in action_count:
+	var action_count: int = min(hc_weapon_input_actions.size(), hc_weapon_systems.size())
+	for index in range(action_count):
 		if Input.is_action_just_pressed(hc_weapon_input_actions[index]):
 			_toggle_weapon_system(index)
 
