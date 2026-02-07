@@ -12,7 +12,8 @@
 #                 • experience_per_second: float – time scaling for exp
 #                 • experience_token_scene: PackedScene – drop scene
 # Dependencies     • res://items/experience_token.tscn
-# Last Major Rev   • 25-09-27 – add experience drops + scaling
+#                 • res://enemies/enemy_health_bar.tscn
+# Last Major Rev   • 25-09-27 – add toggleable enemy health bar
 ###############################################################
 
 class_name TestEnemy
@@ -33,6 +34,10 @@ var test_enemy_is_dead: bool = false
 var test_enemy_wander_direction: Vector3 = Vector3.ZERO
 var test_enemy_wander_elapsed: float = 0.0
 var test_enemy_rng: RandomNumberGenerator = RandomNumberGenerator.new()
+var test_enemy_max_health: float = 1.0
+
+@onready
+var test_enemy_health_bar: EnemyHealthBar3D = get_node_or_null("HealthBar3D") as EnemyHealthBar3D
 
 
 func _ready() -> void:
@@ -40,6 +45,8 @@ func _ready() -> void:
 	test_enemy_rng.randomize()
 	_pick_wander_direction()
 	_apply_initial_scaling()
+	test_enemy_max_health = max(1.0, health)
+	_update_health_bar()
 
 
 func _physics_process(delta: float) -> void:
@@ -58,6 +65,7 @@ func _pick_wander_direction() -> void:
 
 func apply_damage(amount: float) -> void:
 	health -= amount
+	_update_health_bar()
 	if health <= 0.0 and not test_enemy_is_dead:
 		test_enemy_is_dead = true
 		_drop_experience()
@@ -67,9 +75,11 @@ func apply_damage(amount: float) -> void:
 func configure_from_time(time_seconds: float) -> void:
 	var scaled_health := base_health + time_seconds * health_per_second
 	health = max(1.0, scaled_health)
+	test_enemy_max_health = health
 	var scaled_experience := base_experience_reward + time_seconds * experience_per_second
 	test_enemy_experience_reward = max(1, int(round(scaled_experience)))
 	test_enemy_configured = true
+	_update_health_bar()
 
 
 func _apply_initial_scaling() -> void:
@@ -83,6 +93,12 @@ func _apply_initial_scaling() -> void:
 		configure_from_time(game_state.get_elapsed_time())
 	else:
 		test_enemy_experience_reward = base_experience_reward
+
+
+func _update_health_bar() -> void:
+	if test_enemy_health_bar == null:
+		return
+	test_enemy_health_bar.set_health(health, test_enemy_max_health)
 
 
 func _drop_experience() -> void:
