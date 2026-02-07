@@ -9,7 +9,8 @@
 #                 • spawn_radius: float – radius around spawner
 #                 • spawn_height: float – vertical spawn offset
 # Dependencies     • res://enemies/test_enemy.tscn (assigned in scene)
-# Last Major Rev   • 25-09-26 – initial spawner
+#                 • res://game_state.gd
+# Last Major Rev   • 25-09-27 – add time-based enemy scaling
 ###############################################################
 
 class_name EnemySpawner
@@ -23,6 +24,8 @@ extends Node3D
 
 var enemy_spawner_elapsed: float = 0.0
 var enemy_spawner_rng: RandomNumberGenerator = RandomNumberGenerator.new()
+var enemy_spawner_warned_missing_scene: bool = false
+var enemy_spawner_warned_bad_interval: bool = false
 
 
 func _ready() -> void:
@@ -31,8 +34,14 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	if enemy_scene == null:
+		if not enemy_spawner_warned_missing_scene:
+			enemy_spawner_warned_missing_scene = true
+			push_warning("EnemySpawner: enemy_scene is missing; cannot spawn enemies.")
 		return
 	if spawn_interval <= 0.0:
+		if not enemy_spawner_warned_bad_interval:
+			enemy_spawner_warned_bad_interval = true
+			push_warning("EnemySpawner: spawn_interval must be > 0 to spawn enemies.")
 		return
 	enemy_spawner_elapsed += delta
 	while enemy_spawner_elapsed >= spawn_interval:
@@ -50,8 +59,9 @@ func _can_spawn() -> bool:
 func _spawn_enemy() -> void:
 	var enemy_spawner_instance: Node3D = enemy_scene.instantiate()
 	var enemy_spawner_offset: Vector3 = _random_offset()
-	enemy_spawner_instance.global_position = global_position + enemy_spawner_offset
 	get_tree().current_scene.add_child(enemy_spawner_instance)
+	enemy_spawner_instance.global_position = global_position + enemy_spawner_offset
+	_apply_time_scaling(enemy_spawner_instance)
 
 
 func _random_offset() -> Vector3:
@@ -62,3 +72,17 @@ func _random_offset() -> Vector3:
 		spawn_height,
 		sin(enemy_spawner_angle) * enemy_spawner_radius
 	)
+
+
+func _apply_time_scaling(enemy_instance: Node) -> void:
+	var game_state := get_tree().get_first_node_in_group("game_state")
+	if game_state == null:
+		push_warning("EnemySpawner: GameState not found; skipping time scaling.")
+		return
+	if not game_state.has_method("get_elapsed_time"):
+		push_warning("EnemySpawner: GameState missing get_elapsed_time; skipping scaling.")
+		return
+	if enemy_instance.has_method("configure_from_time"):
+		enemy_instance.configure_from_time(game_state.get_elapsed_time())
+	else:
+		push_warning("EnemySpawner: Enemy missing configure_from_time; skipping scaling.")

@@ -2,20 +2,34 @@
 # enemies/test_enemy.gd
 # Key Classes      • TestEnemy – wandering target dummy
 # Key Functions    • apply_damage() – reduce health and despawn
+#                 • configure_from_time() – set health/exp scaling
 #                 • _pick_wander_direction() – choose a new wander heading
 # Critical Consts  • n/a
 # Editor Exports   • health: float – hit points
-# Dependencies     • n/a
-# Last Major Rev   • 25-09-26 – add wandering movement
+#                 • base_health: float – baseline health
+#                 • health_per_second: float – time scaling for health
+#                 • base_experience_reward: int – base exp reward
+#                 • experience_per_second: float – time scaling for exp
+#                 • experience_token_scene: PackedScene – drop scene
+# Dependencies     • res://items/experience_token.tscn
+# Last Major Rev   • 25-09-27 – add experience drops + scaling
 ###############################################################
 
 class_name TestEnemy
 extends CharacterBody3D
 
 @export var health: float = 12.0
+@export var base_health: float = 12.0
+@export var health_per_second: float = 0.25
+@export var base_experience_reward: int = 1
+@export var experience_per_second: float = 0.1
+@export var experience_token_scene: PackedScene
 @export var test_enemy_wander_speed: float = 2.5
 @export var test_enemy_wander_interval: float = 1.5
 
+var test_enemy_experience_reward: int = 1
+var test_enemy_configured: bool = false
+var test_enemy_is_dead: bool = false
 var test_enemy_wander_direction: Vector3 = Vector3.ZERO
 var test_enemy_wander_elapsed: float = 0.0
 var test_enemy_rng: RandomNumberGenerator = RandomNumberGenerator.new()
@@ -25,6 +39,7 @@ func _ready() -> void:
 	add_to_group("enemies")
 	test_enemy_rng.randomize()
 	_pick_wander_direction()
+	_apply_initial_scaling()
 
 
 func _physics_process(delta: float) -> void:
@@ -43,5 +58,45 @@ func _pick_wander_direction() -> void:
 
 func apply_damage(amount: float) -> void:
 	health -= amount
-	if health <= 0.0:
+	if health <= 0.0 and not test_enemy_is_dead:
+		test_enemy_is_dead = true
+		_drop_experience()
 		queue_free()
+
+
+func configure_from_time(time_seconds: float) -> void:
+	var scaled_health := base_health + time_seconds * health_per_second
+	health = max(1.0, scaled_health)
+	var scaled_experience := base_experience_reward + time_seconds * experience_per_second
+	test_enemy_experience_reward = max(1, int(round(scaled_experience)))
+	test_enemy_configured = true
+
+
+func _apply_initial_scaling() -> void:
+	if test_enemy_configured:
+		return
+	if not is_equal_approx(health, base_health):
+		test_enemy_experience_reward = base_experience_reward
+		return
+	var game_state := get_tree().get_first_node_in_group("game_state")
+	if game_state != null and game_state.has_method("get_elapsed_time"):
+		configure_from_time(game_state.get_elapsed_time())
+	else:
+		test_enemy_experience_reward = base_experience_reward
+
+
+func _drop_experience() -> void:
+	if experience_token_scene == null:
+		push_warning("TestEnemy: experience_token_scene missing; no XP drop.")
+		return
+	var token := experience_token_scene.instantiate()
+	var current_scene := get_tree().current_scene
+	if current_scene == null:
+		push_warning("TestEnemy: current scene missing; cannot drop XP token.")
+		return
+	current_scene.add_child(token)
+	if token is Node3D:
+		var token_node := token as Node3D
+		token_node.global_position = global_position
+	if token.has_method("configure_amount"):
+		token.configure_amount(test_enemy_experience_reward)
