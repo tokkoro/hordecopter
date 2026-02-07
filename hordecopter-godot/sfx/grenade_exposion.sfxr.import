@@ -1,0 +1,17 @@
+[remap]
+
+importer="com.timothyqiu.gdfxr.importer"
+type="AudioStreamWAV"
+uid="uid://chosaf4cbrcxb"
+path="res://.godot/imported/grenade_exposion.sfxr-8d536225601290ad7ea2ecf510b2597a.sample"
+
+[deps]
+
+source_file="res://sfx/grenade_exposion.sfxr"
+dest_files=["res://.godot/imported/grenade_exposion.sfxr-8d536225601290ad7ea2ecf510b2597a.sample"]
+
+[params]
+
+loop=false
+bit_depth=0
+sample_rate=0

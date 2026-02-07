@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://osh184fb2s6f"]
+
+[ext_resource type="AudioStream" uid="uid://8naf1pdpss0s" path="res://sfx/collect.sfxr" id="1_3iiyy"]
+
+[node name="Node3D" type="Node3D" unique_id=1019651761]
+
+[node name="AudioListener3D" type="AudioListener3D" parent="." unique_id=869342115]
+
+[node name="Collect" type="AudioStreamPlayer" parent="." unique_id=284005649]
+stream = ExtResource("1_3iiyy")
+autoplay = true

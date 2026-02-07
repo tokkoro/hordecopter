@@ -1,0 +1,17 @@
+[remap]
+
+importer="com.timothyqiu.gdfxr.importer"
+type="AudioStreamWAV"
+uid="uid://cayj20rvvd48s"
+path="res://.godot/imported/missile_shoot.sfxr-b10f766d0d9add5695181c67f8fc77d6.sample"
+
+[deps]
+
+source_file="res://sfx/missile_shoot.sfxr"
+dest_files=["res://.godot/imported/missile_shoot.sfxr-b10f766d0d9add5695181c67f8fc77d6.sample"]
+
+[params]
+
+loop=false
+bit_depth=0
+sample_rate=0

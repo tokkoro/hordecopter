@@ -1,0 +1,17 @@
+[remap]
+
+importer="com.timothyqiu.gdfxr.importer"
+type="AudioStreamWAV"
+uid="uid://cmhy567uwmpra"
+path="res://.godot/imported/rotor_blade_swosh.sfxr-95b04b6b28aa99a6e02a9c95b748134b.sample"
+
+[deps]
+
+source_file="res://sfx/rotor_blade_swosh.sfxr"
+dest_files=["res://.godot/imported/rotor_blade_swosh.sfxr-95b04b6b28aa99a6e02a9c95b748134b.sample"]
+
+[params]
+
+loop=false
+bit_depth=0
+sample_rate=0
