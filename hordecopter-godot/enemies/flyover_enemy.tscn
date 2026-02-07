@@ -1,18 +1,16 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://enemies/flyover_enemy.gd" id="1_flyover_enemy"]
+[ext_resource type="PackedScene" path="res://models/medusa_head_shaded.glb" id="2_medusa_head"]
 
-[sub_resource type="BoxMesh" id="BoxMesh_flyover"]
-size = Vector3(1.0, 0.6, 2.0)
-
-[sub_resource type="BoxShape3D" id="BoxShape3D_flyover"]
-size = Vector3(1.0, 0.6, 2.0)
+[sub_resource type="SphereShape3D" id="SphereShape3D_flyover"]
+radius = 0.9
 
 [node name="FlyoverEnemy" type="CharacterBody3D"]
 script = ExtResource("1_flyover_enemy")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("BoxMesh_flyover")
+[node name="MedusaHead" parent="." instance=ExtResource("2_medusa_head")]
+transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 0, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-shape = SubResource("BoxShape3D_flyover")
+shape = SubResource("SphereShape3D_flyover")

@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="WeaponDefinition" format=3 uid="uid://cmxm237mhp5h2"]
+[gd_resource type="Resource" script_class="WeaponDefinition" format=3]
 
 [ext_resource type="Script" path="res://weapons/weapon_definition.gd" id="1_weapon"]
 [ext_resource type="PackedScene" path="res://weapons/plasma_ball.tscn" id="2_plasma"]
