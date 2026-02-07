@@ -1,6 +1,6 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://dtvm5nkvy8k57"]
 
-[ext_resource type="Script" path="res://enemies/test_enemy.gd" id="1_test_enemy"]
+[ext_resource type="Script" uid="uid://didoxsqy6ljic" path="res://enemies/test_enemy.gd" id="1_test_enemy"]
 [ext_resource type="PackedScene" path="res://items/experience_token.tscn" id="2_experience_token"]
 [ext_resource type="PackedScene" path="res://enemies/enemy_health_bar.tscn" id="3_enemy_health_bar"]
 
@@ -10,15 +10,15 @@ size = Vector3(1.2, 1.2, 1.2)
 [sub_resource type="BoxShape3D" id="BoxShape3D_4b8bn"]
 size = Vector3(1.2, 1.2, 1.2)
 
-[node name="TestEnemy" type="CharacterBody3D"]
+[node name="TestEnemy" type="CharacterBody3D" unique_id=515240342]
 script = ExtResource("1_test_enemy")
 experience_token_scene = ExtResource("2_experience_token")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=309156588]
 mesh = SubResource("BoxMesh_7dgk3")
 
-[node name="HealthBar3D" parent="." instance=ExtResource("3_enemy_health_bar")]
+[node name="HealthBar3D" parent="." unique_id=419946373 instance=ExtResource("3_enemy_health_bar")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=233246378]
 shape = SubResource("BoxShape3D_4b8bn")
