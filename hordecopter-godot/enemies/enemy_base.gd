@@ -95,9 +95,11 @@ func _play_hit_sfx() -> void:
 
 func _play_sfx_at(stream: AudioStream, position: Vector3) -> void:
 	if stream == null:
+		push_warning("no stream for enemy audio")
 		return
 	var current_scene := get_tree().current_scene
 	if current_scene == null:
+		push_warning("no scene for enemy audio")
 		return
 	var player := AudioStreamPlayer3D.new()
 	current_scene.add_child(player)

@@ -1,14 +1,14 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://qp5lb2p6eipd"]
 
-[ext_resource type="PackedScene" path="res://hordecopter.tscn" id="2_qn30u"]
-[ext_resource type="Texture2D" path="res://ground_gpt.png" id="2_wkxu0"]
-[ext_resource type="Script" path="res://camera_3d.gd" id="3_qn30u"]
+[ext_resource type="PackedScene" uid="uid://ddo5hf3gvff11" path="res://hordecopter.tscn" id="2_qn30u"]
+[ext_resource type="Texture2D" uid="uid://cvmso3ruvike3" path="res://ground_gpt.png" id="2_wkxu0"]
+[ext_resource type="Script" uid="uid://c5ovtis2odund" path="res://camera_3d.gd" id="3_qn30u"]
 [ext_resource type="PackedScene" path="res://enemies/test_enemy.tscn" id="4_test_enemy"]
-[ext_resource type="Script" path="res://enemies/enemy_spawner.gd" id="5_enemy_spawner"]
+[ext_resource type="Script" uid="uid://byuj30fao1rua" path="res://enemies/enemy_spawner.gd" id="5_enemy_spawner"]
 [ext_resource type="PackedScene" path="res://enemies/flyover_enemy.tscn" id="6_flyover_enemy"]
-[ext_resource type="Script" path="res://game_state.gd" id="6_game_state"]
-[ext_resource type="Script" path="res://ui/hud.gd" id="7_hud"]
-[ext_resource type="Script" path="res://props/prop_spawner.gd" id="8_prop_spawner"]
+[ext_resource type="Script" uid="uid://ccyrihhmixdf4" path="res://game_state.gd" id="6_game_state"]
+[ext_resource type="Script" uid="uid://ltl7lenutetf" path="res://ui/hud.gd" id="7_hud"]
+[ext_resource type="Script" uid="uid://5y4lu84m00fd" path="res://props/prop_spawner.gd" id="8_prop_spawner"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qn30u"]
 albedo_texture = ExtResource("2_wkxu0")
@@ -26,73 +26,73 @@ font_size = 28
 [sub_resource type="LabelSettings" id="LabelSettings_r430w"]
 font_size = 32
 
-[node name="Node3D" type="Node3D"]
+[node name="Node3D" type="Node3D" unique_id=1023174345]
 
-[node name="Hordecopter" parent="." instance=ExtResource("2_qn30u")]
+[node name="Hordecopter" parent="." unique_id=771629937 instance=ExtResource("2_qn30u")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8481881, 0)
 lock_rotation = true
 
-[node name="Maa" type="StaticBody3D" parent="."]
+[node name="Maa" type="StaticBody3D" parent="." unique_id=604683723]
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="Maa"]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Maa" unique_id=1704752473]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5091238, 0)
 material_override = SubResource("StandardMaterial3D_qn30u")
 mesh = SubResource("BoxMesh_koayk")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Maa"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Maa" unique_id=478634929]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 shape = SubResource("BoxShape3D_4jg3y")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1013122941]
 transform = Transform3D(1, 0, 0, 0, 0.19387484, 0.9810263, 0, -0.9810263, 0.19387484, 0, 23.777777, 0)
 shadow_enabled = true
 
-[node name="Camera3D" type="Camera3D" parent="."]
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1177538808]
 transform = Transform3D(1, 0, 0, 0, 0.9583226, 0.28568837, 0, -0.28568837, 0.9583226, 0, 5.8, 5.26)
 script = ExtResource("3_qn30u")
 
-[node name="EnemySpawner" type="Node3D" parent="."]
+[node name="EnemySpawner" type="Node3D" parent="." unique_id=1364854204]
 script = ExtResource("5_enemy_spawner")
-ground_enemy_scenes = [ExtResource("4_test_enemy")]
-flyover_enemy_scenes = [ExtResource("6_flyover_enemy")]
+ground_enemy_scenes = Array[PackedScene]([ExtResource("4_test_enemy")])
+flyover_enemy_scenes = Array[PackedScene]([ExtResource("6_flyover_enemy")])
 
-[node name="PropSpawner" type="Node3D" parent="."]
+[node name="PropSpawner" type="Node3D" parent="." unique_id=1101542793]
 script = ExtResource("8_prop_spawner")
 
-[node name="GameState" type="Node" parent="."]
+[node name="GameState" type="Node" parent="." unique_id=554225321]
 script = ExtResource("6_game_state")
 
-[node name="HUD" type="CanvasLayer" parent="."]
+[node name="HUD" type="CanvasLayer" parent="." unique_id=542620325]
 script = ExtResource("7_hud")
 
-[node name="MarginContainer" type="MarginContainer" parent="HUD"]
+[node name="MarginContainer" type="MarginContainer" parent="HUD" unique_id=1692005082]
 anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 58.0
 grow_horizontal = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="HUD/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="HUD/MarginContainer" unique_id=1036150805]
 layout_mode = 2
 
-[node name="LevelProgress" type="ProgressBar" parent="HUD/MarginContainer/VBoxContainer"]
+[node name="LevelProgress" type="ProgressBar" parent="HUD/MarginContainer/VBoxContainer" unique_id=1182468169]
 self_modulate = Color(0, 0.74371713, 0.39724934, 1)
 custom_minimum_size = Vector2(0, 12)
 layout_mode = 2
 max_value = 1.0
 show_percentage = false
 
-[node name="LevelLabel" type="Label" parent="HUD/MarginContainer/VBoxContainer"]
+[node name="LevelLabel" type="Label" parent="HUD/MarginContainer/VBoxContainer" unique_id=2098179565]
 layout_mode = 2
 text = "  Level 1"
 label_settings = SubResource("LabelSettings_lrgam")
 
-[node name="TimeLabel" type="Label" parent="HUD/MarginContainer/VBoxContainer"]
+[node name="TimeLabel" type="Label" parent="HUD/MarginContainer/VBoxContainer" unique_id=1932256981]
 layout_mode = 2
 text = "00:00"
 label_settings = SubResource("LabelSettings_r430w")
 horizontal_alignment = 1
 
-[node name="ExperienceLabel" type="Label" parent="HUD/MarginContainer/VBoxContainer"]
+[node name="ExperienceLabel" type="Label" parent="HUD/MarginContainer/VBoxContainer" unique_id=1483063927]
 visible = false
 layout_mode = 2
 text = "0 / 0 XP"
