@@ -25,15 +25,15 @@ const PROP_DEFAULT_PATHS: Array[String] = [
 ]
 
 const PROP_COLLISION_SIZES := {
-	"res://models/tree.glb": Vector3(2.6, 6.0, 2.6),
-	"res://models/rock.glb": Vector3(3.0, 2.0, 3.0),
-	"res://models/bush.glb": Vector3(2.8, 1.6, 2.8)
+	"res://models/tree.glb": Vector3(1.3, 2.0, 1.3),
+	"res://models/rock.glb": Vector3(1.7, 0.9, 1.7),
+	"res://models/bush.glb": Vector3(1.3, 1.7, 1.3)
 }
 
 const PROP_SCALE_RANGES := {
-	"res://models/tree.glb": Vector2(0.9, 1.2),
-	"res://models/rock.glb": Vector2(0.8, 1.1),
-	"res://models/bush.glb": Vector2(0.9, 1.3)
+	"res://models/tree.glb": Vector2(1.9, 2.6),
+	"res://models/rock.glb": Vector2(0.8, 1.8),
+	"res://models/bush.glb": Vector2(0.9, 1.9)
 }
 
 @export var prop_paths: Array[String] = PROP_DEFAULT_PATHS.duplicate()
@@ -136,15 +136,15 @@ func _spawn_prop(prop_spawner_definition: Dictionary, position: Vector3) -> void
 	var prop_spawner_scene := prop_spawner_definition["scene"] as PackedScene
 	var prop_spawner_instance := prop_spawner_scene.instantiate()
 	prop_spawner_body.add_child(prop_spawner_instance)
-	if prop_spawner_instance is Node3D:
-		var prop_spawner_node := prop_spawner_instance as Node3D
-		var prop_spawner_scale_range: Vector2 = prop_spawner_definition["scale_range"]
-		var prop_spawner_scale_value := prop_spawner_rng.randf_range(
-			prop_spawner_scale_range.x, prop_spawner_scale_range.y
-		)
-		prop_spawner_node.scale = Vector3.ONE * prop_spawner_scale_value
-		prop_spawner_node.rotation.y = prop_spawner_rng.randf_range(0.0, TAU)
-	var prop_spawner_collision_size: Vector3 = prop_spawner_definition["collision_size"]
+
+	var prop_spawner_node := prop_spawner_instance as Node3D
+	var prop_spawner_scale_range: Vector2 = prop_spawner_definition["scale_range"]
+	var prop_spawner_scale_value := prop_spawner_rng.randf_range(
+		prop_spawner_scale_range.x, prop_spawner_scale_range.y
+	)
+	prop_spawner_node.scale = Vector3.ONE * prop_spawner_scale_value
+	prop_spawner_node.rotation.y = prop_spawner_rng.randf_range(0.0, TAU)
+	var prop_spawner_collision_size: Vector3 = prop_spawner_definition["collision_size"] * prop_spawner_scale_value
 	var prop_spawner_shape := BoxShape3D.new()
 	prop_spawner_shape.size = prop_spawner_collision_size
 	var prop_spawner_collision := CollisionShape3D.new()

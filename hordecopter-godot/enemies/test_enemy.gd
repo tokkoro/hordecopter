@@ -5,11 +5,16 @@
 #                 • _pick_wander_direction() – choose a new wander heading
 #                 • _find_player() – locate the player target
 # Critical Consts  • n/a
-# Editor Exports   • test_enemy_wander_speed: float – wander movement speed
-#                 • test_enemy_seek_speed: float – chase movement speed
-#                 • test_enemy_wander_interval: float – seconds between turns
-#                 • test_enemy_turn_speed: float – turn lerp speed
-# Dependencies     • res://enemies/enemy_health_bar.tscn
+# Editor Exports   • health: float – hit points
+#                 • base_health: float – baseline health
+#                 • health_per_second: float – time scaling for health
+#                 • base_experience_reward: int – base exp reward
+#                 • experience_token_scene: PackedScene – drop scene
+#                 • test_enemy_climb_speed: float – vertical climb speed
+#                 • test_enemy_climb_duration: float – climb time after bump
+# Dependencies     • res://enemies/enemy_experience_manager.gd
+#                 • res://items/experience_token.tscn
+#                 • res://enemies/enemy_health_bar.tscn
 #                 • res://ui/damage_label_3d.tscn
 # Last Major Rev   • 25-09-27 – add toggleable enemy health bar
 ###############################################################
@@ -21,9 +26,14 @@ extends EnemyBase
 @export var test_enemy_seek_speed: float = 1.5
 @export var test_enemy_wander_interval: float = 1.5
 @export var test_enemy_turn_speed: float = 2.0
+@export var test_enemy_climb_speed: float = 2.0
+@export var test_enemy_climb_duration: float = 0.35
 
 var test_enemy_wander_direction: Vector3 = Vector3.ZERO
 var test_enemy_wander_elapsed: float = 0.0
+var test_enemy_climb_timer: float = 0.0
+var test_enemy_vertical_velocity: float = 0.0
+var test_enemy_gravity: float = 0.0
 var test_enemy_rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var test_enemy_target: Node3D
 
@@ -33,6 +43,8 @@ func _ready() -> void:
 	test_enemy_rng.randomize()
 	_pick_wander_direction()
 	test_enemy_target = _find_player()
+	test_enemy_gravity = float(ProjectSettings.get_setting("physics/3d/default_gravity"))
+
 
 
 func _physics_process(delta: float) -> void:
@@ -65,8 +77,27 @@ func _physics_process(delta: float) -> void:
 	var test_enemy_speed: float = test_enemy_wander_speed
 	if test_enemy_has_target:
 		test_enemy_speed = test_enemy_seek_speed
+	if test_enemy_climb_timer > 0.0:
+		test_enemy_climb_timer = max(0.0, test_enemy_climb_timer - delta)
+		test_enemy_vertical_velocity = test_enemy_climb_speed
+	else:
+		test_enemy_vertical_velocity -= test_enemy_gravity * delta
 	velocity = test_enemy_wander_direction * test_enemy_speed
+	velocity.y = test_enemy_vertical_velocity
 	move_and_slide()
+	if is_on_floor() and test_enemy_climb_timer <= 0.0:
+		test_enemy_vertical_velocity = 0.0
+	var test_enemy_touching_prop: bool = false
+	for test_enemy_slide_index in range(get_slide_collision_count()):
+		var test_enemy_collision := get_slide_collision(test_enemy_slide_index)
+		var test_enemy_collider := test_enemy_collision.get_collider()
+		if test_enemy_collider != null and test_enemy_collider.is_in_group("props"):
+			test_enemy_touching_prop = true
+			break
+	if test_enemy_touching_prop:
+		test_enemy_climb_timer = test_enemy_climb_duration
+	else:
+		test_enemy_climb_timer = 0.0
 
 
 func _pick_wander_direction() -> void:
