@@ -124,7 +124,7 @@ func _apply_swarm_damage(delta: float) -> void:
 	if ohs_damage_time > 0.0:
 		return
 	ohs_damage_time = maxf(0.05, damage_tick_interval)
-	var enemies := get_tree().get_nodes_in_group("enemies")
+	var enemies := get_tree().get_nodes_in_group("enemy_targets")
 	if enemies.is_empty():
 		return
 	for enemy in enemies:

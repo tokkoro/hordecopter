@@ -47,6 +47,7 @@ var enemy_base_health_bar: EnemyHealthBar3D = get_node_or_null("HealthBar3D") as
 
 func _ready() -> void:
 	add_to_group("enemies")
+	add_to_group("enemy_targets")
 	base_health = max(1.0, base_health)
 	enemy_base_max_health = max(1.0, health)
 	_apply_initial_scaling()

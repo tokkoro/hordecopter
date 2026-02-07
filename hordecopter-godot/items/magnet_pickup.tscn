@@ -1,0 +1,20 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://items/magnet_pickup.gd" id="1_magnet_pickup"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_magnet"]
+radius = 0.25
+height = 0.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_magnet"]
+albedo_color = Color(0.2, 0.8, 1, 1)
+emission_enabled = true
+emission = Color(0.2, 0.8, 1, 1)
+emission_energy = 1.2
+
+[node name="MagnetPickup" type="Node3D"]
+script = ExtResource("1_magnet_pickup")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_magnet")
+material_override = SubResource("StandardMaterial3D_magnet")

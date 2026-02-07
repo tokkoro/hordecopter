@@ -54,7 +54,7 @@ func _get_target() -> Node3D:
 
 
 func _collect() -> void:
-	var enemies := get_tree().get_nodes_in_group("enemies")
+	var enemies := get_tree().get_nodes_in_group("enemy_targets")
 	for enemy in enemies:
 		if enemy != null and enemy.has_method("apply_time_stop"):
 			enemy.apply_time_stop(stop_duration)

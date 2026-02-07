@@ -13,10 +13,10 @@ class_name AreaWeaponSystem
 extends WeaponSystem
 
 @export var indicator_path: NodePath = NodePath("AreaIndicator")
-@onready var area_indicator = $"AreaIndicator"
 
 var aws_indicator: Node3D
 var aws_next_fire_time: float = 0.0
+@onready var area_indicator = $"AreaIndicator"
 
 
 func _ready() -> void:
@@ -33,9 +33,11 @@ func _physics_process(_delta: float) -> void:
 		return
 	try_fire()
 
+
 func activate() -> void:
 	super.activate()
 	_update_indicator()
+
 
 func try_fire() -> void:
 	if weapon == null:
@@ -54,7 +56,7 @@ func _fire_area() -> void:
 	if radius <= 0.0:
 		return
 	var origin := global_position
-	for enemy in get_tree().get_nodes_in_group("enemies"):
+	for enemy in get_tree().get_nodes_in_group("enemy_targets"):
 		if enemy is Node3D:
 			var enemy_node := enemy as Node3D
 			if enemy_node.global_position.distance_to(origin) <= radius:
