@@ -8,15 +8,15 @@
 [sub_resource type="BoxShape3D" id="BoxShape3D_4b8bn"]
 size = Vector3(1.2, 1.2, 1.2)
 
-[node name="TestEnemy" type="CharacterBody3D" unique_id=515240342]
+[node name="TestEnemy" type="RigidBody3D"]
 script = ExtResource("1_hl4u3")
 experience_token_scene = ExtResource("2_8r0c7")
 
 [node name="Tiger" parent="." instance=ExtResource("3_tiger")]
 transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 0, 0)
 
-[node name="HealthBar3D" parent="." unique_id=419946373 instance=ExtResource("4_bmdkl")]
+[node name="HealthBar3D" parent="." instance=ExtResource("4_bmdkl")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=233246378]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("BoxShape3D_4b8bn")
