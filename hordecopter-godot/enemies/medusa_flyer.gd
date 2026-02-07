@@ -10,6 +10,7 @@
 #                 • wave_amplitude: float – vertical wave height
 #                 • wave_frequency: float – wave cycles per second
 # Dependencies     • res://enemies/enemy_health_bar.tscn
+#                 • res://ui/damage_label_3d.tscn
 # Last Major Rev   • 25-09-27 – add toggleable enemy health bar
 ###############################################################
 
@@ -20,6 +21,7 @@ extends CharacterBody3D
 @export var move_speed: float = 4.0
 @export var wave_amplitude: float = 1.6
 @export var wave_frequency: float = 0.8
+@export var medusa_flyer_damage_label_scene: PackedScene = preload("res://ui/damage_label_3d.tscn")
 
 var medusa_flyer_direction: Vector3 = Vector3.FORWARD
 var medusa_flyer_target: Node3D
@@ -71,6 +73,7 @@ func configure_spawn_direction(direction: Vector3) -> void:
 
 
 func apply_damage(amount: float) -> void:
+	_spawn_damage_label(amount)
 	health -= amount
 	_update_health_bar()
 	if health <= 0.0:
@@ -88,3 +91,18 @@ func _find_player() -> Node3D:
 	if medusa_flyer_player is Node3D:
 		return medusa_flyer_player
 	return null
+
+
+func _spawn_damage_label(amount: float) -> void:
+	if medusa_flyer_damage_label_scene == null:
+		return
+	var medusa_flyer_label_instance := medusa_flyer_damage_label_scene.instantiate()
+	var medusa_flyer_scene := get_tree().current_scene
+	if medusa_flyer_scene == null:
+		return
+	medusa_flyer_scene.add_child(medusa_flyer_label_instance)
+	if medusa_flyer_label_instance is Node3D:
+		var medusa_flyer_label_node := medusa_flyer_label_instance as Node3D
+		medusa_flyer_label_node.global_position = global_position + Vector3(0.0, 1.5, 0.0)
+	if medusa_flyer_label_instance.has_method("set_damage"):
+		medusa_flyer_label_instance.set_damage(amount)
