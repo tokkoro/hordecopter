@@ -47,11 +47,11 @@ func update_time(time_seconds: float) -> void:
 	var total_seconds := int(floor(time_seconds))
 	var minutes := total_seconds / 60
 	var seconds := total_seconds % 60
-	hud_time_label.text = "Time %02d:%02d" % [minutes, seconds]
+	hud_time_label.text = "%02d:%02d" % [minutes, seconds]
 
 
 func update_level(level: int, progress: float, experience: int, experience_cap: int) -> void:
-	hud_level_label.text = "Level %d" % level
+	hud_level_label.text = "  Level %d" % level
 	hud_level_bar.value = clamp(progress, 0.0, 1.0)
 	if show_experience_numbers:
 		hud_experience_label.text = "%d / %d XP" % [experience, experience_cap]

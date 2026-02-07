@@ -27,7 +27,7 @@ var game_state_elapsed_time: float = 0.0
 var game_state_level: int = 1
 var game_state_experience: int = 0
 var game_state_experience_cap: int = 10
-var game_state_hud: Node
+var game_state_hud: GameHud
 var game_state_warned_missing_hud: bool = false
 var game_state_pending_level_ups: int = 0
 var game_state_level_up_active: bool = false
