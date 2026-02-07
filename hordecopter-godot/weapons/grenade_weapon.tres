@@ -1,8 +1,8 @@
-[gd_resource type="Resource" script_class="WeaponDefinition" format=3]
+[gd_resource type="Resource" script_class="WeaponDefinition" format=3 uid="uid://bar0g1efnvqlw"]
 
-[ext_resource type="Script" path="res://weapons/weapon_definition.gd" id="1_weapon"]
+[ext_resource type="Script" uid="uid://jw2coyki72vv" path="res://weapons/weapon_definition.gd" id="1_weapon"]
 [ext_resource type="PackedScene" path="res://weapons/grenade_projectile.tscn" id="2_grenade"]
-[ext_resource type="Texture2D" path="res://weapons/grenade.png" id="3_grenade_icon"]
+[ext_resource type="Texture2D" uid="uid://bmvbgyk38igke" path="res://weapons/grenade.png" id="3_grenade_icon"]
 
 [resource]
 script = ExtResource("1_weapon")

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://43ctfu7x2c84"]
 
-[ext_resource type="PackedScene" path="res://hordecopter.tscn" id="2_qn30u"]
+[ext_resource type="PackedScene" uid="uid://vw7a3bje77ju" path="res://hordecopter.tscn" id="2_qn30u"]
 [ext_resource type="Texture2D" uid="uid://cvmso3ruvike3" path="res://ground_gpt.png" id="2_wkxu0"]
 [ext_resource type="Script" uid="uid://c5ovtis2odund" path="res://camera_3d.gd" id="3_qn30u"]
 [ext_resource type="PackedScene" path="res://enemies/test_enemy.tscn" id="4_test_enemy"]
