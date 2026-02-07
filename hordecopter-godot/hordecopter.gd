@@ -40,7 +40,8 @@ var hc_weapon_system_names: Array[StringName] = [
 	&"MissileWeaponSystem",
 	&"GrenadeWeaponSystem",
 	&"PlasmaWeaponSystem",
-	&"AreaWeaponSystem"
+	&"AreaWeaponSystem",
+	&"OrbitingWeaponSystem"
 ]
 var hc_weapon_input_actions: Array[StringName] = [
 	&"p1_weapon_1", &"p1_weapon_2", &"p1_weapon_3", &"p1_weapon_4", &"p1_weapon_5"
@@ -61,6 +62,7 @@ func _ready() -> void:
 	if my_camera == null:
 		push_error("Missä on mun kamera? %s" % [my_camera_name])
 		return
+	_ensure_orbiting_weapon_system()
 	_configure_weapon_systems()
 
 
@@ -186,6 +188,15 @@ func _collect_weapon_systems() -> Array[WeaponSystem]:
 		if system != null:
 			systems.append(system)
 	return systems
+
+
+func _ensure_orbiting_weapon_system() -> void:
+	var existing := get_node_or_null(NodePath("OrbitingWeaponSystem")) as WeaponSystem
+	if existing != null:
+		return
+	var orbiting_system := OrbitingHelicopterWeaponSystem.new()
+	orbiting_system.name = "OrbitingWeaponSystem"
+	add_child(orbiting_system)
 
 
 func _configure_weapon_systems() -> void:
