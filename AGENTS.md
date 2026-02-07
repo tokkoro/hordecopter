@@ -30,6 +30,7 @@
 > * **Indentation:** Use tabs in `.gd`, `.gdshader`, `.cs` files. Do not use spaces.
 > * `gdlint` expects `class_name` **before** `extends`.
 > * Never include `uid` fields anywhere (scenes, scripts, or other files); they are not readable or debuggable.
+> * When creating a new node in code, it needs to be attached to the scene tree before e.g. `.global_position` can be used.
 
 > \[!IMPORTANT]
 > Your tools might let you create a PR that includes a binary file, but the user
@@ -102,7 +103,7 @@ dotnet format --verify-no-changes --nologo --severity hidden || {
 
 **CODING AGENT RULES**
 
-* No tabs, no syntax errors, no style violations before commit.
+* No syntax errors, no style violations before commit.
 * **Binary files may not be added, staged, or committed** under any circumstances.
 * Review local `TODO.md`, `CHANGE_LOG.md`, `STYLE_GUIDE.md`, `README.md`,
   `VARIABLE_NAMING.md`. Create/ update them as needed.
