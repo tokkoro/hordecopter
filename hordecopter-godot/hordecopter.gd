@@ -13,6 +13,7 @@ extends RigidBody3D
 
 const HC_WEAPON_DAMAGE_STEP: float = 0.25
 const HC_WEAPON_COOLDOWN_MULTIPLIER: float = 0.92
+const HC_MAX_UNLOCKED_WEAPONS: int = 6
 
 @export var auto_float: bool = true
 @export var my_camera_name: StringName = &"Camera3D"
@@ -204,7 +205,7 @@ func _configure_weapon_systems() -> void:
 	rng.randomize()
 	var index := rng.randi_range(0, hc_weapon_systems.size() - 1)
 	_unlock_weapon_system(index, true)
-
+	_update_weapon_hud()
 
 
 func get_level_up_options(count: int) -> Array[Dictionary]:
@@ -215,6 +216,7 @@ func get_level_up_options(count: int) -> Array[Dictionary]:
 	for index in range(hc_weapon_systems.size()):
 		indices.append(index)
 	indices.shuffle()
+	var unlocked_count := _get_unlocked_weapon_count()
 	var option_count: int = int(min(count, indices.size()))
 	for option_index in range(option_count):
 		var system_index := indices[option_index]
@@ -227,6 +229,8 @@ func get_level_up_options(count: int) -> Array[Dictionary]:
 		var current_level := hc_weapon_levels[system_index]
 		var label: String
 		if current_level <= 0:
+			if unlocked_count >= HC_MAX_UNLOCKED_WEAPONS:
+				continue
 			label = "Unlock %s" % weapon_name
 		else:
 			label = "Upgrade %s (Lv %d → %d)" % [weapon_name, current_level, current_level + 1]
@@ -242,13 +246,16 @@ func apply_level_up_choice(choice: Dictionary) -> void:
 	if system_index < 0 or system_index >= hc_weapon_systems.size():
 		return
 	if hc_weapon_levels[system_index] <= 0:
+		if _get_unlocked_weapon_count() >= HC_MAX_UNLOCKED_WEAPONS:
+			push_warning("Weapon slots full; cannot unlock more weapons.")
+			return
 		_unlock_weapon_system(system_index, false)
 	else:
 		hc_weapon_levels[system_index] += 1
 		var level := _apply_weapon_level(system_index)
 		if level == 1:
 			_unlock_weapon_system(system_index, true)
-		 
+	_update_weapon_hud()
 
 
 func _unlock_weapon_system(index: int, make_active: bool) -> void:
@@ -260,6 +267,7 @@ func _unlock_weapon_system(index: int, make_active: bool) -> void:
 	if make_active:
 		_disable_all_weapon_systems()
 		hc_weapon_systems[index].set_physics_process(true)
+	_update_weapon_hud()
 
 
 func _disable_all_weapon_systems() -> void:
@@ -281,6 +289,31 @@ func _apply_weapon_level(index: int) -> int:
 	var cooldown_multiplier := pow(HC_WEAPON_COOLDOWN_MULTIPLIER, float(level - 1))
 	system.weapon.cooldown = max(0.05, base_cooldown * cooldown_multiplier)
 	return level
+
+
+func _get_unlocked_weapon_count() -> int:
+	var unlocked_count := 0
+	for level in hc_weapon_levels:
+		if level > 0:
+			unlocked_count += 1
+	return unlocked_count
+
+
+func _update_weapon_hud() -> void:
+	var hud := get_tree().get_first_node_in_group("hud")
+	if hud == null or not hud.has_method("update_weapon_slots"):
+		return
+	var weapon_data: Array[Dictionary] = []
+	var slot_count := int(min(hc_weapon_systems.size(), HC_MAX_UNLOCKED_WEAPONS))
+	for index in range(slot_count):
+		var system := hc_weapon_systems[index]
+		var icon: Texture2D = null
+		var level := 0
+		if system != null and system.weapon != null:
+			icon = system.weapon.icon
+			level = hc_weapon_levels[index]
+		weapon_data.append({"icon": icon, "level": level})
+	hud.update_weapon_slots(weapon_data)
 
 
 func _is_weapon_locked(index: int) -> bool:
