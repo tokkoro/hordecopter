@@ -236,6 +236,7 @@ func get_level_up_options(count: int) -> Array[Dictionary]:
 
 func apply_level_up_choice(choice: Dictionary) -> void:
 	if not choice.has("index"):
+		push_warning("Invalid level up choice: %s" % JSON.stringify(choice))
 		return
 	var system_index := int(choice["index"])
 	if system_index < 0 or system_index >= hc_weapon_systems.size():
@@ -244,7 +245,10 @@ func apply_level_up_choice(choice: Dictionary) -> void:
 		_unlock_weapon_system(system_index, false)
 	else:
 		hc_weapon_levels[system_index] += 1
-		_apply_weapon_level(system_index)
+		var level := _apply_weapon_level(system_index)
+		if level == 1:
+			_unlock_weapon_system(system_index, true)
+		 
 
 
 func _unlock_weapon_system(index: int, make_active: bool) -> void:
@@ -264,18 +268,19 @@ func _disable_all_weapon_systems() -> void:
 			system.set_physics_process(false)
 
 
-func _apply_weapon_level(index: int) -> void:
+func _apply_weapon_level(index: int) -> int:
 	if index < 0 or index >= hc_weapon_systems.size():
-		return
+		return 0
 	var system := hc_weapon_systems[index]
 	if system == null or system.weapon == null:
-		return
+		return 0
 	var base_damage := hc_weapon_base_damage[index]
 	var base_cooldown := hc_weapon_base_cooldown[index]
 	var level: int = int(max(1, hc_weapon_levels[index]))
 	system.weapon.damage = base_damage * (1.0 + HC_WEAPON_DAMAGE_STEP * float(level - 1))
 	var cooldown_multiplier := pow(HC_WEAPON_COOLDOWN_MULTIPLIER, float(level - 1))
 	system.weapon.cooldown = max(0.05, base_cooldown * cooldown_multiplier)
+	return level
 
 
 func _is_weapon_locked(index: int) -> bool:

@@ -198,4 +198,3 @@ func _request_level_up_if_needed() -> void:
 		game_state_hud.show_level_up_choices(options)
 	else:
 		push_warning("GameState: HUD missing show_level_up_choices; cannot show upgrades.")
-
