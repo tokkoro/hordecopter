@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="WeaponDefinition" load_steps=3 format=3 uid="uid://d2k7r0x2kp2o3"]
+[gd_resource type="Resource" script_class="WeaponDefinition" format=3 uid="uid://d2k7r0x2kp2o3"]
 
 [ext_resource type="Script" uid="uid://jw2coyki72vv" path="res://weapons/weapon_definition.gd" id="1_weapon"]
 [ext_resource type="PackedScene" uid="uid://bn3m1t2hpss8c" path="res://weapons/grenade_projectile.tscn" id="2_grenade"]

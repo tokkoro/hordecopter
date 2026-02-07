@@ -12,7 +12,7 @@ class_name GrenadeProjectile
 extends Area3D
 
 @export var speed: float = 10.0
-@export var gravity: float = 18.0
+#@export var gravity: float = 18.0
 @export var lifetime: float = 2.2
 @export var explosion_radius: float = 2.5
 
