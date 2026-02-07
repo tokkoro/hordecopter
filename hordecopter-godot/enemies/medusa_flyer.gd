@@ -9,8 +9,8 @@
 #                 • move_speed: float – travel speed
 #                 • wave_amplitude: float – vertical wave height
 #                 • wave_frequency: float – wave cycles per second
-# Dependencies     • n/a
-# Last Major Rev   • 25-09-27 – initial medusa flyer
+# Dependencies     • res://enemies/enemy_health_bar.tscn
+# Last Major Rev   • 25-09-27 – add toggleable enemy health bar
 ###############################################################
 
 class_name MedusaFlyer
@@ -25,6 +25,10 @@ var medusa_flyer_direction: Vector3 = Vector3.FORWARD
 var medusa_flyer_target: Node3D
 var medusa_flyer_time: float = 0.0
 var medusa_flyer_base_height: float = 0.0
+var medusa_flyer_max_health: float = 1.0
+
+@onready
+var medusa_flyer_health_bar: EnemyHealthBar3D = get_node_or_null("HealthBar3D") as EnemyHealthBar3D
 
 
 func _ready() -> void:
@@ -32,6 +36,8 @@ func _ready() -> void:
 	medusa_flyer_direction = medusa_flyer_direction.normalized()
 	medusa_flyer_target = _find_player()
 	medusa_flyer_base_height = global_position.y
+	medusa_flyer_max_health = max(1.0, health)
+	_update_health_bar()
 	if medusa_flyer_target == null:
 		push_warning("MedusaFlyer: player target not found; using fallback direction.")
 
@@ -66,8 +72,15 @@ func configure_spawn_direction(direction: Vector3) -> void:
 
 func apply_damage(amount: float) -> void:
 	health -= amount
+	_update_health_bar()
 	if health <= 0.0:
 		queue_free()
+
+
+func _update_health_bar() -> void:
+	if medusa_flyer_health_bar == null:
+		return
+	medusa_flyer_health_bar.set_health(health, medusa_flyer_max_health)
 
 
 func _find_player() -> Node3D:
