@@ -125,10 +125,10 @@ func _spawn_medusa_flyer() -> void:
 				enemy_spawner_margin
 			)
 			enemy_spawner_direction = Vector3.BACK
+	get_tree().current_scene.add_child(enemy_spawner_instance)
 	enemy_spawner_instance.global_position = enemy_spawner_position
 	if enemy_spawner_instance.has_method("configure_spawn_direction"):
 		enemy_spawner_instance.call("configure_spawn_direction", enemy_spawner_direction)
-	get_tree().current_scene.add_child(enemy_spawner_instance)
 
 
 func _random_ground_position() -> Vector3:
