@@ -14,6 +14,8 @@
 class_name FlyoverEnemy
 extends CharacterBody3D
 
+const FLYOVER_ENEMY_HIT_SFX: AudioStream = preload("res://sfx/monster_hit.sfxr")
+
 @export var health: float = 4.0
 @export var flyover_speed: float = 4.0
 @export var flyover_enemy_damage_label_scene: PackedScene = preload("res://ui/damage_label_3d.tscn")
@@ -44,6 +46,7 @@ func configure_flyover(direction: Vector3) -> void:
 
 
 func apply_damage(amount: float) -> void:
+	_play_hit_sfx()
 	_spawn_damage_label(amount)
 	health -= amount
 	_update_health_bar()
@@ -80,3 +83,21 @@ func _spawn_damage_label(amount: float) -> void:
 		flyover_enemy_label_node.global_position = global_position + Vector3(0.0, 1.5, 0.0)
 	if flyover_enemy_label_instance.has_method("set_damage"):
 		flyover_enemy_label_instance.set_damage(amount)
+
+
+func _play_hit_sfx() -> void:
+	_play_sfx_at(FLYOVER_ENEMY_HIT_SFX, global_position)
+
+
+func _play_sfx_at(stream: AudioStream, position: Vector3) -> void:
+	if stream == null:
+		return
+	var current_scene := get_tree().current_scene
+	if current_scene == null:
+		return
+	var player := AudioStreamPlayer3D.new()
+	current_scene.add_child(player)
+	player.stream = stream
+	player.global_position = position
+	player.finished.connect(player.queue_free)
+	player.play()

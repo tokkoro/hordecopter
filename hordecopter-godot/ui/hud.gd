@@ -15,6 +15,7 @@ extends CanvasLayer
 const HUD_MAX_WEAPON_SLOTS: int = 6
 
 @export var show_experience_numbers: bool = false
+@export var menu_select_sound: AudioStream = preload("res://sfx/menu_select.sfxr")
 
 var hud_level_up_overlay: PanelContainer
 var hud_level_up_buttons: Array[Button] = []
@@ -263,8 +264,20 @@ func _on_level_up_option_pressed(index: int) -> void:
 		return
 	var choice := hud_level_up_options[index]
 	hide_level_up_choices()
+	_play_menu_select_sfx()
 	var game_state := get_tree().get_first_node_in_group("game_state")
 	if game_state != null and game_state.has_method("resolve_level_up_choice"):
 		game_state.resolve_level_up_choice(choice)
 	else:
 		push_warning("GameHud: GameState missing resolve_level_up_choice; cannot apply upgrade.")
+
+
+func _play_menu_select_sfx() -> void:
+	if menu_select_sound == null:
+		return
+	var player := AudioStreamPlayer.new()
+	player.stream = menu_select_sound
+	player.process_mode = Node.PROCESS_MODE_ALWAYS
+	player.finished.connect(player.queue_free)
+	add_child(player)
+	player.play()

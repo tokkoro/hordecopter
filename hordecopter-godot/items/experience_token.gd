@@ -21,9 +21,9 @@ extends Node3D
 @export var magnet_speed: float = 6.0
 
 @export var sleep_time: float = 3.0
+@export var collect_sound: AudioStream = preload("res://sfx/collect.sfxr")
 
 var start_time: float = 0
-
 
 var experience_token_target: Node3D
 var experience_token_warned_missing_target: bool = false
@@ -46,7 +46,9 @@ func _physics_process(delta: float) -> void:
 	if distance <= magnet_radius:
 		var t = (Time.get_ticks_msec() - start_time) / (sleep_time * 1000)
 		t = clampf(t, 0, 1)
-		global_position = global_position.move_toward(target.global_position, magnet_speed * delta * t)
+		global_position = global_position.move_toward(
+			target.global_position, magnet_speed * delta * t
+		)
 
 
 func configure_amount(amount: int) -> void:
@@ -78,4 +80,19 @@ func _collect() -> void:
 		game_state.add_experience(experience_amount)
 	else:
 		push_warning("ExperienceToken: GameState missing add_experience; XP not granted.")
+	_play_sfx_at(collect_sound, global_position)
 	queue_free()
+
+
+func _play_sfx_at(stream: AudioStream, position: Vector3) -> void:
+	if stream == null:
+		return
+	var current_scene := get_tree().current_scene
+	if current_scene == null:
+		return
+	var player := AudioStreamPlayer3D.new()
+	current_scene.add_child(player)
+	player.stream = stream
+	player.global_position = position
+	player.finished.connect(player.queue_free)
+	player.play()

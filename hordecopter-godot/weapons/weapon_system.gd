@@ -11,14 +11,17 @@
 class_name WeaponSystem
 extends Node3D
 
+const WEAPON_SYSTEM_LASER_SFX: AudioStream = preload("res://sfx/laser.sfxr")
+const WEAPON_SYSTEM_MISSILE_SFX: AudioStream = preload("res://sfx/missile_shoot.sfxr")
+
 @export var weapon: WeaponDefinition
 @export var muzzle_path: NodePath = NodePath("../Muzzle")
 
+var is_ready = false
+var is_active = false
 var _muzzle: Node3D
 var _next_fire_time: float = 0.0
 
-var is_ready = false
-var is_active = false
 
 func _ready() -> void:
 	if is_ready:
@@ -31,6 +34,7 @@ func _ready() -> void:
 		_muzzle = self
 	is_ready = true
 
+
 func activate() -> void:
 	print("activate weapon")
 	if is_active:
@@ -40,6 +44,7 @@ func activate() -> void:
 		push_warning("Activating weapon that is not ready! 😱😱")
 	if weapon != null:
 		_next_fire_time = weapon.cooldown
+
 
 func _physics_process(_delta: float) -> void:
 	if weapon == null or not is_active:
@@ -62,6 +67,7 @@ func try_fire() -> void:
 func _fire_hitscan() -> void:
 	if _muzzle == null:
 		return
+	_play_sfx_at(WEAPON_SYSTEM_LASER_SFX, _muzzle.global_position)
 	var start := _muzzle.global_position
 	var direction := -_muzzle.global_transform.basis.z
 	var end := start + direction * weapon.range
@@ -90,9 +96,34 @@ func _fire_projectile() -> void:
 	if weapon.projectile_scene == null:
 		push_warning("Projectile weapon should have projectile_scene!")
 		return
+	_play_projectile_sfx()
 	var projectile := weapon.projectile_scene.instantiate()
 	get_tree().current_scene.add_child(projectile)
 	projectile.global_transform = _muzzle.global_transform
 	if projectile.has_method("configure"):
 		var direction := -_muzzle.global_transform.basis.z
 		projectile.configure(weapon, direction)
+
+
+func _play_projectile_sfx() -> void:
+	if weapon == null or weapon.projectile_scene == null:
+		return
+	var projectile_path := weapon.projectile_scene.resource_path
+	if projectile_path == "":
+		return
+	if projectile_path.ends_with("homing_missile.tscn"):
+		_play_sfx_at(WEAPON_SYSTEM_MISSILE_SFX, _muzzle.global_position)
+
+
+func _play_sfx_at(stream: AudioStream, position: Vector3) -> void:
+	if stream == null:
+		return
+	var current_scene := get_tree().current_scene
+	if current_scene == null:
+		return
+	var player := AudioStreamPlayer3D.new()
+	current_scene.add_child(player)
+	player.stream = stream
+	player.global_position = position
+	player.finished.connect(player.queue_free)
+	player.play()
