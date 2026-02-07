@@ -76,3 +76,4 @@ func _update_facing(direction: Vector3) -> void:
 	if direction.length() <= 0.01:
 		return
 	medusa_flyer_head.look_at(medusa_flyer_head.global_position + direction, Vector3.UP)
+	medusa_flyer_head.rotate_y(PI)
