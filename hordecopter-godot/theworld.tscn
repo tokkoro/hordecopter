@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://ddo5hf3gvff11" path="res://hordecopter.tscn" id="2_qn30u"]
 [ext_resource type="Texture2D" uid="uid://cvmso3ruvike3" path="res://ground_gpt.png" id="2_wkxu0"]
 [ext_resource type="Script" uid="uid://c5ovtis2odund" path="res://camera_3d.gd" id="3_qn30u"]
-[ext_resource type="PackedScene" path="res://enemies/test_enemy.tscn" id="4_test_enemy"]
+[ext_resource type="PackedScene" uid="uid://dtvm5nkvy8k57" path="res://enemies/test_enemy.tscn" id="4_test_enemy"]
 [ext_resource type="Script" uid="uid://byuj30fao1rua" path="res://enemies/enemy_spawner.gd" id="5_enemy_spawner"]
 [ext_resource type="PackedScene" path="res://enemies/flyover_enemy.tscn" id="6_flyover_enemy"]
 [ext_resource type="Script" uid="uid://ccyrihhmixdf4" path="res://game_state.gd" id="6_game_state"]
