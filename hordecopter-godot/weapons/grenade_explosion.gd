@@ -30,8 +30,8 @@ func configure(damage: float, radius: float) -> void:
 
 
 func _ready() -> void:
-	monitoring = true
-	monitorable = true
+	set_deferred("monitoring", true)
+	set_deferred("monitorable", true)
 	_apply_radius()
 	_prepare_material()
 	_play_burst()

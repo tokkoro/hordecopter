@@ -1,4 +1,4 @@
-[gd_resource type="Resource" script_class="WeaponDefinition" format=3]
+[gd_resource type="Resource" script_class="WeaponDefinition" format=3 uid="uid://kfs76h8hlc32"]
 
 [ext_resource type="Script" path="res://weapons/weapon_definition.gd" id="1_weapon"]
 [ext_resource type="PackedScene" path="res://weapons/homing_missile.tscn" id="2_missile"]
