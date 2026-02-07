@@ -1,8 +1,8 @@
-[gd_scene format=3 uid="uid://d3wshr8b25xcp"]
+[gd_scene format=3]
 
-[ext_resource type="PackedScene" uid="uid://x4pith38mxmy" path="res://hordecopter.tscn" id="2_qn30u"]
-[ext_resource type="Texture2D" uid="uid://cvmso3ruvike3" path="res://ground_gpt.png" id="2_wkxu0"]
-[ext_resource type="Script" uid="uid://c5ovtis2odund" path="res://camera_3d.gd" id="3_qn30u"]
+[ext_resource type="PackedScene" path="res://hordecopter.tscn" id="2_qn30u"]
+[ext_resource type="Texture2D" path="res://ground_gpt.png" id="2_wkxu0"]
+[ext_resource type="Script" path="res://camera_3d.gd" id="3_qn30u"]
 [ext_resource type="PackedScene" path="res://enemies/test_enemy.tscn" id="4_test_enemy"]
 [ext_resource type="Script" path="res://enemies/enemy_spawner.gd" id="5_enemy_spawner"]
 

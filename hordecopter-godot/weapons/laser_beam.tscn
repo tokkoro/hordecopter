@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://b5ap7upuq6g6l"]
+[gd_scene format=3]
 
-[ext_resource type="Script" uid="uid://c5yjtkmrdj16w" path="res://weapons/laser_beam.gd" id="1_laser"]
+[ext_resource type="Script" path="res://weapons/laser_beam.gd" id="1_laser"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1"]
 albedo_color = Color(1, 0.25, 0.25, 1)
