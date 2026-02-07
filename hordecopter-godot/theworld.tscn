@@ -70,7 +70,6 @@ script = ExtResource("8_prop_spawner")
 
 [node name="GameState" type="Node" parent="." unique_id=554225321]
 script = ExtResource("6_game_state")
-clock_speed = 50.0
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=542620325]
 script = ExtResource("7_hud")

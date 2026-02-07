@@ -1,29 +1,29 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://cwy2xmpah0dwq"]
 
 [ext_resource type="Script" path="res://enemies/enemy_health_bar.gd" id="1_enemy_health_bar"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_health_bg"]
+shading_mode = 0
 albedo_color = Color(0.1, 0.1, 0.1, 0.8)
-shading_mode = 0
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_health_fill"]
-albedo_color = Color(0.2, 0.9, 0.2, 0.9)
-shading_mode = 0
 
 [sub_resource type="BoxMesh" id="BoxMesh_health_bg"]
-size = Vector3(1.2, 0.12, 0.12)
+size = Vector3(0.98, 0.12, 0.12)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_health_fill"]
+shading_mode = 0
+albedo_color = Color(0.2, 0.9, 0.2, 0.9)
 
 [sub_resource type="BoxMesh" id="BoxMesh_health_fill"]
-size = Vector3(1.0, 0.08, 0.08)
+size = Vector3(1, 0.08, 0.08)
 
-[node name="EnemyHealthBar3D" type="Node3D"]
+[node name="EnemyHealthBar3D" type="Node3D" unique_id=1304257082]
 script = ExtResource("1_enemy_health_bar")
 
-[node name="Background" type="MeshInstance3D" parent="."]
-mesh = SubResource("BoxMesh_health_bg")
+[node name="Background" type="MeshInstance3D" parent="." unique_id=1647053598]
 material_override = SubResource("StandardMaterial3D_health_bg")
+mesh = SubResource("BoxMesh_health_bg")
 
-[node name="Fill" type="MeshInstance3D" parent="."]
-position = Vector3(0, 0, -0.01)
-mesh = SubResource("BoxMesh_health_fill")
+[node name="Fill" type="MeshInstance3D" parent="." unique_id=1037435142]
+transform = Transform3D(0.5, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, -0.01)
 material_override = SubResource("StandardMaterial3D_health_fill")
+mesh = SubResource("BoxMesh_health_fill")
