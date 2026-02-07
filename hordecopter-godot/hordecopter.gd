@@ -1,11 +1,11 @@
 ###############################################################
 # hordecopter.gd
-# Key Classes      • Hordecopter – player controller + weapon toggles
+# Key Classes      • Hordecopter – player controller
 # Key Functions    • _configure_weapon_systems() – random starter weapon
 # Critical Consts  • n/a
 # Editor Exports   • auto_float: bool – hover assist toggle
 # Dependencies     • weapons/weapon_system.gd
-# Last Major Rev   • 25-09-20 – weapon activation toggles
+# Last Major Rev   • 25-09-20 – weapon activation toggle remove
 ###############################################################
 
 class_name Hordecopter
@@ -60,7 +60,6 @@ func _ready() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	_handle_weapon_toggles()
 	# handle _p1_ inputs
 	var up_force_input = 0
 	if Input.is_action_pressed("p1_thrust_up"):
@@ -200,28 +199,12 @@ func _configure_weapon_systems() -> void:
 		else:
 			hc_weapon_base_damage.append(0.0)
 			hc_weapon_base_cooldown.append(0.0)
+	# TODO: level up at a start of give certain weapon?
 	var rng := RandomNumberGenerator.new()
 	rng.randomize()
 	var index := rng.randi_range(0, hc_weapon_systems.size() - 1)
 	_unlock_weapon_system(index, true)
 
-
-func _handle_weapon_toggles() -> void:
-	var action_count: int = min(hc_weapon_input_actions.size(), hc_weapon_systems.size())
-	for index in range(action_count):
-		if Input.is_action_just_pressed(hc_weapon_input_actions[index]):
-			_toggle_weapon_system(index)
-
-
-func _toggle_weapon_system(index: int) -> void:
-	if index < 0 or index >= hc_weapon_systems.size():
-		return
-	if _is_weapon_locked(index):
-		return
-	var system := hc_weapon_systems[index]
-	if system == null:
-		return
-	system.set_physics_process(not system.is_physics_processing())
 
 
 func get_level_up_options(count: int) -> Array[Dictionary]:
