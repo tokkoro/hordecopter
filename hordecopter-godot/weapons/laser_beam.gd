@@ -14,9 +14,9 @@ extends Node3D
 @export var lifetime: float = 0.05
 @export var beam_mesh_path: NodePath = NodePath("BeamMesh")
 @export var sweep_duration: float = 0.35
-@export var sweep_angle_degrees: float = 50.0
 @export var sweep_ease_power: float = 2.0
 
+const sweep_angle_degrees: float = 179.0
 var _beam_mesh: MeshInstance3D
 var _beam_material: StandardMaterial3D
 var _sweep_active := false
