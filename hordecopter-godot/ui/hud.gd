@@ -26,6 +26,15 @@ func _ready() -> void:
 	hud_level_bar.max_value = 1.0
 	hud_level_bar.value = 0.0
 	hud_experience_label.visible = show_experience_numbers
+	_register_with_game_state()
+
+
+func _register_with_game_state() -> void:
+	var game_state := get_tree().get_first_node_in_group("game_state")
+	if game_state != null and game_state.has_method("register_hud"):
+		game_state.register_hud(self)
+	else:
+		push_warning("GameHud: GameState missing register_hud; HUD may not update.")
 
 
 func update_time(time_seconds: float) -> void:

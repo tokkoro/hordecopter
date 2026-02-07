@@ -3,6 +3,7 @@
 # Key Classes      • GameState – global timer and experience tracker
 # Key Functions    • add_experience() – apply experience and handle leveling
 #                 • get_elapsed_time() – report time since start
+#                 • register_hud() – receive HUD instance from UI
 # Critical Consts  • n/a
 # Editor Exports   • level_start: int – starting level
 #                 • experience_start: int – starting experience value
@@ -39,12 +40,14 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	game_state_elapsed_time += delta
+	_ensure_hud()
 	_update_time_hud()
 
 
 func add_experience(amount: int) -> void:
 	if amount <= 0:
 		return
+	_ensure_hud()
 	game_state_experience += amount
 	while game_state_experience >= game_state_experience_cap:
 		game_state_experience -= game_state_experience_cap
@@ -62,11 +65,26 @@ func get_experience_progress() -> float:
 	return float(game_state_experience) / float(max(1, game_state_experience_cap))
 
 
+func register_hud(hud: Node) -> void:
+	game_state_hud = hud
+	game_state_warned_missing_hud = false
+	_refresh_hud()
+	_update_time_hud()
+
+
 func _find_hud() -> Node:
 	var huds := get_tree().get_nodes_in_group("hud")
 	if huds.size() > 0:
 		return huds[0]
 	return null
+
+
+func _ensure_hud() -> void:
+	if game_state_hud != null:
+		return
+	game_state_hud = _find_hud()
+	if game_state_hud != null:
+		game_state_warned_missing_hud = false
 
 
 func _refresh_hud() -> void:
