@@ -7,6 +7,7 @@
 # Editor Exports   • ground_enemy_scene: PackedScene – wandering enemy type
 #                 • medusa_flyer_scene: PackedScene – flying enemy type
 #                 • flyover_enemy_scene: PackedScene – legacy flyover type (unused)
+#                 • spawn_effect_scene: PackedScene – spawn cue visual
 #                 • spawn_interval: float – time between spawns
 #                 • max_enemies: int – global enemy cap
 #                 • group_size: int – count spawned per wave
@@ -16,6 +17,7 @@
 #                 • flyover_spawn_margin: float – extra distance from map edge
 # Dependencies     • res://enemies/test_enemy.tscn (assigned in scene)
 #                 • res://enemies/medusa_flyer.tscn
+#                 • res://enemies/enemy_spawn_effect.tscn
 #                 • res://game_state.gd
 # Last Major Rev   • 25-09-27 – add medusa flyer spawns
 ###############################################################
@@ -26,6 +28,7 @@ extends Node3D
 @export var ground_enemy_scene: PackedScene
 @export var medusa_flyer_scene: PackedScene = preload("res://enemies/medusa_flyer.tscn")
 @export var flyover_enemy_scene: PackedScene
+@export var spawn_effect_scene: PackedScene = preload("res://enemies/enemy_spawn_effect.tscn")
 @export var spawn_interval: float = 5.0
 @export var max_enemies: int = 100
 @export var group_size: int = 3
@@ -82,16 +85,13 @@ func _spawn_group() -> void:
 
 
 func _spawn_ground_enemy() -> void:
-	var enemy_spawner_instance: Node3D = ground_enemy_scene.instantiate()
-	get_tree().current_scene.add_child(enemy_spawner_instance)
-	enemy_spawner_instance.global_position = _random_ground_position()
-	_apply_time_scaling(enemy_spawner_instance)
+	var enemy_spawner_position := _random_ground_position()
+	_spawn_with_effect(ground_enemy_scene, enemy_spawner_position, Callable())
 
 
 func _spawn_medusa_flyer() -> void:
 	if medusa_flyer_scene == null:
 		return
-	var enemy_spawner_instance: Node3D = medusa_flyer_scene.instantiate()
 	var enemy_spawner_side: int = enemy_spawner_rng.randi_range(0, 3)
 	var enemy_spawner_half: float = map_size * 0.5
 	var enemy_spawner_margin: float = enemy_spawner_half + flyover_spawn_margin
@@ -126,10 +126,10 @@ func _spawn_medusa_flyer() -> void:
 				enemy_spawner_margin
 			)
 			enemy_spawner_direction = Vector3.BACK
-	get_tree().current_scene.add_child(enemy_spawner_instance)
-	enemy_spawner_instance.global_position = enemy_spawner_position
-	if enemy_spawner_instance.has_method("configure_spawn_direction"):
-		enemy_spawner_instance.call("configure_spawn_direction", enemy_spawner_direction)
+	var enemy_spawner_configure := Callable(self, "_configure_medusa_flyer").bind(
+		enemy_spawner_direction
+	)
+	_spawn_with_effect(medusa_flyer_scene, enemy_spawner_position, enemy_spawner_configure)
 
 
 func _random_ground_position() -> Vector3:
@@ -153,3 +153,48 @@ func _apply_time_scaling(enemy_instance: Node) -> void:
 		enemy_instance.configure_from_time(game_state.get_elapsed_time())
 	else:
 		push_warning("EnemySpawner: Enemy missing configure_from_time; skipping scaling.")
+
+
+func _spawn_with_effect(
+	enemy_scene: PackedScene, spawn_position: Vector3, configure_callback: Callable
+) -> void:
+	if enemy_scene == null:
+		return
+	var enemy_spawner_effect := _create_spawn_effect(spawn_position)
+	if enemy_spawner_effect == null:
+		_spawn_enemy_instance(enemy_scene, spawn_position, configure_callback)
+		return
+	enemy_spawner_effect.spawn_ready.connect(
+		_on_spawn_effect_ready.bind(enemy_scene, spawn_position, configure_callback)
+	)
+
+
+func _create_spawn_effect(spawn_position: Vector3) -> Node3D:
+	if spawn_effect_scene == null:
+		return null
+	var enemy_spawner_effect: Node3D = spawn_effect_scene.instantiate()
+	get_tree().current_scene.add_child(enemy_spawner_effect)
+	enemy_spawner_effect.global_position = spawn_position
+	return enemy_spawner_effect
+
+
+func _on_spawn_effect_ready(
+	enemy_scene: PackedScene, spawn_position: Vector3, configure_callback: Callable
+) -> void:
+	_spawn_enemy_instance(enemy_scene, spawn_position, configure_callback)
+
+
+func _spawn_enemy_instance(
+	enemy_scene: PackedScene, spawn_position: Vector3, configure_callback: Callable
+) -> void:
+	var enemy_spawner_instance: Node3D = enemy_scene.instantiate()
+	get_tree().current_scene.add_child(enemy_spawner_instance)
+	enemy_spawner_instance.global_position = spawn_position
+	if configure_callback.is_valid():
+		configure_callback.call(enemy_spawner_instance)
+	_apply_time_scaling(enemy_spawner_instance)
+
+
+func _configure_medusa_flyer(enemy_instance: Node3D, travel_direction: Vector3) -> void:
+	if enemy_instance.has_method("configure_spawn_direction"):
+		enemy_instance.call("configure_spawn_direction", travel_direction)

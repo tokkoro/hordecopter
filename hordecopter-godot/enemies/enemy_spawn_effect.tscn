@@ -1,0 +1,13 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://enemies/enemy_spawn_effect.gd" id="1_enemy_spawn_effect"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_enemy_spawn_effect"]
+radius = 0.5
+height = 1.0
+
+[node name="EnemySpawnEffect" type="Node3D"]
+script = ExtResource("1_enemy_spawn_effect")
+
+[node name="Sphere" type="MeshInstance3D" parent="."]
+mesh = SubResource("SphereMesh_enemy_spawn_effect")
