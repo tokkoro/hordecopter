@@ -1,10 +1,10 @@
 [gd_scene format=3 uid="uid://cwy2xmpah0dwq"]
 
-[ext_resource type="Script" path="res://enemies/enemy_health_bar.gd" id="1_enemy_health_bar"]
+[ext_resource type="Script" uid="uid://ccb7g4kffyyj6" path="res://enemies/enemy_health_bar.gd" id="1_enemy_health_bar"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_health_bg"]
 shading_mode = 0
-albedo_color = Color(0.1, 0.1, 0.1, 0.8)
+albedo_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_health_bg"]
 size = Vector3(0.98, 0.12, 0.12)

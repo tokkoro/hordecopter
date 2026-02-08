@@ -39,14 +39,15 @@ metadata/_custom_type_script = "uid://jw2coyki72vv"
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_health_bg"]
 shading_mode = 0
-albedo_color = Color(0.1, 0.1, 0.1, 0.8)
+albedo_color = Color(0.101960786, 0.101960786, 0.101960786, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_health_bg"]
 size = Vector3(0.98, 0.12, 0.12)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3adfc"]
+transparency = 1
 shading_mode = 0
-albedo_color = Color(1, 0.6431373, 0.2, 0.9019608)
+albedo_color = Color(1, 0.6431373, 0.2, 1)
 
 [sub_resource type="BoxMesh" id="BoxMesh_health_fill"]
 size = Vector3(1, 0.08, 0.08)
