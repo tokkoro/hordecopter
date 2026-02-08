@@ -61,7 +61,7 @@ func _fire_area() -> void:
 			var enemy_node := enemy as Node3D
 			if enemy_node.global_position.distance_to(origin) <= radius:
 				if enemy_node.has_method("apply_damage"):
-					enemy_node.apply_damage(weapon.damage)
+					enemy_node.apply_damage(weapon.damage, weapon.knockback, origin)
 
 
 func _get_area_radius() -> float:

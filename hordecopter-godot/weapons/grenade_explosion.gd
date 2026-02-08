@@ -22,12 +22,14 @@ const GRENADE_EXPLOSION_SFX: AudioStream = preload("res://sfx/grenade_exposion.s
 @export var emission_energy: float = 2.8
 
 var _explosion_has_damaged: bool = false
+var _explosion_knockback: float = 0.0
 @onready var _explosion_mesh: MeshInstance3D = $ExplosionMesh
 @onready var _explosion_collision: CollisionShape3D = $CollisionShape3D
 
 
-func configure(damage: float, radius: float) -> void:
+func configure(damage: float, knockback: float, radius: float) -> void:
 	explosion_damage = damage
+	_explosion_knockback = knockback
 	explosion_radius = radius
 	_apply_radius()
 
@@ -43,7 +45,7 @@ func _ready() -> void:
 	timer.timeout.connect(queue_free)
 
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 	if not _explosion_has_damaged:
 		_apply_damage()
 
@@ -93,7 +95,7 @@ func _apply_damage() -> void:
 			var node := body as Node3D
 			var distance := global_position.distance_to(node.global_position)
 			if distance <= explosion_radius and node.has_method("apply_damage"):
-				node.apply_damage(explosion_damage)
+				node.apply_damage(explosion_damage, _explosion_knockback, global_position)
 				_explosion_has_damaged = true
 
 
