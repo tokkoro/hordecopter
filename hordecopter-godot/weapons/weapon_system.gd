@@ -115,7 +115,7 @@ func _fire_projectile() -> void:
 	var projectile_count: int = int(max(1, weapon.projectile_count))
 	var base_direction := -_muzzle.global_transform.basis.z
 	var base_up := _muzzle.global_transform.basis.y
-	var spread_step_degrees := 5.0
+	var spread_step_degrees := 15.0
 	var spread_start := -0.5 * float(projectile_count - 1) * spread_step_degrees
 	for index in range(projectile_count):
 		var projectile := weapon.projectile_scene.instantiate()

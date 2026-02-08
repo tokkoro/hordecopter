@@ -29,7 +29,6 @@
 >
 > * **Indentation:** Use tabs in `.gd`, `.gdshader`, `.cs` files. Do not use spaces.
 > * `gdlint` expects `class_name` **before** `extends`.
-> * Never include `uid` fields anywhere (scenes, scripts, or other files); they are not readable or debuggable.
 > * When creating a new node in code, it needs to be attached to the scene tree before e.g. `.global_position` can be used.
 
 > \[!IMPORTANT]
