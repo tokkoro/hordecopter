@@ -1,23 +1,20 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://dnws6oy2g18y4"]
 
-[ext_resource type="Script" path="res://enemies/flyover_enemy.gd" id="1_flyover_enemy"]
-[ext_resource type="PackedScene" path="res://enemies/enemy_health_bar.tscn" id="2_enemy_health_bar"]
-
-[sub_resource type="BoxMesh" id="BoxMesh_flyover"]
-size = Vector3(1, 0.6, 2)
+[ext_resource type="Script" uid="uid://dtf1c7gxhfwcm" path="res://enemies/flyover_enemy.gd" id="1_flyover_enemy"]
+[ext_resource type="PackedScene" uid="uid://cwy2xmpah0dwq" path="res://enemies/enemy_health_bar.tscn" id="2_enemy_health_bar"]
+[ext_resource type="PackedScene" uid="uid://dbhy7ufb4wrd5" path="res://models/medusa_head_shaded.glb" id="3_yc4cl"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_flyover"]
 size = Vector3(1, 0.6, 2)
 
-[node name="FlyoverEnemy" type="RigidBody3D"]
+[node name="FlyoverEnemy" type="RigidBody3D" unique_id=1330513271]
 script = ExtResource("1_flyover_enemy")
 is_flying = true
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-mesh = SubResource("BoxMesh_flyover")
-
-[node name="HealthBar3D" parent="." instance=ExtResource("2_enemy_health_bar")]
+[node name="HealthBar3D" parent="." unique_id=347238629 instance=ExtResource("2_enemy_health_bar")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.2, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1016913879]
 shape = SubResource("BoxShape3D_flyover")
+
+[node name="medusa_head_shaded" parent="." unique_id=969775795 instance=ExtResource("3_yc4cl")]

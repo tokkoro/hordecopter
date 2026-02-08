@@ -1,20 +1,22 @@
 [gd_scene format=3 uid="uid://cksfgpkhgs7uq"]
 
-[ext_resource type="Script" uid="uid://dv1bt8rnxg4kh" path="res://ui/main_menu.gd" id="1_c0j6p"]
-[ext_resource type="Script" uid="uid://bwc8b66rmbyph" path="res://weapons/weapon_system.gd" id="2_p8ri8"]
-[ext_resource type="Resource" uid="uid://kqaffrt5hvoc" path="res://weapons/homing_missile_weapon.tres" id="3_ubpvv"]
+[ext_resource type="Script" uid="uid://boy3ufjfjqxsy" path="res://ui/main_menu.gd" id="1_c0j6p"]
+[ext_resource type="Script" uid="uid://fa4lscqld16j" path="res://weapons/weapon_system.gd" id="2_p8ri8"]
+[ext_resource type="Texture2D" uid="uid://brfha4l641gob" path="res://weapons/missile.png" id="4_8jgmr"]
 [ext_resource type="PackedScene" uid="uid://d25k72efcjldo" path="res://models/vain_body.glb" id="4_arv2f"]
-[ext_resource type="Script" uid="uid://nmj5je32etrs" path="res://rollaus_pivot_piste.gd" id="5_5klac"]
+[ext_resource type="Script" uid="uid://ckkyad8tnpn7e" path="res://rollaus_pivot_piste.gd" id="5_5klac"]
+[ext_resource type="PackedScene" path="res://weapons/homing_missile.tscn" id="5_q75kt"]
+[ext_resource type="Script" uid="uid://dq0avkcbb1f5i" path="res://weapons/weapon_definition.gd" id="6_0i0gl"]
 [ext_resource type="PackedScene" uid="uid://yksjed5m5v1b" path="res://models/vain_ropeli.glb" id="6_lsdqh"]
 [ext_resource type="Texture2D" uid="uid://b4vbypn3vqhkj" path="res://ground_gpt_2.png" id="7_p8ri8"]
-[ext_resource type="Environment" uid="uid://d4mwoxujdu6d6" path="res://the_environment.tres" id="8_ubpvv"]
-[ext_resource type="Script" uid="uid://byuj30fao1rua" path="res://enemies/enemy_spawner.gd" id="9_0nobx"]
+[ext_resource type="Script" uid="uid://bis62j8a7c1e7" path="res://enemies/enemy_spawner.gd" id="9_0nobx"]
 [ext_resource type="PackedScene" uid="uid://b4fmt4sv8ly22" path="res://enemies/basic_enemy.tscn" id="10_iyrh0"]
 [ext_resource type="PackedScene" uid="uid://3wckabtb30ws" path="res://enemies/basic_enemy_2.tscn" id="11_8jgmr"]
 [ext_resource type="PackedScene" uid="uid://b54rvoqsjj6f3" path="res://enemies/basic_enemy_3.tscn" id="12_q75kt"]
 [ext_resource type="PackedScene" uid="uid://61wxncgqfry7" path="res://enemies/basic_enemy_4.tscn" id="13_0i0gl"]
 [ext_resource type="PackedScene" path="res://enemies/medusa_flyer.tscn" id="14_jqly5"]
-[ext_resource type="PackedScene" path="res://enemies/flyover_enemy.tscn" id="15_pbm0j"]
+[ext_resource type="PackedScene" uid="uid://b0fhkjani5dta" path="res://world_environment.tscn" id="15_0nobx"]
+[ext_resource type="PackedScene" uid="uid://dnws6oy2g18y4" path="res://enemies/flyover_enemy.tscn" id="15_pbm0j"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ubpvv"]
 albedo_texture = ExtResource("7_p8ri8")
@@ -28,6 +30,19 @@ height = 1.0
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_0nobx"]
 height = 1.0
 radius = 10.0
+
+[sub_resource type="Resource" id="Resource_jqly5"]
+script = ExtResource("6_0i0gl")
+weapon_name = "Homing Missile"
+icon = ExtResource("4_8jgmr")
+fire_mode = 1
+cooldown = 1.0
+damage = 100.0
+knockback = 6.0
+knockback_per_level = 1.0
+range = 70.0
+projectile_count_level_step = 1
+projectile_scene = ExtResource("5_q75kt")
 
 [node name="MainMenu" type="Control" unique_id=1534175925]
 layout_mode = 3
@@ -67,7 +82,7 @@ layout_mode = 2
 text = "Quit"
 
 [node name="Maa" type="StaticBody3D" parent="." unique_id=2135507121]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5115425, 9.284622)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0025794506, -0.5115425, 3.3489027)
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Maa" unique_id=967538802]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5091238, 0)
@@ -79,11 +94,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 shape = SubResource("CylinderShape3D_0nobx")
 
 [node name="Hordecopter" type="Node3D" parent="." unique_id=2134224287]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10.114728)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.8685341, 0, 7.2828608)
 
 [node name="MissileWeaponSystem" type="Node3D" parent="Hordecopter" unique_id=301106776]
 script = ExtResource("2_p8ri8")
-weapon = ExtResource("3_ubpvv")
+weapon = SubResource("Resource_jqly5")
 is_active = true
 
 [node name="vain_body" parent="Hordecopter" unique_id=1528544377 instance=ExtResource("4_arv2f")]
@@ -101,21 +116,23 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.45494208, -0.20959833)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.20205303, -0.8301058)
 
 [node name="EnemySpawner" type="Node3D" parent="." unique_id=1064900324]
-transform = Transform3D(0.7813951, -0.23068504, 0.579833, 0.026434876, 0.94056696, 0.338578, -0.62347656, -0.24923533, 0.7410525, 2.2345638, 1.2234739, 0.80332935)
+transform = Transform3D(0.7813951, -0.23068504, 0.579833, 0.026434876, 0.94056696, 0.338578, -0.62347656, -0.24923533, 0.7410525, 0.7463703, 0, -2.8318672)
 script = ExtResource("9_0nobx")
 ground_enemy_scenes = Array[PackedScene]([ExtResource("10_iyrh0"), ExtResource("11_8jgmr"), ExtResource("12_q75kt"), ExtResource("13_0i0gl"), ExtResource("14_jqly5"), ExtResource("15_pbm0j")])
-spawn_interval_max = 5.0
-spawn_interval_min = 5.0
+spawn_interval_max = 4.0
+spawn_interval_min = 4.0
 spawn_ramp_duration = 1.0
 max_enemies = 10
 group_size_min = 5
 group_size_max = 10
 map_size = 1.0
+new_enemy_interval = 7.9
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1556954517]
-transform = Transform3D(0.7813951, -0.23068504, 0.579833, 0.026434876, 0.94056696, 0.338578, -0.62347656, -0.24923533, 0.7410525, 2.2345638, 1.2234739, 10.918057)
-environment = ExtResource("8_ubpvv")
+transform = Transform3D(0.7813951, -0.23068504, 0.579833, 0.026434876, 0.94056696, 0.338578, -0.62347656, -0.24923533, 0.7410525, 4.103098, 1.2234739, 8.08619)
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Camera3D" unique_id=249780247]
 transform = Transform3D(1, 0, 0, 0, 0.19387484, 0.9810263, 0, -0.9810263, 0.19387484, 0, 23.777777, 0)
 shadow_enabled = true
+
+[node name="WorldEnvironment" parent="." unique_id=2067898889 instance=ExtResource("15_0nobx")]

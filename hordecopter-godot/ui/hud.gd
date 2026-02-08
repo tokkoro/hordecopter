@@ -17,6 +17,7 @@ const HUD_MAX_ITEM_SLOTS: int = 5
 
 @export var show_experience_numbers: bool = false
 @export var menu_select_sound: AudioStream = preload("res://sfx/menu_select.sfxr")
+const LEVEL_UP :AudioStream= preload("uid://ccqsebs1ovo5c")
 
 var hud_level_up_overlay: PanelContainer
 var hud_level_up_buttons: Array[Button] = []
@@ -124,7 +125,6 @@ func update_item_slots(item_data: Array[Dictionary]) -> void:
 			label.visible = false
 			slot_panel.modulate = Color(1, 1, 1, 0.35)
 
-
 func show_level_up_choices(options: Array[Dictionary]) -> void:
 	hud_level_up_options = options
 	if hud_level_up_overlay == null:
@@ -145,6 +145,13 @@ func show_level_up_choices(options: Array[Dictionary]) -> void:
 	hud_level_up_overlay.visible = true
 	if hud_level_up_buttons.size() > 0:
 		hud_level_up_buttons[0].grab_focus()
+
+	var player := AudioStreamPlayer.new()
+	player.stream = LEVEL_UP
+	player.process_mode = Node.PROCESS_MODE_ALWAYS
+	player.finished.connect(player.queue_free)
+	add_child(player)
+	player.play()
 
 
 func hide_level_up_choices() -> void:

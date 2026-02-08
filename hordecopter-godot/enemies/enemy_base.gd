@@ -186,6 +186,12 @@ func _spawn_damage_label(amount: float) -> void:
 	if enemy_base_label_instance is Node3D:
 		var enemy_base_label_node := enemy_base_label_instance as Node3D
 		enemy_base_label_node.global_position = global_position + Vector3(0.0, 1.5, 0.0)
+		enemy_base_label_node.rotation = rotation
+		print("old", enemy_base_label_node.global_position)
+		enemy_base_label_node.position += transform.basis.z
+		enemy_base_label_node.position += transform.basis.x * randf_range(-1, 1)
+		enemy_base_label_node.position += transform.basis.y * randf_range(0, 0.5)
+		print("new", enemy_base_label_node.global_position)
 	if enemy_base_label_instance.has_method("set_damage"):
 		enemy_base_label_instance.set_damage(amount)
 

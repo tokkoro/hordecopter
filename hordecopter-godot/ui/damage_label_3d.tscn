@@ -1,11 +1,13 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://c4pi2gc255e4j"]
 
-[ext_resource type="Script" path="res://ui/damage_label_3d.gd" id="1_damage_label_3d"]
+[ext_resource type="Script" uid="uid://dlvid1oa1glko" path="res://ui/damage_label_3d.gd" id="1_damage_label_3d"]
 
-[node name="DamageLabel3D" type="Node3D"]
+[node name="DamageLabel3D" type="Node3D" unique_id=207314575]
 script = ExtResource("1_damage_label_3d")
 
-[node name="Label3D" type="Label3D" parent="."]
-text = "0"
-billboard = 1
+[node name="Label3D" type="Label3D" parent="." unique_id=1519879078]
 pixel_size = 0.01
+billboard = 1
+modulate = Color(0.21, 0.20131999, 0.079799995, 1)
+outline_modulate = Color(0.95, 0.8961667, 0.14249997, 0.36862746)
+text = "0"

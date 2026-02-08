@@ -33,7 +33,7 @@ extends StaticBody3D
 
 const LOOT_CRATE_HIT_SFX: AudioStream = preload("res://sfx/monster_hit.sfxr")
 
-@export var max_health: float = 6.0
+@export var max_health: float = 1.0
 @export var drop_speed: float = 2.5
 @export var drop_drift_speed: float = 0.6
 @export var experience_drop_count: int = 6
@@ -98,7 +98,6 @@ func begin_drop(landing_height: float) -> void:
 func apply_damage(amount: float, _knockback: float = 0.0, _origin: Vector3 = Vector3.ZERO) -> void:
 	if amount <= 0.0:
 		return
-	_spawn_damage_label(amount)
 	_play_hit_sfx()
 	loot_crate_health -= amount
 	_update_health_bar()
@@ -179,21 +178,6 @@ func _update_health_bar() -> void:
 		push_warning("No health bar on loot crate")
 		return
 	loot_crate_health_bar.set_health(loot_crate_health, loot_crate_max_health)
-
-
-func _spawn_damage_label(amount: float) -> void:
-	if damage_label_scene == null:
-		return
-	var loot_crate_label_instance := damage_label_scene.instantiate()
-	var loot_crate_scene := get_tree().current_scene
-	if loot_crate_scene == null:
-		return
-	loot_crate_scene.add_child(loot_crate_label_instance)
-	if loot_crate_label_instance is Node3D:
-		var loot_crate_label_node := loot_crate_label_instance as Node3D
-		loot_crate_label_node.global_position = global_position + Vector3(0.0, 1.5, 0.0)
-	if loot_crate_label_instance.has_method("set_damage"):
-		loot_crate_label_instance.set_damage(amount)
 
 
 func _play_hit_sfx() -> void:

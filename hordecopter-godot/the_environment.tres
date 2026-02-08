@@ -14,4 +14,5 @@ sky = SubResource("Sky_jm5vp")
 sky_custom_fov = 61.2
 ambient_light_source = 3
 ambient_light_color = Color(0.7735279, 0.7565761, 0, 1)
-ambient_light_energy = 0.2
+ambient_light_sky_contribution = 0.5
+ambient_light_energy = 0.0

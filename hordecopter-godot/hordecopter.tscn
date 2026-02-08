@@ -1,21 +1,21 @@
 [gd_scene format=3 uid="uid://ddo5hf3gvff11"]
 
-[ext_resource type="Script" uid="uid://cjcl4isvop3nb" path="res://hordecopter.gd" id="1_hordecopter"]
-[ext_resource type="Script" uid="uid://bwc8b66rmbyph" path="res://weapons/weapon_system.gd" id="2_weapon_system"]
-[ext_resource type="Script" uid="uid://421udilwjuap" path="res://weapons/area_weapon_system.gd" id="3_area_weapon_system"]
+[ext_resource type="Script" uid="uid://crdqoqfrdyur8" path="res://hordecopter.gd" id="1_hordecopter"]
+[ext_resource type="Script" uid="uid://fa4lscqld16j" path="res://weapons/weapon_system.gd" id="2_weapon_system"]
+[ext_resource type="Script" uid="uid://0sqa3sn5e1tl" path="res://weapons/area_weapon_system.gd" id="3_area_weapon_system"]
 [ext_resource type="PackedScene" uid="uid://d25k72efcjldo" path="res://models/vain_body.glb" id="4_body"]
 [ext_resource type="Resource" uid="uid://b26uwna5dssms" path="res://weapons/laser_weapon.tres" id="5_laser_weapon"]
 [ext_resource type="Resource" uid="uid://kqaffrt5hvoc" path="res://weapons/homing_missile_weapon.tres" id="6_missile_weapon"]
-[ext_resource type="Script" uid="uid://nmj5je32etrs" path="res://rollaus_pivot_piste.gd" id="7_rollaus_pivot"]
+[ext_resource type="Script" uid="uid://ckkyad8tnpn7e" path="res://rollaus_pivot_piste.gd" id="7_rollaus_pivot"]
 [ext_resource type="Resource" uid="uid://bar0g1efnvqlw" path="res://weapons/grenade_weapon.tres" id="8_grenade_weapon"]
 [ext_resource type="PackedScene" uid="uid://yksjed5m5v1b" path="res://models/vain_ropeli.glb" id="9_ropeli"]
 [ext_resource type="Resource" uid="uid://ckexc7c57b1uu" path="res://weapons/plasma_weapon.tres" id="10_plasma_weapon"]
 [ext_resource type="Resource" uid="uid://dtq2mw6n4aqm3" path="res://weapons/area_weapon.tres" id="11_area_weapon"]
-[ext_resource type="Script" uid="uid://4tcllulb563i" path="res://weapons/orbiting_helicopter_weapon_system.gd" id="12_6gtap"]
+[ext_resource type="Script" uid="uid://bja26lmlo7lfn" path="res://weapons/orbiting_helicopter_weapon_system.gd" id="12_6gtap"]
 [ext_resource type="Texture2D" uid="uid://b0323mruxlisk" path="res://weapons/copters_around.png" id="13_8sv32"]
-[ext_resource type="Script" uid="uid://jw2coyki72vv" path="res://weapons/weapon_definition.gd" id="14_t13ue"]
+[ext_resource type="Script" uid="uid://dq0avkcbb1f5i" path="res://weapons/weapon_definition.gd" id="14_t13ue"]
 [ext_resource type="PackedScene" uid="uid://bvillwguvjmyl" path="res://weapons/orbiting_ropelli.tscn" id="15_8sv32"]
-[ext_resource type="Script" uid="uid://ccb7g4kffyyj6" path="res://enemies/enemy_health_bar.gd" id="16_t13ue"]
+[ext_resource type="Script" uid="uid://dgvc7s1uv5dxk" path="res://enemies/enemy_health_bar.gd" id="16_t13ue"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_eifgo"]
 
@@ -58,6 +58,9 @@ script = ExtResource("1_hordecopter")
 kp = 250.0
 ki = 10.0
 kd = 100.0
+fuel_drain_per_second = 1.0
+fuel_altitude_drain_per_second = 0.1
+fuel_ground_height = 2.0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1321631637]
 shape = SubResource("BoxShape3D_eifgo")
