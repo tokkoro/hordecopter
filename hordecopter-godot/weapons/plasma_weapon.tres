@@ -10,5 +10,7 @@ weapon_name = "Plasma Ball"
 icon = ExtResource("3_plasma_icon")
 fire_mode = 1
 cooldown = 1.0
+knockback = 3.0
+knockback_per_level = 0.5
 range = 45.0
 projectile_scene = ExtResource("2_plasma")

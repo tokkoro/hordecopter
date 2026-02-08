@@ -59,7 +59,7 @@ func _ready() -> void:
 	loot_crate_rng.randomize()
 
 
-func apply_damage(amount: float) -> void:
+func apply_damage(amount: float, _knockback: float = 0.0, _origin: Vector3 = Vector3.ZERO) -> void:
 	if amount <= 0.0:
 		return
 	_spawn_damage_label(amount)

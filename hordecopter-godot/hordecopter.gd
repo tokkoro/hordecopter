@@ -65,6 +65,7 @@ var hc_item_levels: Array[int] = []
 
 var hc_base_max_x_speed: float = 0.0
 var hc_base_max_z_speed: float = 0.0
+var hc_weapon_base_knockback: Array[float] = []
 var hc_rotor_swosh_timer: float = 0.0
 var _i: float = 0.0
 var _prev_error: float = 0.0
@@ -263,6 +264,7 @@ func _configure_weapon_systems() -> void:
 	hc_weapon_base_damage.clear()
 	hc_weapon_base_cooldown.clear()
 	hc_weapon_base_area_radius.clear()
+	hc_weapon_base_knockback.clear()
 	for system in hc_weapon_systems:
 		if not system.is_ready:
 			push_warning("Weapon was not ready to be configured!")
@@ -275,6 +277,11 @@ func _configure_weapon_systems() -> void:
 			hc_weapon_base_damage.append(0.0)
 			hc_weapon_base_cooldown.append(0.0)
 			hc_weapon_base_area_radius.append(0.0)
+			hc_weapon_base_knockback.append(system.weapon.knockback)
+		else:
+			hc_weapon_base_damage.append(0.0)
+			hc_weapon_base_cooldown.append(0.0)
+			hc_weapon_base_knockback.append(0.0)
 	# TODO: level up at a start of give certain weapon?
 	var rng := RandomNumberGenerator.new()
 	rng.randomize()
@@ -382,12 +389,14 @@ func _apply_weapon_level(index: int) -> int:
 	var base_damage := hc_weapon_base_damage[index]
 	var base_cooldown := hc_weapon_base_cooldown[index]
 	var base_area_radius := hc_weapon_base_area_radius[index]
+	var base_knockback := hc_weapon_base_knockback[index]
 	var level: int = int(max(1, hc_weapon_levels[index]))
 	var bonus_damage := get_item_bonus(ItemDefinition.ItemType.DAMAGE)
 	var bonus_attack_speed := get_item_bonus(ItemDefinition.ItemType.ATTACK_SPEED)
 	var bonus_area_size := get_item_bonus(ItemDefinition.ItemType.AREA_SIZE)
 	system.weapon.damage = base_damage * (1.0 + HC_WEAPON_DAMAGE_STEP * float(level - 1))
 	system.weapon.damage += bonus_damage
+	system.weapon.knockback = base_knockback + system.weapon.knockback_per_level * float(level - 1)
 	var cooldown_multiplier := pow(HC_WEAPON_COOLDOWN_MULTIPLIER, float(level - 1))
 	system.weapon.cooldown = max(0.05, base_cooldown * cooldown_multiplier - bonus_attack_speed)
 	if base_area_radius > 0.0:

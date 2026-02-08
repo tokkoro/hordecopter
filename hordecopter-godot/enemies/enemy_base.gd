@@ -4,6 +4,8 @@
 # Key Functions    • apply_damage() – handle damage and death flow
 #                 • configure_elite() – scale elite stats
 #                 • _find_player() – locate the player target
+#                 • _apply_knockback() – push enemy away from hit
+#                 • _trigger_hit_flash() – flash enemy on hit
 # Critical Consts  • n/a
 # Editor Exports   • health: float – hit points
 #                 • base_health: float – baseline health
@@ -23,6 +25,8 @@ class_name EnemyBase
 extends RigidBody3D
 
 const ENEMY_HIT_SFX: AudioStream = preload("res://sfx/monster_hit.sfxr")
+const ENEMY_BASE_FLASH_COLOR: Color = Color(1.0, 0.2, 0.2, 1.0)
+const ENEMY_BASE_FLASH_DURATION: float = 0.12
 
 @export var health: float = 4.0
 @export var base_health: float = 4.0
@@ -40,6 +44,9 @@ var enemy_base_experience_reward: int = 1
 var enemy_base_configured: bool = false
 var enemy_base_is_dead: bool = false
 var enemy_base_time_stop_remaining: float = 0.0
+var enemy_base_flash_timer: float = 0.0
+var enemy_base_flash_materials: Array[StandardMaterial3D] = []
+var enemy_base_flash_colors: Array[Color] = []
 
 @onready
 var enemy_base_health_bar: EnemyHealthBar3D = get_node_or_null("HealthBar3D") as EnemyHealthBar3D
@@ -54,17 +61,21 @@ func _ready() -> void:
 	enemy_base_max_health = max(1.0, health)
 	_apply_initial_scaling()
 	set_max_health(health)
+	_cache_flash_materials()
 
 
 func _process(delta: float) -> void:
+	_update_hit_flash(delta)
 	if enemy_base_time_stop_remaining <= 0.0:
 		return
 	enemy_base_time_stop_remaining = max(0.0, enemy_base_time_stop_remaining - delta)
 
 
-func apply_damage(amount: float) -> void:
+func apply_damage(amount: float, knockback: float = 0.0, origin: Vector3 = Vector3.ZERO) -> void:
 	_spawn_damage_label(amount)
 	_play_hit_sfx()
+	_trigger_hit_flash()
+	_apply_knockback(knockback, origin)
 	health -= amount
 	_update_health_bar()
 	if health <= 0.0:
@@ -182,6 +193,59 @@ func _find_player() -> Node3D:
 
 func _play_hit_sfx() -> void:
 	_play_sfx_at(ENEMY_HIT_SFX, global_position)
+
+
+func _cache_flash_materials() -> void:
+	enemy_base_flash_materials.clear()
+	enemy_base_flash_colors.clear()
+	var meshes: Array[MeshInstance3D] = []
+	_collect_mesh_instances(self, meshes)
+	for mesh in meshes:
+		if mesh.material_override is StandardMaterial3D:
+			var material := mesh.material_override.duplicate()
+			mesh.material_override = material
+			enemy_base_flash_materials.append(material)
+			enemy_base_flash_colors.append(material.albedo_color)
+
+
+func _collect_mesh_instances(node: Node, meshes: Array[MeshInstance3D]) -> void:
+	for child in node.get_children():
+		if child is MeshInstance3D:
+			meshes.append(child as MeshInstance3D)
+		_collect_mesh_instances(child, meshes)
+
+
+func _trigger_hit_flash() -> void:
+	if enemy_base_flash_materials.is_empty():
+		return
+	enemy_base_flash_timer = ENEMY_BASE_FLASH_DURATION
+	for material in enemy_base_flash_materials:
+		if material != null:
+			material.albedo_color = ENEMY_BASE_FLASH_COLOR
+
+
+func _update_hit_flash(delta: float) -> void:
+	if enemy_base_flash_timer <= 0.0:
+		return
+	enemy_base_flash_timer = max(0.0, enemy_base_flash_timer - delta)
+	if enemy_base_flash_timer > 0.0:
+		return
+	for index in range(min(enemy_base_flash_materials.size(), enemy_base_flash_colors.size())):
+		var material := enemy_base_flash_materials[index]
+		if material != null:
+			material.albedo_color = enemy_base_flash_colors[index]
+
+
+func _apply_knockback(knockback: float, origin: Vector3) -> void:
+	if knockback <= 0.0:
+		return
+	var direction := global_position - origin
+	direction.y = 0.0
+	if direction.length() < 0.01:
+		direction = -global_transform.basis.z
+	if direction.length() < 0.01:
+		direction = Vector3.FORWARD
+	apply_impulse(direction.normalized() * knockback)
 
 
 func _play_sfx_at(stream: AudioStream, position: Vector3) -> void:

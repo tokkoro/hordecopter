@@ -81,6 +81,7 @@ func _fire_hitscan() -> void:
 				direction,
 				weapon.range,
 				weapon.damage,
+				weapon.knockback,
 				weapon.beam_color,
 				weapon.beam_width,
 				get_parent()
@@ -98,7 +99,7 @@ func _fire_hitscan() -> void:
 		if result.has("collider"):
 			collider = result.collider
 		if collider != null and collider.has_method("apply_damage"):
-			collider.apply_damage(weapon.damage)
+			collider.apply_damage(weapon.damage, weapon.knockback, start)
 	if beam != null and beam.has_method("configure"):
 		beam.configure(start, hit_point, weapon.beam_color, weapon.beam_width)
 

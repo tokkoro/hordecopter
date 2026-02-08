@@ -18,6 +18,7 @@ extends Area3D
 @export var explosion_scene: PackedScene
 
 var _weapon_damage: float = 0.0
+var _weapon_knockback: float = 0.0
 var _velocity: Vector3 = Vector3.ZERO
 var _grenade_has_exploded: bool = false
 
@@ -32,6 +33,7 @@ func _ready() -> void:
 
 func configure(weapon: WeaponDefinition, direction: Vector3) -> void:
 	_weapon_damage = weapon.damage
+	_weapon_knockback = weapon.knockback
 	var launch_direction := direction
 	launch_direction.y = 0.35
 	if launch_direction.length() > 0.0:
@@ -77,5 +79,5 @@ func _explode() -> void:
 			var explosion_node := explosion as Node3D
 			explosion_node.global_position = global_position
 		if explosion.has_method("configure"):
-			explosion.configure(_weapon_damage, explosion_radius)
+			explosion.configure(_weapon_damage, _weapon_knockback, explosion_radius)
 	queue_free()

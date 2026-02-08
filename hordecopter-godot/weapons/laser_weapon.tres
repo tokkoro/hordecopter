@@ -10,6 +10,7 @@ weapon_name = "Laser"
 icon = ExtResource("3_laser_icon")
 cooldown = 1.0
 damage = 4.0
+knockback = 1.0
 range = 60.0
 beam_scene = ExtResource("2_beam")
 beam_color = Color(1, 0.25, 0.25, 1)

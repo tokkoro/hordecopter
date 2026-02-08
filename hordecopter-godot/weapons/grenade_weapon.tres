@@ -11,5 +11,7 @@ icon = ExtResource("3_grenade_icon")
 fire_mode = 1
 cooldown = 1.0
 damage = 8.0
+knockback = 7.0
+knockback_per_level = 1.5
 range = 35.0
 projectile_scene = ExtResource("2_grenade")

@@ -16,6 +16,7 @@ extends Area3D
 @export var lifetime: float = 6.0
 
 var _weapon_damage: float = 0.0
+var _weapon_knockback: float = 0.0
 var _velocity: Vector3 = Vector3.ZERO
 var _target: Node3D
 
@@ -28,6 +29,7 @@ func _ready() -> void:
 
 func configure(weapon: WeaponDefinition, direction: Vector3) -> void:
 	_weapon_damage = weapon.damage
+	_weapon_knockback = weapon.knockback
 	if direction.length() > 0.0:
 		_velocity = direction.normalized() * speed
 	else:
@@ -77,5 +79,5 @@ func _find_target() -> Node3D:
 
 func _on_body_entered(body: Node) -> void:
 	if body != null and body.has_method("apply_damage"):
-		body.apply_damage(_weapon_damage)
+		body.apply_damage(_weapon_damage, _weapon_knockback, global_position)
 	queue_free()
