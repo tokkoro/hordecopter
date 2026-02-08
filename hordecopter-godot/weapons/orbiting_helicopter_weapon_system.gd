@@ -45,7 +45,11 @@ func _ready() -> void:
 		weapon.damage = 2.0
 		weapon.knockback = 1.2
 		weapon.knockback_per_level = 0.3
+		weapon.projectile_count = 2
+		weapon.projectile_count_level_step = 1
+		weapon.projectile_count_level_interval = 1
 		weapon.range = orbit_radius_max
+	orbit_count = max(1, weapon.projectile_count)
 	_spawn_copters()
 	_set_copters_visible(false)
 	ohs_cooldown_time = weapon.cooldown
@@ -91,6 +95,17 @@ func _deactivate_swarm() -> void:
 	ohs_is_active = false
 	ohs_cooldown_time = maxf(0.1, weapon.cooldown)
 	_set_copters_visible(false)
+
+
+func apply_projectile_count(count: int) -> void:
+	var desired: int = maxi(1, count)
+	if desired == orbit_count and not ohs_helicopters.is_empty():
+		return
+	orbit_count = desired
+	_spawn_copters()
+	_update_orbit(0.0)
+	if not ohs_is_active:
+		_set_copters_visible(false)
 
 
 func _set_copters_visible(visible: bool) -> void:
