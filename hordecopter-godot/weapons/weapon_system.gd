@@ -19,7 +19,7 @@ const WEAPON_SYSTEM_PLASMA_SFX: AudioStream = preload("res://sfx/plasma_shoot.sf
 @export var muzzle_path: NodePath = NodePath("../Muzzle")
 
 var is_ready: bool = false
-var is_active: bool = false
+@export var is_active: bool = false
 
 var _muzzle: Node3D
 var _next_fire_time: float = 0.0
