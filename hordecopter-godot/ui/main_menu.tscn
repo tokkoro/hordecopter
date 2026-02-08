@@ -6,8 +6,26 @@
 [ext_resource type="PackedScene" uid="uid://d25k72efcjldo" path="res://models/vain_body.glb" id="4_arv2f"]
 [ext_resource type="Script" uid="uid://nmj5je32etrs" path="res://rollaus_pivot_piste.gd" id="5_5klac"]
 [ext_resource type="PackedScene" uid="uid://yksjed5m5v1b" path="res://models/vain_ropeli.glb" id="6_lsdqh"]
+[ext_resource type="Texture2D" uid="uid://b4vbypn3vqhkj" path="res://ground_gpt_2.png" id="7_p8ri8"]
+[ext_resource type="Environment" uid="uid://d4mwoxujdu6d6" path="res://the_environment.tres" id="8_ubpvv"]
+[ext_resource type="Script" uid="uid://byuj30fao1rua" path="res://enemies/enemy_spawner.gd" id="9_0nobx"]
+[ext_resource type="PackedScene" uid="uid://b4fmt4sv8ly22" path="res://enemies/basic_enemy.tscn" id="10_iyrh0"]
+[ext_resource type="PackedScene" uid="uid://3wckabtb30ws" path="res://enemies/basic_enemy_2.tscn" id="11_8jgmr"]
+[ext_resource type="PackedScene" uid="uid://b54rvoqsjj6f3" path="res://enemies/basic_enemy_3.tscn" id="12_q75kt"]
+[ext_resource type="PackedScene" uid="uid://61wxncgqfry7" path="res://enemies/basic_enemy_4.tscn" id="13_0i0gl"]
+[ext_resource type="PackedScene" path="res://enemies/medusa_flyer.tscn" id="14_jqly5"]
+[ext_resource type="PackedScene" path="res://enemies/flyover_enemy.tscn" id="15_pbm0j"]
 
-[sub_resource type="Environment" id="Environment_ei257"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ubpvv"]
+albedo_texture = ExtResource("7_p8ri8")
+uv1_scale = Vector3(5, 5, 5)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_arv2f"]
+top_radius = 10.0
+height = 1.0
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_5klac"]
+size = Vector3(100, 1, 100)
 
 [node name="MainMenu" type="Control" unique_id=1534175925]
 layout_mode = 3
@@ -46,7 +64,20 @@ unique_name_in_owner = true
 layout_mode = 2
 text = "Quit"
 
+[node name="Maa" type="StaticBody3D" parent="." unique_id=2135507121]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5115425, 9.284622)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Maa" unique_id=967538802]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5091238, 0)
+material_override = SubResource("StandardMaterial3D_ubpvv")
+mesh = SubResource("CylinderMesh_arv2f")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Maa" unique_id=1185607996]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("BoxShape3D_5klac")
+
 [node name="Hordecopter" type="Node3D" parent="." unique_id=2134224287]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10.114728)
 
 [node name="MissileWeaponSystem" type="Node3D" parent="Hordecopter" unique_id=301106776]
 script = ExtResource("2_p8ri8")
@@ -67,9 +98,22 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.45494208, -0.20959833)
 [node name="Muzzle" type="Node3D" parent="Hordecopter" unique_id=1704582275]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.20205303, -0.8301058)
 
+[node name="EnemySpawner" type="Node3D" parent="." unique_id=1064900324]
+transform = Transform3D(0.7813951, -0.23068504, 0.579833, 0.026434876, 0.94056696, 0.338578, -0.62347656, -0.24923533, 0.7410525, 2.2345638, 1.2234739, 0.80332935)
+script = ExtResource("9_0nobx")
+ground_enemy_scenes = Array[PackedScene]([ExtResource("10_iyrh0"), ExtResource("11_8jgmr"), ExtResource("12_q75kt"), ExtResource("13_0i0gl"), ExtResource("14_jqly5"), ExtResource("15_pbm0j")])
+spawn_interval_max = 10.0
+spawn_interval_min = 10.0
+spawn_ramp_duration = 10.0
+max_enemies = 10
+group_size_min = 5
+group_size_max = 10
+map_size = 5.0
+new_enemy_interval = 0.001
+
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1556954517]
-transform = Transform3D(0.7813951, -0.23068504, 0.579833, 0.026434876, 0.94056696, 0.338578, -0.62347656, -0.24923533, 0.7410525, 1.095883, 0.7287953, 1.565005)
-environment = SubResource("Environment_ei257")
+transform = Transform3D(0.7813951, -0.23068504, 0.579833, 0.026434876, 0.94056696, 0.338578, -0.62347656, -0.24923533, 0.7410525, 2.2345638, 1.2234739, 10.918057)
+environment = ExtResource("8_ubpvv")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="Camera3D" unique_id=249780247]
 transform = Transform3D(1, 0, 0, 0, 0.19387484, 0.9810263, 0, -0.9810263, 0.19387484, 0, 23.777777, 0)
