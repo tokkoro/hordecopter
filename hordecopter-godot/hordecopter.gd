@@ -506,14 +506,28 @@ func _apply_weapon_level(index: int) -> int:
 	if _is_missile_weapon(system):
 		var fire_rate_steps := int(floor(float(level) / 2.0))
 		var cooldown_multiplier := pow(HC_WEAPON_COOLDOWN_MULTIPLIER, float(fire_rate_steps))
-		system.weapon.cooldown = max(0.05, base_cooldown * cooldown_multiplier - bonus_attack_speed)
+		system.weapon.cooldown = max(
+			0.05,
+			(
+				base_cooldown * cooldown_multiplier
+				- bonus_attack_speed
+				- system.weapon.cooldown_level_step * float(level - 1)
+			)
+		)
 		var missile_steps := int(floor(float(level - 1) / 2.0))
 		system.weapon.projectile_count = max(
 			1, base_projectile_count + missile_steps * system.weapon.projectile_count_level_step
 		)
 	else:
 		var cooldown_multiplier := pow(HC_WEAPON_COOLDOWN_MULTIPLIER, float(level - 1))
-		system.weapon.cooldown = max(0.05, base_cooldown * cooldown_multiplier - bonus_attack_speed)
+		system.weapon.cooldown = max(
+			0.05,
+			(
+				base_cooldown * cooldown_multiplier
+				- bonus_attack_speed
+				- system.weapon.cooldown_level_step * float(level - 1)
+			)
+		)
 		var interval: int = int(max(1, system.weapon.projectile_count_level_interval))
 		var steps := int(floor(float(level - 1) / float(interval)))
 		system.weapon.projectile_count = max(
@@ -538,8 +552,6 @@ func _apply_weapon_level(index: int) -> int:
 		var area_interval_multiplier := pow(HC_AREA_WEAPON_INTERVAL_MULTIPLIER, float(level - 1))
 		var area_system := system as AreaWeaponSystem
 		area_system.aws_damage_interval = max(0.05, base_area_interval * area_interval_multiplier)
-
-
 
 	return level
 

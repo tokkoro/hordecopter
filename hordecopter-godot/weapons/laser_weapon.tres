@@ -8,7 +8,7 @@
 script = ExtResource("1_weapon")
 weapon_name = "Laser"
 icon = ExtResource("3_laser_icon")
-cooldown = 1.0
+cooldown = 1.4
 damage = 4.0
 knockback = 1.0
 range = 60.0
@@ -17,3 +17,4 @@ projectile_count_level_interval = 1
 beam_scene = ExtResource("2_beam")
 beam_color = Color(1, 0.25, 0.25, 1)
 beam_width = 0.06
+cooldown_level_step = 0.08

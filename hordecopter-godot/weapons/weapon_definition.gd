@@ -11,6 +11,7 @@
 #                 • projectile_count_level_interval: int – levels per step
 #                 • knockback: float – base knockback force
 #                 • knockback_per_level: float – knockback gained per level
+#                 • cooldown_level_step: float – cooldown reduction per level
 # Dependencies     • n/a
 # Last Major Rev   • 25-09-27 – add projectile count scaling fields
 ###############################################################
@@ -31,6 +32,7 @@ enum FireMode {
 @export var damage: float = 5.0
 @export var knockback: float = 0.0
 @export var knockback_per_level: float = 0.0
+@export var cooldown_level_step: float = 0.0
 @export var range: float = 50.0
 @export var area_radius: float = 6.0
 @export var projectile_count: int = 1
