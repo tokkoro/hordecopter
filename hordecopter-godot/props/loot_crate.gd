@@ -63,7 +63,7 @@ func _ready() -> void:
 	add_to_group("props")
 	add_to_group("enemy_targets")
 	add_to_group("loot_crates")
-	loot_crate_health = max(1.0, max_health)
+	loot_crate_health = 1 # max(1.0, max_health)
 	loot_crate_max_health = loot_crate_health
 	_update_health_bar()
 	loot_crate_rng.randomize()
