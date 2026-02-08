@@ -428,18 +428,37 @@ func _apply_weapon_level(index: int) -> int:
 	system.weapon.damage = base_damage * (1.0 + HC_WEAPON_DAMAGE_STEP * float(level - 1))
 	system.weapon.damage += bonus_damage
 	system.weapon.knockback = base_knockback + system.weapon.knockback_per_level * float(level - 1)
-	var cooldown_multiplier := pow(HC_WEAPON_COOLDOWN_MULTIPLIER, float(level - 1))
-
-	system.weapon.cooldown = max(0.05, base_cooldown * cooldown_multiplier - bonus_attack_speed)
-	var interval: int = int(max(1, system.weapon.projectile_count_level_interval))
-	var steps := int(floor(float(level - 1) / float(interval)))
-	system.weapon.projectile_count = max(
-		1, base_projectile_count + steps * system.weapon.projectile_count_level_step
-	)
+	if _is_missile_weapon(system):
+		var fire_rate_steps := int(floor(float(level) / 2.0))
+		var cooldown_multiplier := pow(HC_WEAPON_COOLDOWN_MULTIPLIER, float(fire_rate_steps))
+		system.weapon.cooldown = max(0.05, base_cooldown * cooldown_multiplier - bonus_attack_speed)
+		var missile_steps := int(floor(float(level - 1) / 2.0))
+		system.weapon.projectile_count = max(
+			1, base_projectile_count + missile_steps * system.weapon.projectile_count_level_step
+		)
+	else:
+		var cooldown_multiplier := pow(HC_WEAPON_COOLDOWN_MULTIPLIER, float(level - 1))
+		system.weapon.cooldown = max(0.05, base_cooldown * cooldown_multiplier - bonus_attack_speed)
+		var interval: int = int(max(1, system.weapon.projectile_count_level_interval))
+		var steps := int(floor(float(level - 1) / float(interval)))
+		system.weapon.projectile_count = max(
+			1, base_projectile_count + steps * system.weapon.projectile_count_level_step
+		)
 	if base_area_radius > 0.0:
 		system.weapon.area_radius = max(0.1, base_area_radius + bonus_area_size)
 
 	return level
+
+
+func _is_missile_weapon(system: WeaponSystem) -> bool:
+	if system == null or system.weapon == null:
+		return false
+	if system.weapon.projectile_scene == null:
+		return false
+	var projectile_path := system.weapon.projectile_scene.resource_path
+	if projectile_path == "":
+		return false
+	return projectile_path.ends_with("homing_missile.tscn")
 
 
 func _get_unlocked_weapon_count() -> int:
