@@ -1,36 +1,76 @@
-[gd_scene format=3 uid="uid://d1heuwl0ke3ur"]
+[gd_scene format=3 uid="uid://puindrw6g6rm"]
 
-[ext_resource type="Script" path="res://ui/main_menu.gd" id="1_c0j6p"]
+[ext_resource type="Script" uid="uid://boy3ufjfjqxsy" path="res://ui/main_menu.gd" id="1_c0j6p"]
+[ext_resource type="Script" uid="uid://bwc8b66rmbyph" path="res://weapons/weapon_system.gd" id="2_p8ri8"]
+[ext_resource type="Resource" uid="uid://kqaffrt5hvoc" path="res://weapons/homing_missile_weapon.tres" id="3_ubpvv"]
+[ext_resource type="PackedScene" uid="uid://d25k72efcjldo" path="res://models/vain_body.glb" id="4_arv2f"]
+[ext_resource type="Script" uid="uid://nmj5je32etrs" path="res://rollaus_pivot_piste.gd" id="5_5klac"]
+[ext_resource type="PackedScene" uid="uid://yksjed5m5v1b" path="res://models/vain_ropeli.glb" id="6_lsdqh"]
 
-[node name="MainMenu" type="Control"]
+[sub_resource type="Environment" id="Environment_ei257"]
+
+[node name="MainMenu" type="Control" unique_id=1534175925]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_c0j6p")
 
-[node name="CenterContainer" type="CenterContainer" parent="."]
+[node name="CenterContainer" type="CenterContainer" parent="." unique_id=320945389]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="CenterContainer" unique_id=1161345897]
 layout_mode = 2
 theme_override_constants/separation = 16
 alignment = 1
 
-[node name="TitleLabel" type="Label" parent="CenterContainer/VBoxContainer"]
+[node name="TitleLabel" type="Label" parent="CenterContainer/VBoxContainer" unique_id=976338056]
 layout_mode = 2
 text = "HORDECOPTER"
 horizontal_alignment = 1
 
-[node name="StartButton" type="Button" parent="CenterContainer/VBoxContainer"]
+[node name="StartButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1246232049]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Start Game"
 
-[node name="QuitButton" type="Button" parent="CenterContainer/VBoxContainer"]
+[node name="QuitButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=2030493062]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Quit"
+
+[node name="Hordecopter" type="Node3D" parent="." unique_id=2134224287]
+
+[node name="MissileWeaponSystem" type="Node3D" parent="Hordecopter" unique_id=301106776]
+script = ExtResource("2_p8ri8")
+weapon = ExtResource("3_ubpvv")
+is_active = true
+
+[node name="vain_body" parent="Hordecopter" unique_id=1528544377 instance=ExtResource("4_arv2f")]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, -0.45981646, 0)
+
+[node name="rollaus_pivot_piste" type="Node3D" parent="Hordecopter" unique_id=2080287499]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.18035194)
+script = ExtResource("5_5klac")
+rotation_speed = 10.0
+
+[node name="vain_ropeli" parent="Hordecopter/rollaus_pivot_piste" unique_id=1609318281 instance=ExtResource("6_lsdqh")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.45494208, -0.20959833)
+
+[node name="Muzzle" type="Node3D" parent="Hordecopter" unique_id=1704582275]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.20205303, -0.8301058)
+
+[node name="Camera3D" type="Camera3D" parent="." unique_id=1556954517]
+transform = Transform3D(0.7813951, -0.23068504, 0.579833, 0.026434876, 0.94056696, 0.338578, -0.62347656, -0.24923533, 0.7410525, 1.095883, 0.7287953, 1.565005)
+environment = SubResource("Environment_ei257")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="Camera3D" unique_id=249780247]
+transform = Transform3D(1, 0, 0, 0, 0.19387484, 0.9810263, 0, -0.9810263, 0.19387484, 0, 23.777777, 0)
+shadow_enabled = true
