@@ -3,6 +3,7 @@
 # Key Classes      • PropSpawner – scatters static props with collisions
 # Key Functions    • _spawn_props() – place props around the map
 #                 • _load_prop_definitions() – load prop scenes and metadata
+#                 • _spawn_loot_crate_drop() – deliver loot crates from the sky
 # Critical Consts  • PROP_DEFAULT_PATHS – models to scatter
 # Editor Exports   • prop_paths: Array[String] – list of model scene paths
 #                 • prop_count: int – number of props to place
@@ -11,6 +12,11 @@
 #                 • spawn_height: float – ground height for props
 #                 • min_spacing: float – minimum spacing between props
 #                 • center_clear_radius: float – keep props away from center
+#                 • loot_crate_scene: PackedScene – loot crate scene to drop
+#                 • loot_crate_min_delay: float – minimum drop delay in seconds
+#                 • loot_crate_max_delay: float – maximum drop delay in seconds
+#                 • loot_crate_drop_height: float – height above ground to spawn
+#                 • loot_crate_max_active: int – max number of active drops
 # Dependencies     • res://models/tree.glb (optional)
 #                 • res://models/rock.glb (optional)
 #                 • res://models/bush.glb (optional)
@@ -21,24 +27,19 @@ class_name PropSpawner
 extends Node3D
 
 const PROP_DEFAULT_PATHS: Array[String] = [
-	"res://models/tree.glb",
-	"res://models/rock.glb",
-	"res://models/bush.glb",
-	"res://props/loot_crate.tscn"
+	"res://models/tree.glb", "res://models/rock.glb", "res://models/bush.glb"
 ]
 
 const PROP_COLLISION_SIZES := {
 	"res://models/tree.glb": Vector3(1.3, 2.0, 1.3),
 	"res://models/rock.glb": Vector3(1.7, 0.9, 1.7),
-	"res://models/bush.glb": Vector3(1.3, 1.7, 1.3),
-	"res://props/loot_crate.tscn": Vector3(1.2, 1.2, 1.2)
+	"res://models/bush.glb": Vector3(1.3, 1.7, 1.3)
 }
 
 const PROP_SCALE_RANGES := {
 	"res://models/tree.glb": Vector2(1.9, 2.6),
 	"res://models/rock.glb": Vector2(0.8, 1.8),
-	"res://models/bush.glb": Vector2(0.9, 1.9),
-	"res://props/loot_crate.tscn": Vector2(1.0, 1.0)
+	"res://models/bush.glb": Vector2(0.9, 1.9)
 }
 
 @export var prop_paths: Array[String] = PROP_DEFAULT_PATHS.duplicate()
@@ -49,13 +50,35 @@ const PROP_SCALE_RANGES := {
 @export var min_spacing: float = 5.0
 @export var center_clear_radius: float = 10.0
 @export var max_attempts: int = 200
+@export var loot_crate_scene: PackedScene = preload("res://props/loot_crate.tscn")
+@export var loot_crate_min_delay: float = 6.0
+@export var loot_crate_max_delay: float = 12.0
+@export var loot_crate_drop_height: float = 18.0
+@export var loot_crate_max_active: int = 3
 
 var prop_spawner_rng: RandomNumberGenerator = RandomNumberGenerator.new()
+var prop_spawner_loot_crate_timer: float = 0.0
+var prop_spawner_loot_crate_target: float = 0.0
 
 
 func _ready() -> void:
 	prop_spawner_rng.randomize()
 	_spawn_props()
+	_schedule_next_loot_crate_drop()
+
+
+func _process(delta: float) -> void:
+	if loot_crate_scene == null:
+		return
+	if loot_crate_max_active > 0:
+		var prop_spawner_active := get_tree().get_nodes_in_group("loot_crates").size()
+		if prop_spawner_active >= loot_crate_max_active:
+			return
+	prop_spawner_loot_crate_timer += delta
+	if prop_spawner_loot_crate_timer < prop_spawner_loot_crate_target:
+		return
+	_spawn_loot_crate_drop()
+	_schedule_next_loot_crate_drop()
 
 
 func _spawn_props() -> void:
@@ -173,3 +196,28 @@ func _apply_prop_transform(prop_spawner_node: Node, prop_spawner_scale_value: fl
 func _resolve_scale_value(prop_spawner_definition: Dictionary) -> float:
 	var prop_spawner_scale_range: Vector2 = prop_spawner_definition["scale_range"]
 	return prop_spawner_rng.randf_range(prop_spawner_scale_range.x, prop_spawner_scale_range.y)
+
+
+func _schedule_next_loot_crate_drop() -> void:
+	prop_spawner_loot_crate_timer = 0.0
+	var prop_spawner_min: float = max(1.0, loot_crate_min_delay)
+	var prop_spawner_max: float = max(prop_spawner_min, loot_crate_max_delay)
+	prop_spawner_loot_crate_target = prop_spawner_rng.randf_range(
+		prop_spawner_min, prop_spawner_max
+	)
+
+
+func _spawn_loot_crate_drop() -> void:
+	if loot_crate_scene == null:
+		return
+	var prop_spawner_landing_position := _random_position(map_size * 0.5)
+	var prop_spawner_spawn_position := prop_spawner_landing_position
+	prop_spawner_spawn_position.y = spawn_height + loot_crate_drop_height
+	var prop_spawner_crate_instance: Node = loot_crate_scene.instantiate()
+	if not prop_spawner_crate_instance is Node3D:
+		return
+	add_child(prop_spawner_crate_instance)
+	var prop_spawner_crate_node := prop_spawner_crate_instance as Node3D
+	prop_spawner_crate_node.global_position = prop_spawner_spawn_position
+	if prop_spawner_crate_node.has_method("begin_drop"):
+		prop_spawner_crate_node.call_deferred("begin_drop", spawn_height)

@@ -1,19 +1,44 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://d23arrc57acbg"]
 
-[ext_resource type="PackedScene" path="res://models/crate.glb" id="1_crate_model"]
-[ext_resource type="Script" path="res://props/loot_crate.gd" id="2_loot_crate"]
-[ext_resource type="PackedScene" path="res://enemies/enemy_health_bar.tscn" id="3_enemy_health_bar"]
+[ext_resource type="PackedScene" uid="uid://vyv7fpgtcew3" path="res://models/crate.glb" id="1_crate_model"]
+[ext_resource type="Script" uid="uid://b88uncgp38f00" path="res://props/loot_crate.gd" id="2_loot_crate"]
+[ext_resource type="PackedScene" uid="uid://cwy2xmpah0dwq" path="res://enemies/enemy_health_bar.tscn" id="3_enemy_health_bar"]
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_parachute_canopy"]
+top_radius = 0.35
+bottom_radius = 1.9
+height = 0.5
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_parachute"]
+albedo_color = Color(0.855, 0.168, 0.188, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_parachute_lines"]
+top_radius = 0.04
+bottom_radius = 0.04
+height = 2.2
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_loot_crate"]
 size = Vector3(1.2, 1.2, 1.2)
 
-[node name="LootCrate" type="StaticBody3D"]
+[node name="LootCrate" type="StaticBody3D" unique_id=365441658]
 script = ExtResource("2_loot_crate")
 
-[node name="CrateModel" parent="." instance=ExtResource("1_crate_model")]
+[node name="CrateModel" parent="." unique_id=379533076 instance=ExtResource("1_crate_model")]
 
-[node name="HealthBar3D" parent="." instance=ExtResource("3_enemy_health_bar")]
+[node name="Parachute" type="Node3D" parent="." unique_id=2009876096]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, 0)
+
+[node name="Canopy" type="MeshInstance3D" parent="Parachute" unique_id=608038121]
+mesh = SubResource("CylinderMesh_parachute_canopy")
+surface_material_override/0 = SubResource("StandardMaterial3D_parachute")
+
+[node name="Lines" type="MeshInstance3D" parent="Parachute" unique_id=1892412494]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.35, 0)
+mesh = SubResource("CylinderMesh_parachute_lines")
+surface_material_override/0 = SubResource("StandardMaterial3D_parachute")
+
+[node name="HealthBar3D" parent="." unique_id=783259838 instance=ExtResource("3_enemy_health_bar")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1527730187]
 shape = SubResource("BoxShape3D_loot_crate")
