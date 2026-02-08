@@ -21,6 +21,7 @@ const HC_ITEM_MOVE_SPEED_STEP: float = 1.0
 const HC_ITEM_AREA_SIZE_STEP: float = 0.25
 const HC_ITEM_ATTACK_SPEED_STEP: float = 0.02
 const HC_ITEM_PROJECTILE_SPEED_STEP: float = 1.0
+const HC_GRENADE_RADIUS_LEVEL_STEP: float = 0.25
 
 @export var auto_float: bool = true
 @export var my_camera_name: StringName = &"Camera3D"
@@ -121,7 +122,7 @@ func _physics_process(delta: float) -> void:
 		up_force_input = 1
 	if Input.is_action_pressed("p1_thurst_down"):
 		up_force_input = -1
-	
+
 	if hc_fuel_current <= 0.0:
 		up_force_input = 0
 
@@ -184,7 +185,7 @@ func _physics_process(delta: float) -> void:
 
 		#total force
 		var force_y := hover_force + u
-		auto_float_debug_value = force_y 
+		auto_float_debug_value = force_y
 		#limit
 		force_y = clamp(force_y, -auto_float_power_max, auto_float_power_max)
 
@@ -233,8 +234,7 @@ func _update_fuel(delta: float) -> void:
 		if Time.get_ticks_msec() - hc_previous_aerial_time > 1000:
 			hc_fuel_current = min(fuel_max, hc_fuel_current + fuel_regen_per_second * delta)
 		return
-	else:
-		hc_previous_aerial_time = Time.get_ticks_msec()
+	hc_previous_aerial_time = Time.get_ticks_msec()
 	var altitude: float = max(0.0, _get_ground_distance())
 	var altitude_drain: float = fuel_altitude_drain_per_second * altitude
 	var drain: float = (fuel_drain_per_second + altitude_drain) * delta
@@ -507,7 +507,13 @@ func _apply_weapon_level(index: int) -> int:
 			1, base_projectile_count + steps * system.weapon.projectile_count_level_step
 		)
 	if base_area_radius > 0.0:
-		system.weapon.area_radius = max(0.1, base_area_radius + bonus_area_size)
+		if _is_grenade_weapon(system):
+			system.weapon.area_radius = max(
+				0.1,
+				base_area_radius + bonus_area_size + HC_GRENADE_RADIUS_LEVEL_STEP * float(level - 1)
+			)
+		else:
+			system.weapon.area_radius = max(0.1, base_area_radius + bonus_area_size)
 
 	return level
 
@@ -521,6 +527,17 @@ func _is_missile_weapon(system: WeaponSystem) -> bool:
 	if projectile_path == "":
 		return false
 	return projectile_path.ends_with("homing_missile.tscn")
+
+
+func _is_grenade_weapon(system: WeaponSystem) -> bool:
+	if system == null or system.weapon == null:
+		return false
+	if system.weapon.projectile_scene == null:
+		return false
+	var projectile_path := system.weapon.projectile_scene.resource_path
+	if projectile_path == "":
+		return false
+	return projectile_path.ends_with("grenade_projectile.tscn")
 
 
 func _get_unlocked_weapon_count() -> int:

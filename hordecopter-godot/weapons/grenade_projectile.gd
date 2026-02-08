@@ -34,6 +34,8 @@ func _ready() -> void:
 func configure(weapon: WeaponDefinition, direction: Vector3) -> void:
 	_weapon_damage = weapon.damage
 	_weapon_knockback = weapon.knockback
+	if weapon.area_radius > 0.0:
+		explosion_radius = weapon.area_radius
 	var launch_direction := direction
 	launch_direction.y = 0.35
 	if launch_direction.length() > 0.0:
