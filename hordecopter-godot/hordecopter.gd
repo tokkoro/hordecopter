@@ -24,6 +24,11 @@ const HC_ITEM_MOVE_SPEED_STEP: float = 1.0
 const HC_ITEM_AREA_SIZE_STEP: float = 0.25
 const HC_ITEM_ATTACK_SPEED_STEP: float = 0.02
 const HC_ITEM_PROJECTILE_SPEED_STEP: float = 1.0
+const HC_ITEM_ICON_DAMAGE: Texture2D = preload("res://ui/high-impact-rounds.png")
+const HC_ITEM_ICON_MOVE_SPEED: Texture2D = preload("res://ui/overclocked-rotors.png")
+const HC_ITEM_ICON_AREA_SIZE: Texture2D = preload("res://ui/expanded-payloads.png")
+const HC_ITEM_ICON_ATTACK_SPEED: Texture2D = preload("res://ui/rapid-reload.png")
+const HC_ITEM_ICON_PROJECTILE_SPEED: Texture2D = preload("res://ui/turbo-munitions.png")
 const HC_GRENADE_RADIUS_LEVEL_STEP: float = 0.25
 
 @export var auto_float: bool = true
@@ -621,6 +626,7 @@ func _configure_item_definitions() -> void:
 	var damage_item := ItemDefinition.new()
 	damage_item.item_name = "High-Impact Rounds"
 	damage_item.item_type = ItemDefinition.ItemType.DAMAGE
+	damage_item.icon = HC_ITEM_ICON_DAMAGE
 	damage_item.bonus_per_level = HC_ITEM_DAMAGE_STEP
 	damage_item.max_level = 5
 	hc_item_definitions.append(damage_item)
@@ -629,6 +635,7 @@ func _configure_item_definitions() -> void:
 	var move_item := ItemDefinition.new()
 	move_item.item_name = "Overclocked Rotors"
 	move_item.item_type = ItemDefinition.ItemType.MOVE_SPEED
+	move_item.icon = HC_ITEM_ICON_MOVE_SPEED
 	move_item.bonus_per_level = HC_ITEM_MOVE_SPEED_STEP
 	move_item.max_level = 5
 	hc_item_definitions.append(move_item)
@@ -637,6 +644,7 @@ func _configure_item_definitions() -> void:
 	var size_item := ItemDefinition.new()
 	size_item.item_name = "Expanded Payloads"
 	size_item.item_type = ItemDefinition.ItemType.AREA_SIZE
+	size_item.icon = HC_ITEM_ICON_AREA_SIZE
 	size_item.bonus_per_level = HC_ITEM_AREA_SIZE_STEP
 	size_item.max_level = 5
 	hc_item_definitions.append(size_item)
@@ -645,6 +653,7 @@ func _configure_item_definitions() -> void:
 	var attack_speed_item := ItemDefinition.new()
 	attack_speed_item.item_name = "Rapid Reload"
 	attack_speed_item.item_type = ItemDefinition.ItemType.ATTACK_SPEED
+	attack_speed_item.icon = HC_ITEM_ICON_ATTACK_SPEED
 	attack_speed_item.bonus_per_level = HC_ITEM_ATTACK_SPEED_STEP
 	attack_speed_item.max_level = 5
 	hc_item_definitions.append(attack_speed_item)
@@ -653,6 +662,7 @@ func _configure_item_definitions() -> void:
 	var projectile_speed_item := ItemDefinition.new()
 	projectile_speed_item.item_name = "Turbo Munitions"
 	projectile_speed_item.item_type = ItemDefinition.ItemType.PROJECTILE_SPEED
+	projectile_speed_item.icon = HC_ITEM_ICON_PROJECTILE_SPEED
 	projectile_speed_item.bonus_per_level = HC_ITEM_PROJECTILE_SPEED_STEP
 	projectile_speed_item.max_level = 5
 	hc_item_definitions.append(projectile_speed_item)
