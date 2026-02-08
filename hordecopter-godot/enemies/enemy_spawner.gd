@@ -227,17 +227,17 @@ func _random_flyover_offset(enemy_spawner_side: int) -> Vector3:
 	return Vector3.ZERO
 
 
-func _apply_time_scaling(enemy_instance: Node) -> void:
+func _apply_level_scaling(enemy_instance: Node) -> void:
 	if game_state == null:
-		push_warning("EnemySpawner: GameState not found; skipping time scaling.")
+		push_warning("EnemySpawner: GameState not found; skipping level scaling.")
 		return
-	if not game_state.has_method("get_elapsed_time"):
-		push_warning("EnemySpawner: GameState missing get_elapsed_time; skipping scaling.")
+	if not game_state.has_method("get_current_level"):
+		push_warning("EnemySpawner: GameState missing get_current_level; skipping scaling.")
 		return
-	if enemy_instance.has_method("configure_from_time"):
-		enemy_instance.configure_from_time(game_state.get_elapsed_time())
+	if enemy_instance.has_method("configure_from_level"):
+		enemy_instance.configure_from_level(game_state.get_current_level())
 	else:
-		push_warning("EnemySpawner: Enemy missing configure_from_time; skipping scaling.")
+		push_warning("EnemySpawner: Enemy missing configure_from_level; skipping scaling.")
 
 
 func _spawn_with_effect(
@@ -277,7 +277,7 @@ func _spawn_enemy_instance(
 	enemy_spawner_instance.global_position = spawn_position
 	if configure_callback.is_valid():
 		configure_callback.call(enemy_spawner_instance)
-	_apply_time_scaling(enemy_spawner_instance)
+	_apply_level_scaling(enemy_spawner_instance)
 	_apply_elite_roll(enemy_spawner_instance)
 
 
