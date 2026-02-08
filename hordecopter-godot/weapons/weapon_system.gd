@@ -71,7 +71,20 @@ func _fire_hitscan() -> void:
 		return
 	_play_sfx_at(WEAPON_SYSTEM_LASER_SFX, _muzzle.global_position)
 	var start := _muzzle.global_position
-	var direction := -_muzzle.global_transform.basis.z
+	var base_direction := -_muzzle.global_transform.basis.z
+	var base_up := _muzzle.global_transform.basis.y
+	var beam_count: int = int(max(1, weapon.projectile_count))
+	var spread_step_degrees := 8.0
+	var spread_start := -0.5 * float(beam_count - 1) * spread_step_degrees
+	for index in range(beam_count):
+		var direction := base_direction
+		if beam_count > 1:
+			var spread_angle := spread_start + float(index) * spread_step_degrees
+			direction = base_direction.rotated(base_up, deg_to_rad(spread_angle))
+		_fire_hitscan_beam(start, direction)
+
+
+func _fire_hitscan_beam(start: Vector3, direction: Vector3) -> void:
 	var beam: Node = null
 	if weapon.beam_scene != null:
 		beam = weapon.beam_scene.instantiate()
