@@ -40,7 +40,6 @@ var game_state_level_up_options: Array[Dictionary] = []
 var game_state_debug_level_key_down: bool = false
 
 
-
 func _ready() -> void:
 	add_to_group("game_state")
 	game_state_level = max(1, level_start)
@@ -82,6 +81,10 @@ func add_experience(amount: int) -> void:
 
 func get_elapsed_time() -> float:
 	return game_state_elapsed_time
+
+
+func get_current_level() -> int:
+	return game_state_level
 
 
 func are_enemy_health_bars_visible() -> bool:
@@ -154,6 +157,7 @@ func _apply_enemy_health_bar_visibility() -> void:
 			health_bar.visible = game_state_show_enemy_health_bars
 		elif health_bar is CanvasItem:
 			health_bar.visible = game_state_show_enemy_health_bars
+
 
 func _handle_debug_level_up_input() -> void:
 	var is_pressed := Input.is_key_pressed(KEY_L)

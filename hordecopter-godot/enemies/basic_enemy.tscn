@@ -1,4 +1,4 @@
-[gd_scene format=3 uid="uid://c4y366n73fpvy"]
+[gd_scene format=3 uid="uid://b4fmt4sv8ly22"]
 
 [ext_resource type="Script" uid="uid://didoxsqy6ljic" path="res://enemies/basic_enemy.gd" id="1_test_enemy"]
 [ext_resource type="PackedScene" path="res://items/experience_token.tscn" id="2_experience_token"]
@@ -16,16 +16,16 @@ size = Vector3(1.2, 1.2, 1.2)
 [sub_resource type="BoxShape3D" id="BoxShape3D_4b8bn"]
 size = Vector3(1.2, 1.2, 1.2)
 
-[node name="TestEnemy" type="RigidBody3D" unique_id=169100716]
+[node name="TestEnemy" type="RigidBody3D" unique_id=1458272205]
 script = ExtResource("1_test_enemy")
 experience_token_scene = ExtResource("2_experience_token")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1613251914]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=754737886]
 material_override = SubResource("StandardMaterial3D_qjw0p")
 mesh = SubResource("BoxMesh_7dgk3")
 
-[node name="HealthBar3D" parent="." unique_id=1048081295 instance=ExtResource("3_enemy_health_bar")]
+[node name="HealthBar3D" parent="." unique_id=1174431845 instance=ExtResource("3_enemy_health_bar")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2126885684]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=95496211]
 shape = SubResource("BoxShape3D_4b8bn")

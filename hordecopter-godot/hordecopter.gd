@@ -14,6 +14,8 @@ extends RigidBody3D
 const HC_WEAPON_DAMAGE_STEP: float = 0.25
 const HC_WEAPON_COOLDOWN_MULTIPLIER: float = 0.92
 const HC_MAX_UNLOCKED_WEAPONS: int = 6
+const HC_BASE_MOVE_SPEED_MULTIPLIER: float = 0.9
+const HC_MOVE_SPEED_LEVEL_MULTIPLIER: float = 1.1
 const HC_ITEM_DAMAGE_STEP: float = 1.0
 const HC_ITEM_MOVE_SPEED_STEP: float = 1.0
 const HC_ITEM_AREA_SIZE_STEP: float = 0.25
@@ -32,7 +34,7 @@ const HC_ITEM_PROJECTILE_SPEED_STEP: float = 1.0
 @export var ki: float = 2.0
 @export var kd: float = 12.0
 @export var d_filter_hz: float = -1.0
-@export var rotation_speed: float = 50.0
+@export var rotation_speed: float = 100.0
 
 var my_camera: Camera3D
 var auto_float_target_altitude: float = 0.5
@@ -40,9 +42,13 @@ var show_info: bool = false
 var upward_power: float = 100_000.0
 var sideward_power: float = 100_000.0
 var forward_power: float = 100_000.0
+var base_y_speed: float = 10.0
+var base_x_speed: float = 10.0
+var base_z_speed: float = 10.0
 var max_y_speed: float = 10.0
 var max_x_speed: float = 10.0
 var max_z_speed: float = 10.0
+var hc_cached_level: int = 1
 
 var hc_weapon_systems_is_initialized = false
 var hc_weapon_systems: Array[WeaponSystem] = []
@@ -85,12 +91,16 @@ func _ready() -> void:
 	_configure_item_definitions()
 	_ensure_orbiting_weapon_system()
 	# _configure_weapon_systems()
+	_apply_movement_speed_for_level(_get_current_level())
 
 
 func _physics_process(delta: float) -> void:
 	if not hc_weapon_systems_is_initialized:
 		_configure_weapon_systems()
 		hc_weapon_systems_is_initialized = true
+	var current_level := _get_current_level()
+	if current_level != hc_cached_level:
+		_apply_movement_speed_for_level(current_level)
 	# handle _p1_ inputs
 	var up_force_input = 0
 	if Input.is_action_pressed("p1_thrust_up"):
@@ -200,6 +210,24 @@ func apply_player_damage(amount: float) -> void:
 	if amount <= 0.0:
 		return
 	_play_sfx_at(player_hit_sound, global_position)
+
+
+func _apply_movement_speed_for_level(level: int) -> void:
+	hc_cached_level = max(1, level)
+	var speed_multiplier := (
+		HC_BASE_MOVE_SPEED_MULTIPLIER
+		* pow(HC_MOVE_SPEED_LEVEL_MULTIPLIER, float(hc_cached_level - 1))
+	)
+	max_x_speed = base_x_speed * speed_multiplier
+	max_y_speed = base_y_speed * speed_multiplier
+	max_z_speed = base_z_speed * speed_multiplier
+
+
+func _get_current_level() -> int:
+	var game_state := get_tree().get_first_node_in_group("game_state")
+	if game_state != null and game_state.has_method("get_current_level"):
+		return int(game_state.get_current_level())
+	return 1
 
 
 func _update_rotor_swosh(delta: float) -> void:
