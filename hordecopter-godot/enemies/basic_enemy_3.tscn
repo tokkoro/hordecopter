@@ -5,18 +5,22 @@
 [ext_resource type="PackedScene" path="res://models/mecha_tiger.glb" id="3_mecha_tiger"]
 [ext_resource type="PackedScene" path="res://enemies/enemy_health_bar.tscn" id="4_mfrr7"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_4b8bn"]
-size = Vector3(1.2, 1.2, 1.2)
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_4b8bn"]
+radius = 1.8
+height = 3.6
 
 [node name="TestEnemy" type="RigidBody3D"]
 script = ExtResource("1_7j1bf")
 experience_token_scene = ExtResource("2_sc6mg")
+axis_lock_angular_x = true
+axis_lock_angular_z = true
 
 [node name="MechaTiger" parent="." instance=ExtResource("3_mecha_tiger")]
-transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 0, 0)
+transform = Transform3D(1.8, 0, 0, 0, 1.8, 0, 0, 0, 1.8, 0, 0, 0)
 
 [node name="HealthBar3D" parent="." instance=ExtResource("4_mfrr7")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-shape = SubResource("BoxShape3D_4b8bn")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("CapsuleShape3D_4b8bn")
