@@ -14,4 +14,5 @@ damage = 8.0
 knockback = 7.0
 knockback_per_level = 1.5
 range = 35.0
+area_radius = 2.5
 projectile_scene = ExtResource("2_grenade")

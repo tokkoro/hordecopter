@@ -122,11 +122,11 @@ func _fire_projectile() -> void:
 		var projectile := weapon.projectile_scene.instantiate()
 		get_tree().current_scene.add_child(projectile)
 		projectile.global_transform = _muzzle.global_transform
-		_apply_projectile_item_bonuses(projectile)
 		if projectile.has_method("configure"):
 			var spread_angle := spread_start + float(index) * spread_step_degrees
 			var direction := base_direction.rotated(base_up, deg_to_rad(spread_angle))
 			projectile.configure(weapon, direction)
+		_apply_projectile_item_bonuses(projectile)
 
 
 func _play_projectile_sfx() -> void:
