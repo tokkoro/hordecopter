@@ -34,6 +34,18 @@ func configure(weapon: WeaponDefinition, direction: Vector3) -> void:
 		_velocity = -global_transform.basis.z * speed
 
 
+func apply_projectile_speed_bonus(amount: float) -> void:
+	if amount == 0.0:
+		return
+	speed = max(0.0, speed + amount)
+
+
+func apply_projectile_size_bonus(amount: float) -> void:
+	if amount == 0.0:
+		return
+	scale = scale + Vector3.ONE * amount
+
+
 func _physics_process(delta: float) -> void:
 	if _velocity == Vector3.ZERO:
 		_velocity = -global_transform.basis.z * speed

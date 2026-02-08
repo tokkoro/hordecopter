@@ -14,6 +14,11 @@ extends RigidBody3D
 const HC_WEAPON_DAMAGE_STEP: float = 0.25
 const HC_WEAPON_COOLDOWN_MULTIPLIER: float = 0.92
 const HC_MAX_UNLOCKED_WEAPONS: int = 6
+const HC_ITEM_DAMAGE_STEP: float = 1.0
+const HC_ITEM_MOVE_SPEED_STEP: float = 1.0
+const HC_ITEM_AREA_SIZE_STEP: float = 0.25
+const HC_ITEM_ATTACK_SPEED_STEP: float = 0.02
+const HC_ITEM_PROJECTILE_SPEED_STEP: float = 1.0
 
 @export var auto_float: bool = true
 @export var my_camera_name: StringName = &"Camera3D"
@@ -53,6 +58,13 @@ var hc_weapon_system_names: Array[StringName] = [
 var hc_weapon_levels: Array[int] = []
 var hc_weapon_base_damage: Array[float] = []
 var hc_weapon_base_cooldown: Array[float] = []
+var hc_weapon_base_area_radius: Array[float] = []
+
+var hc_item_definitions: Array[ItemDefinition] = []
+var hc_item_levels: Array[int] = []
+
+var hc_base_max_x_speed: float = 0.0
+var hc_base_max_z_speed: float = 0.0
 var hc_rotor_swosh_timer: float = 0.0
 var _i: float = 0.0
 var _prev_error: float = 0.0
@@ -67,6 +79,8 @@ func _ready() -> void:
 	if my_camera == null:
 		push_error("Missä on mun kamera? %s" % [my_camera_name])
 		return
+	_cache_base_movement_stats()
+	_configure_item_definitions()
 	_ensure_orbiting_weapon_system()
 	# _configure_weapon_systems()
 
@@ -248,6 +262,7 @@ func _configure_weapon_systems() -> void:
 	hc_weapon_levels.clear()
 	hc_weapon_base_damage.clear()
 	hc_weapon_base_cooldown.clear()
+	hc_weapon_base_area_radius.clear()
 	for system in hc_weapon_systems:
 		if not system.is_ready:
 			push_warning("Weapon was not ready to be configured!")
@@ -255,9 +270,11 @@ func _configure_weapon_systems() -> void:
 		if system.weapon != null:
 			hc_weapon_base_damage.append(system.weapon.damage)
 			hc_weapon_base_cooldown.append(system.weapon.cooldown)
+			hc_weapon_base_area_radius.append(system.weapon.area_radius)
 		else:
 			hc_weapon_base_damage.append(0.0)
 			hc_weapon_base_cooldown.append(0.0)
+			hc_weapon_base_area_radius.append(0.0)
 	# TODO: level up at a start of give certain weapon?
 	var rng := RandomNumberGenerator.new()
 	rng.randomize()
@@ -268,16 +285,15 @@ func _configure_weapon_systems() -> void:
 
 func get_level_up_options(count: int) -> Array[Dictionary]:
 	var options: Array[Dictionary] = []
-	if hc_weapon_systems.is_empty():
+	if hc_weapon_systems.is_empty() and hc_item_definitions.is_empty():
 		return options
+	var option_pool: Array[Dictionary] = []
 	var indices: Array[int] = []
 	for index in range(hc_weapon_systems.size()):
 		indices.append(index)
 	indices.shuffle()
 	var unlocked_count := _get_unlocked_weapon_count()
-	var option_count: int = int(min(count, indices.size()))
-	for option_index in range(option_count):
-		var system_index := indices[option_index]
+	for system_index in indices:
 		var system := hc_weapon_systems[system_index]
 		var weapon_name := "Weapon"
 		var icon: Texture2D = null
@@ -295,7 +311,25 @@ func get_level_up_options(count: int) -> Array[Dictionary]:
 			label = "Unlock %s" % weapon_name
 		else:
 			label = "Upgrade %s (Lv %d → %d)" % [weapon_name, current_level, current_level + 1]
-		options.append({"index": system_index, "label": label, "icon": icon})
+		option_pool.append({"kind": "weapon", "index": system_index, "label": label, "icon": icon})
+	for item_index in range(hc_item_definitions.size()):
+		var item := hc_item_definitions[item_index]
+		if item == null:
+			continue
+		var item_level := hc_item_levels[item_index]
+		var max_level: int = max(1, item.max_level)
+		if item_level >= max_level:
+			continue
+		var item_label := "Upgrade %s (Lv %d → %d)" % [item.item_name, item_level, item_level + 1]
+		if item_level <= 0:
+			item_label = "Unlock %s" % item.item_name
+		option_pool.append(
+			{"kind": "item", "index": item_index, "label": item_label, "icon": item.icon}
+		)
+	option_pool.shuffle()
+	var option_count: int = int(min(count, option_pool.size()))
+	for option_index in range(option_count):
+		options.append(option_pool[option_index])
 	return options
 
 
@@ -305,6 +339,10 @@ func apply_level_up_choice(choice: Dictionary) -> void:
 		push_warning("Invalid level up choice: %s" % JSON.stringify(choice))
 		return
 	var system_index := int(choice["index"])
+	var kind := str(choice.get("kind", "weapon"))
+	if kind == "item":
+		_apply_item_level(system_index)
+		return
 	if system_index < 0 or system_index >= hc_weapon_systems.size():
 		return
 	if (
@@ -343,10 +381,17 @@ func _apply_weapon_level(index: int) -> int:
 		return 0
 	var base_damage := hc_weapon_base_damage[index]
 	var base_cooldown := hc_weapon_base_cooldown[index]
+	var base_area_radius := hc_weapon_base_area_radius[index]
 	var level: int = int(max(1, hc_weapon_levels[index]))
+	var bonus_damage := get_item_bonus(ItemDefinition.ItemType.DAMAGE)
+	var bonus_attack_speed := get_item_bonus(ItemDefinition.ItemType.ATTACK_SPEED)
+	var bonus_area_size := get_item_bonus(ItemDefinition.ItemType.AREA_SIZE)
 	system.weapon.damage = base_damage * (1.0 + HC_WEAPON_DAMAGE_STEP * float(level - 1))
+	system.weapon.damage += bonus_damage
 	var cooldown_multiplier := pow(HC_WEAPON_COOLDOWN_MULTIPLIER, float(level - 1))
-	system.weapon.cooldown = max(0.05, base_cooldown * cooldown_multiplier)
+	system.weapon.cooldown = max(0.05, base_cooldown * cooldown_multiplier - bonus_attack_speed)
+	if base_area_radius > 0.0:
+		system.weapon.area_radius = max(0.1, base_area_radius + bonus_area_size)
 	return level
 
 
@@ -373,12 +418,121 @@ func _update_weapon_hud() -> void:
 			level = hc_weapon_levels[index]
 		weapon_data.append({"icon": icon, "level": level})
 	hud.update_weapon_slots(weapon_data)
+	_update_item_hud(hud)
 
 
 func _is_weapon_locked(index: int) -> bool:
 	if index < 0 or index >= hc_weapon_levels.size():
 		return true
 	return hc_weapon_levels[index] <= 0
+
+
+func _cache_base_movement_stats() -> void:
+	hc_base_max_x_speed = max_x_speed
+	hc_base_max_z_speed = max_z_speed
+
+
+func _configure_item_definitions() -> void:
+	hc_item_definitions.clear()
+	hc_item_levels.clear()
+	var damage_item := ItemDefinition.new()
+	damage_item.item_name = "High-Impact Rounds"
+	damage_item.item_type = ItemDefinition.ItemType.DAMAGE
+	damage_item.bonus_per_level = HC_ITEM_DAMAGE_STEP
+	damage_item.max_level = 5
+	hc_item_definitions.append(damage_item)
+	hc_item_levels.append(0)
+
+	var move_item := ItemDefinition.new()
+	move_item.item_name = "Overclocked Rotors"
+	move_item.item_type = ItemDefinition.ItemType.MOVE_SPEED
+	move_item.bonus_per_level = HC_ITEM_MOVE_SPEED_STEP
+	move_item.max_level = 5
+	hc_item_definitions.append(move_item)
+	hc_item_levels.append(0)
+
+	var size_item := ItemDefinition.new()
+	size_item.item_name = "Expanded Payloads"
+	size_item.item_type = ItemDefinition.ItemType.AREA_SIZE
+	size_item.bonus_per_level = HC_ITEM_AREA_SIZE_STEP
+	size_item.max_level = 5
+	hc_item_definitions.append(size_item)
+	hc_item_levels.append(0)
+
+	var attack_speed_item := ItemDefinition.new()
+	attack_speed_item.item_name = "Rapid Reload"
+	attack_speed_item.item_type = ItemDefinition.ItemType.ATTACK_SPEED
+	attack_speed_item.bonus_per_level = HC_ITEM_ATTACK_SPEED_STEP
+	attack_speed_item.max_level = 5
+	hc_item_definitions.append(attack_speed_item)
+	hc_item_levels.append(0)
+
+	var projectile_speed_item := ItemDefinition.new()
+	projectile_speed_item.item_name = "Turbo Munitions"
+	projectile_speed_item.item_type = ItemDefinition.ItemType.PROJECTILE_SPEED
+	projectile_speed_item.bonus_per_level = HC_ITEM_PROJECTILE_SPEED_STEP
+	projectile_speed_item.max_level = 5
+	hc_item_definitions.append(projectile_speed_item)
+	hc_item_levels.append(0)
+	_update_item_hud()
+
+
+func _apply_item_level(index: int) -> void:
+	if index < 0 or index >= hc_item_definitions.size():
+		return
+	var item := hc_item_definitions[index]
+	if item == null:
+		return
+	var max_level: int = max(1, item.max_level)
+	if hc_item_levels[index] >= max_level:
+		return
+	hc_item_levels[index] += 1
+	_apply_item_bonuses()
+	_update_weapon_hud()
+
+
+func _apply_item_bonuses() -> void:
+	_apply_movement_item_bonuses()
+	_reapply_weapon_levels()
+
+
+func _reapply_weapon_levels() -> void:
+	for index in range(hc_weapon_levels.size()):
+		if hc_weapon_levels[index] > 0:
+			_apply_weapon_level(index)
+
+
+func _apply_movement_item_bonuses() -> void:
+	var move_bonus := get_item_bonus(ItemDefinition.ItemType.MOVE_SPEED)
+	max_x_speed = hc_base_max_x_speed + move_bonus
+	max_z_speed = hc_base_max_z_speed + move_bonus
+
+
+func get_item_bonus(item_type: ItemDefinition.ItemType) -> float:
+	var total := 0.0
+	for index in range(hc_item_definitions.size()):
+		var item := hc_item_definitions[index]
+		if item != null and item.item_type == item_type:
+			total += item.bonus_per_level * float(hc_item_levels[index])
+	return total
+
+
+func _update_item_hud(hud: Node = null) -> void:
+	var target_hud := hud
+	if target_hud == null:
+		target_hud = get_tree().get_first_node_in_group("hud")
+	if target_hud == null or not target_hud.has_method("update_item_slots"):
+		return
+	var item_data: Array[Dictionary] = []
+	for index in range(hc_item_definitions.size()):
+		var item := hc_item_definitions[index]
+		var level := 0
+		var icon: Texture2D = null
+		if item != null:
+			level = hc_item_levels[index]
+			icon = item.icon
+		item_data.append({"icon": icon, "level": level})
+	target_hud.update_item_slots(item_data)
 
 
 func get_camera_xz_basis(cam: Camera3D) -> Dictionary:
