@@ -7,6 +7,7 @@
 # Critical Consts  • n/a
 # Editor Exports   • max_health: float – crate hit points
 #                 • drop_speed: float – descent speed while parachuting
+#                 • drop_drift_speed: float – horizontal drift speed while dropping
 #                 • experience_drop_count: int – XP droplets to spawn
 #                 • drop_radius_min: float – min offset for drops
 #                 • drop_radius_max: float – max offset for drops
@@ -34,6 +35,7 @@ const LOOT_CRATE_HIT_SFX: AudioStream = preload("res://sfx/monster_hit.sfxr")
 
 @export var max_health: float = 6.0
 @export var drop_speed: float = 2.5
+@export var drop_drift_speed: float = 0.6
 @export var experience_drop_count: int = 6
 @export var drop_radius_min: float = 0.6
 @export var drop_radius_max: float = 2.0
@@ -50,6 +52,7 @@ var loot_crate_rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var loot_crate_is_dead: bool = false
 var loot_crate_drop_active: bool = false
 var loot_crate_landing_height: float = 0.0
+var loot_crate_drop_direction: Vector3 = Vector3.ZERO
 
 @onready
 var loot_crate_health_bar: EnemyHealthBar3D = get_node_or_null("HealthBar3D") as EnemyHealthBar3D
@@ -73,6 +76,7 @@ func _physics_process(delta: float) -> void:
 	if not loot_crate_drop_active:
 		return
 	var loot_crate_position := global_position
+	loot_crate_position += loot_crate_drop_direction * drop_drift_speed * delta
 	loot_crate_position.y = max(
 		loot_crate_landing_height, loot_crate_position.y - drop_speed * delta
 	)
@@ -84,6 +88,8 @@ func _physics_process(delta: float) -> void:
 func begin_drop(landing_height: float) -> void:
 	loot_crate_drop_active = true
 	loot_crate_landing_height = landing_height
+	var loot_crate_angle := loot_crate_rng.randf_range(0.0, TAU)
+	loot_crate_drop_direction = Vector3(cos(loot_crate_angle), 0.0, sin(loot_crate_angle))
 	if loot_crate_parachute != null:
 		loot_crate_parachute.visible = true
 	set_physics_process(true)
@@ -162,6 +168,7 @@ func _on_destroyed() -> void:
 
 func _finish_drop() -> void:
 	loot_crate_drop_active = false
+	loot_crate_drop_direction = Vector3.ZERO
 	if loot_crate_parachute != null:
 		loot_crate_parachute.visible = false
 	set_physics_process(false)
