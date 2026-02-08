@@ -496,6 +496,7 @@ func _apply_weapon_level(index: int) -> int:
 	var base_knockback := hc_weapon_base_knockback[index]
 	var base_projectile_count := hc_weapon_base_projectile_count[index]
 	var level: int = int(max(1, hc_weapon_levels[index]))
+	system.weapon.set_meta("current_level", level)
 	var bonus_damage := get_item_bonus(ItemDefinition.ItemType.DAMAGE)
 	var bonus_attack_speed := get_item_bonus(ItemDefinition.ItemType.ATTACK_SPEED)
 	var bonus_area_size := get_item_bonus(ItemDefinition.ItemType.AREA_SIZE)

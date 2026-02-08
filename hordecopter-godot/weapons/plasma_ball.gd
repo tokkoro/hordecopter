@@ -17,6 +17,8 @@ extends Area3D
 var _weapon_damage: float = 0.0
 var _weapon_knockback: float = 0.0
 var _velocity: Vector3 = Vector3.ZERO
+var _remaining_pierces: int = 0
+var _hit_bodies: Array[Node] = []
 
 
 func _ready() -> void:
@@ -30,6 +32,10 @@ func _ready() -> void:
 func configure(weapon: WeaponDefinition, direction: Vector3) -> void:
 	_weapon_damage = weapon.damage
 	_weapon_knockback = weapon.knockback
+	var level: int = 1
+	if weapon != null and weapon.has_meta("current_level"):
+		level = int(max(1, weapon.get_meta("current_level")))
+	_remaining_pierces = max(2, level + 1)
 	if direction.length() > 0.0:
 		_velocity = direction.normalized() * speed
 	else:
@@ -53,6 +59,12 @@ func _physics_process(delta: float) -> void:
 
 
 func _on_body_entered(body: Node) -> void:
+	if body != null and _hit_bodies.has(body):
+		return
 	if body != null and body.has_method("apply_damage"):
 		body.apply_damage(_weapon_damage, _weapon_knockback, global_position)
-	queue_free()
+	if body != null:
+		_hit_bodies.append(body)
+	_remaining_pierces -= 1
+	if _remaining_pierces <= 0:
+		queue_free()
