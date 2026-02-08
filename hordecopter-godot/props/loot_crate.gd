@@ -2,9 +2,11 @@
 # props/loot_crate.gd
 # Key Classes      • LootCrate – destructible crate that drops pickups
 # Key Functions    • apply_damage() – reduce health and destroy crate
+#                 • begin_drop() – start a parachute drop to the ground
 #                 • _spawn_loot() – spawn pickups around the crate
 # Critical Consts  • n/a
 # Editor Exports   • max_health: float – crate hit points
+#                 • drop_speed: float – descent speed while parachuting
 #                 • experience_drop_count: int – XP droplets to spawn
 #                 • drop_radius_min: float – min offset for drops
 #                 • drop_radius_max: float – max offset for drops
@@ -31,6 +33,7 @@ extends StaticBody3D
 const LOOT_CRATE_HIT_SFX: AudioStream = preload("res://sfx/monster_hit.sfxr")
 
 @export var max_health: float = 6.0
+@export var drop_speed: float = 4.5
 @export var experience_drop_count: int = 6
 @export var drop_radius_min: float = 0.6
 @export var drop_radius_max: float = 2.0
@@ -45,18 +48,45 @@ var loot_crate_health: float = 0.0
 var loot_crate_max_health: float = 1.0
 var loot_crate_rng: RandomNumberGenerator = RandomNumberGenerator.new()
 var loot_crate_is_dead: bool = false
+var loot_crate_drop_active: bool = false
+var loot_crate_landing_height: float = 0.0
 
 @onready
 var loot_crate_health_bar: EnemyHealthBar3D = get_node_or_null("HealthBar3D") as EnemyHealthBar3D
+@onready var loot_crate_parachute: Node3D = get_node_or_null("Parachute") as Node3D
 
 
 func _ready() -> void:
 	add_to_group("props")
 	add_to_group("enemy_targets")
+	add_to_group("loot_crates")
 	loot_crate_health = max(1.0, max_health)
 	loot_crate_max_health = loot_crate_health
 	_update_health_bar()
 	loot_crate_rng.randomize()
+	if loot_crate_parachute != null:
+		loot_crate_parachute.visible = false
+	set_physics_process(false)
+
+
+func _physics_process(delta: float) -> void:
+	if not loot_crate_drop_active:
+		return
+	var loot_crate_position := global_position
+	loot_crate_position.y = max(
+		loot_crate_landing_height, loot_crate_position.y - drop_speed * delta
+	)
+	global_position = loot_crate_position
+	if loot_crate_position.y <= loot_crate_landing_height + 0.01:
+		_finish_drop()
+
+
+func begin_drop(landing_height: float) -> void:
+	loot_crate_drop_active = true
+	loot_crate_landing_height = landing_height
+	if loot_crate_parachute != null:
+		loot_crate_parachute.visible = true
+	set_physics_process(true)
 
 
 func apply_damage(amount: float, _knockback: float = 0.0, _origin: Vector3 = Vector3.ZERO) -> void:
@@ -128,6 +158,13 @@ func _on_destroyed() -> void:
 	loot_crate_is_dead = true
 	_spawn_loot()
 	queue_free()
+
+
+func _finish_drop() -> void:
+	loot_crate_drop_active = false
+	if loot_crate_parachute != null:
+		loot_crate_parachute.visible = false
+	set_physics_process(false)
 
 
 func _update_health_bar() -> void:
