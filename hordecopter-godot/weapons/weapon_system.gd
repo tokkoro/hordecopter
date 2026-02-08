@@ -111,12 +111,20 @@ func _fire_projectile() -> void:
 		push_warning("Projectile weapon should have projectile_scene!")
 		return
 	_play_projectile_sfx()
-	var projectile := weapon.projectile_scene.instantiate()
-	get_tree().current_scene.add_child(projectile)
-	projectile.global_transform = _muzzle.global_transform
-	if projectile.has_method("configure"):
-		var direction := -_muzzle.global_transform.basis.z
-		projectile.configure(weapon, direction)
+	var shot_count: int = int(max(1, weapon.projectile_count))
+	var spread_degrees: float = weapon.projectile_spread_degrees
+	for shot_index in range(shot_count):
+		var projectile := weapon.projectile_scene.instantiate()
+		get_tree().current_scene.add_child(projectile)
+		var shot_transform := _muzzle.global_transform
+		if shot_count > 1 and spread_degrees != 0.0:
+			var t := float(shot_index) / float(max(1, shot_count - 1))
+			var yaw := deg_to_rad(lerp(-spread_degrees * 0.5, spread_degrees * 0.5, t))
+			shot_transform.basis = Basis(Vector3.UP, yaw) * shot_transform.basis
+		projectile.global_transform = shot_transform
+		if projectile.has_method("configure"):
+			var direction := -shot_transform.basis.z
+			projectile.configure(weapon, direction)
 
 
 func _play_projectile_sfx() -> void:

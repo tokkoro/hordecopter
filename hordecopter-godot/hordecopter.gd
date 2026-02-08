@@ -54,6 +54,7 @@ var hc_weapon_levels: Array[int] = []
 var hc_weapon_base_damage: Array[float] = []
 var hc_weapon_base_cooldown: Array[float] = []
 var hc_weapon_base_knockback: Array[float] = []
+var hc_weapon_base_projectile_count: Array[int] = []
 var hc_rotor_swosh_timer: float = 0.0
 var _i: float = 0.0
 var _prev_error: float = 0.0
@@ -250,6 +251,7 @@ func _configure_weapon_systems() -> void:
 	hc_weapon_base_damage.clear()
 	hc_weapon_base_cooldown.clear()
 	hc_weapon_base_knockback.clear()
+	hc_weapon_base_projectile_count.clear()
 	for system in hc_weapon_systems:
 		if not system.is_ready:
 			push_warning("Weapon was not ready to be configured!")
@@ -258,10 +260,12 @@ func _configure_weapon_systems() -> void:
 			hc_weapon_base_damage.append(system.weapon.damage)
 			hc_weapon_base_cooldown.append(system.weapon.cooldown)
 			hc_weapon_base_knockback.append(system.weapon.knockback)
+			hc_weapon_base_projectile_count.append(system.weapon.projectile_count)
 		else:
 			hc_weapon_base_damage.append(0.0)
 			hc_weapon_base_cooldown.append(0.0)
 			hc_weapon_base_knockback.append(0.0)
+			hc_weapon_base_projectile_count.append(1)
 	# TODO: level up at a start of give certain weapon?
 	var rng := RandomNumberGenerator.new()
 	rng.randomize()
@@ -348,12 +352,28 @@ func _apply_weapon_level(index: int) -> int:
 	var base_damage := hc_weapon_base_damage[index]
 	var base_cooldown := hc_weapon_base_cooldown[index]
 	var base_knockback := hc_weapon_base_knockback[index]
+	var base_projectile_count := hc_weapon_base_projectile_count[index]
 	var level: int = int(max(1, hc_weapon_levels[index]))
 	system.weapon.damage = base_damage * (1.0 + HC_WEAPON_DAMAGE_STEP * float(level - 1))
 	system.weapon.knockback = base_knockback + system.weapon.knockback_per_level * float(level - 1)
-	var cooldown_multiplier := pow(HC_WEAPON_COOLDOWN_MULTIPLIER, float(level - 1))
-	system.weapon.cooldown = max(0.05, base_cooldown * cooldown_multiplier)
+	if _is_missile_weapon(system.weapon):
+		var fire_rate_upgrades := int(floor(float(level) / 2.0))
+		var missile_upgrades := int(floor(float(level - 1) / 2.0))
+		var cooldown_multiplier := pow(HC_WEAPON_COOLDOWN_MULTIPLIER, float(fire_rate_upgrades))
+		system.weapon.cooldown = max(0.05, base_cooldown * cooldown_multiplier)
+		system.weapon.projectile_count = max(1, base_projectile_count + missile_upgrades)
+	else:
+		var cooldown_multiplier := pow(HC_WEAPON_COOLDOWN_MULTIPLIER, float(level - 1))
+		system.weapon.cooldown = max(0.05, base_cooldown * cooldown_multiplier)
+		system.weapon.projectile_count = max(1, base_projectile_count)
 	return level
+
+
+func _is_missile_weapon(weapon: WeaponDefinition) -> bool:
+	if weapon == null or weapon.projectile_scene == null:
+		return false
+	var projectile_path := weapon.projectile_scene.resource_path
+	return projectile_path != "" and projectile_path.ends_with("homing_missile.tscn")
 
 
 func _get_unlocked_weapon_count() -> int:
