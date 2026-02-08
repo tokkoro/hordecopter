@@ -9,7 +9,7 @@
 # Critical Consts  • n/a
 # Editor Exports   • health: float – hit points
 #                 • base_health: float – baseline health
-#                 • health_per_second: float – time scaling for health
+#                 • health_per_level: float – level scaling for health
 #                 • base_experience_reward: int – base exp reward
 #                 • experience_token_scene: PackedScene – drop scene
 #                 • has_elite_form: bool – allow elite scaling
@@ -31,7 +31,7 @@ const ENEMY_BASE_FLASH_DURATION: float = 0.12
 
 @export var health: float = 4.0
 @export var base_health: float = 4.0
-@export var health_per_second: float = 0.25
+@export var health_per_level: float = 0.25
 @export var base_experience_reward: int = 1
 @export var experience_token_scene: PackedScene
 @export var has_elite_form: bool = true
@@ -108,9 +108,10 @@ func is_time_stopped() -> bool:
 	return enemy_base_time_stop_remaining > 0.0
 
 
-func configure_from_time(time_seconds: float) -> void:
-	var scaled_health := base_health + time_seconds * health_per_second
-	health = max(1.0, scaled_health)
+func configure_from_level(level: int) -> void:
+	var enemy_base_level_step: int = maxi(0, level - 1)
+	var enemy_base_scaled_health := base_health + float(enemy_base_level_step) * health_per_level
+	health = max(1.0, enemy_base_scaled_health)
 	set_max_health(health)
 	_update_experience_reward()
 	enemy_base_configured = true
@@ -144,8 +145,8 @@ func _apply_initial_scaling() -> void:
 		_update_experience_reward()
 		return
 	var game_state := get_tree().get_first_node_in_group("game_state")
-	if game_state != null and game_state.has_method("get_elapsed_time"):
-		configure_from_time(game_state.get_elapsed_time())
+	if game_state != null and game_state.has_method("get_current_level"):
+		configure_from_level(game_state.get_current_level())
 	else:
 		_update_experience_reward()
 

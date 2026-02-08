@@ -7,7 +7,7 @@
 # Critical Consts  • n/a
 # Editor Exports   • health: float – hit points
 #                 • base_health: float – baseline health
-#                 • health_per_second: float – time scaling for health
+#                 • health_per_level: float – level scaling for health
 #                 • base_experience_reward: int – base exp reward
 #                 • experience_token_scene: PackedScene – drop scene
 #                 • test_enemy_climb_speed: float – vertical climb speed
