@@ -13,6 +13,9 @@ extends RigidBody3D
 
 const HC_WEAPON_DAMAGE_STEP: float = 0.25
 const HC_WEAPON_COOLDOWN_MULTIPLIER: float = 0.92
+const HC_AREA_WEAPON_START_SCALE: float = 0.7
+const HC_AREA_WEAPON_SCALE_STEP: float = 0.15
+const HC_AREA_WEAPON_INTERVAL_MULTIPLIER: float = 0.9
 const HC_MAX_UNLOCKED_WEAPONS: int = 6
 const HC_BASE_MOVE_SPEED_MULTIPLIER: float = 0.9
 const HC_MOVE_SPEED_LEVEL_MULTIPLIER: float = 1.1
@@ -26,6 +29,7 @@ const HC_ITEM_ICON_MOVE_SPEED: Texture2D = preload("res://ui/overclocked-rotors.
 const HC_ITEM_ICON_AREA_SIZE: Texture2D = preload("res://ui/expanded-payloads.png")
 const HC_ITEM_ICON_ATTACK_SPEED: Texture2D = preload("res://ui/rapid-reload.png")
 const HC_ITEM_ICON_PROJECTILE_SPEED: Texture2D = preload("res://ui/turbo-munitions.png")
+const HC_GRENADE_RADIUS_LEVEL_STEP: float = 0.25
 
 @export var auto_float: bool = true
 @export var my_camera_name: StringName = &"Camera3D"
@@ -76,6 +80,7 @@ var hc_weapon_levels: Array[int] = []
 var hc_weapon_base_damage: Array[float] = []
 var hc_weapon_base_cooldown: Array[float] = []
 var hc_weapon_base_area_radius: Array[float] = []
+var hc_weapon_base_area_interval: Array[float] = []
 
 var hc_item_definitions: Array[ItemDefinition] = []
 var hc_item_levels: Array[int] = []
@@ -361,6 +366,7 @@ func _configure_weapon_systems() -> void:
 	hc_weapon_base_area_radius.clear()
 	hc_weapon_base_knockback.clear()
 	hc_weapon_base_projectile_count.clear()
+	hc_weapon_base_area_interval.clear()
 	for system in hc_weapon_systems:
 		if not system.is_ready:
 			push_warning("Weapon was not ready to be configured!")
@@ -371,6 +377,11 @@ func _configure_weapon_systems() -> void:
 			hc_weapon_base_area_radius.append(system.weapon.area_radius)
 			hc_weapon_base_knockback.append(system.weapon.knockback)
 			hc_weapon_base_projectile_count.append(system.weapon.projectile_count)
+			if system is AreaWeaponSystem:
+				var area_system := system as AreaWeaponSystem
+				hc_weapon_base_area_interval.append(area_system.aws_damage_interval)
+			else:
+				hc_weapon_base_area_interval.append(0.0)
 		else:
 			push_warning("Weapon system has no weapon!")
 			hc_weapon_base_damage.append(0.0)
@@ -378,6 +389,7 @@ func _configure_weapon_systems() -> void:
 			hc_weapon_base_area_radius.append(0.0)
 			hc_weapon_base_knockback.append(0.0)
 			hc_weapon_base_projectile_count.append(1)
+			hc_weapon_base_area_interval.append(0.0)
 	# TODO: level up at a start of give certain weapon?
 	var rng := RandomNumberGenerator.new()
 	rng.randomize()
@@ -485,9 +497,11 @@ func _apply_weapon_level(index: int) -> int:
 	var base_damage := hc_weapon_base_damage[index]
 	var base_cooldown := hc_weapon_base_cooldown[index]
 	var base_area_radius := hc_weapon_base_area_radius[index]
+	var base_area_interval := hc_weapon_base_area_interval[index]
 	var base_knockback := hc_weapon_base_knockback[index]
 	var base_projectile_count := hc_weapon_base_projectile_count[index]
 	var level: int = int(max(1, hc_weapon_levels[index]))
+	system.weapon.set_meta("current_level", level)
 	var bonus_damage := get_item_bonus(ItemDefinition.ItemType.DAMAGE)
 	var bonus_attack_speed := get_item_bonus(ItemDefinition.ItemType.ATTACK_SPEED)
 	var bonus_area_size := get_item_bonus(ItemDefinition.ItemType.AREA_SIZE)
@@ -497,21 +511,52 @@ func _apply_weapon_level(index: int) -> int:
 	if _is_missile_weapon(system):
 		var fire_rate_steps := int(floor(float(level) / 2.0))
 		var cooldown_multiplier := pow(HC_WEAPON_COOLDOWN_MULTIPLIER, float(fire_rate_steps))
-		system.weapon.cooldown = max(0.05, base_cooldown * cooldown_multiplier - bonus_attack_speed)
+		system.weapon.cooldown = max(
+			0.05,
+			(
+				base_cooldown * cooldown_multiplier
+				- bonus_attack_speed
+				- system.weapon.cooldown_level_step * float(level - 1)
+			)
+		)
 		var missile_steps := int(floor(float(level - 1) / 2.0))
 		system.weapon.projectile_count = max(
 			1, base_projectile_count + missile_steps * system.weapon.projectile_count_level_step
 		)
 	else:
 		var cooldown_multiplier := pow(HC_WEAPON_COOLDOWN_MULTIPLIER, float(level - 1))
-		system.weapon.cooldown = max(0.05, base_cooldown * cooldown_multiplier - bonus_attack_speed)
+		system.weapon.cooldown = max(
+			0.05,
+			(
+				base_cooldown * cooldown_multiplier
+				- bonus_attack_speed
+				- system.weapon.cooldown_level_step * float(level - 1)
+			)
+		)
 		var interval: int = int(max(1, system.weapon.projectile_count_level_interval))
 		var steps := int(floor(float(level - 1) / float(interval)))
 		system.weapon.projectile_count = max(
 			1, base_projectile_count + steps * system.weapon.projectile_count_level_step
 		)
+	if system.has_method("apply_projectile_count"):
+		system.apply_projectile_count(system.weapon.projectile_count)
 	if base_area_radius > 0.0:
-		system.weapon.area_radius = max(0.1, base_area_radius + bonus_area_size)
+		if _is_grenade_weapon(system):
+			system.weapon.area_radius = max(
+				0.1,
+				base_area_radius + bonus_area_size + HC_GRENADE_RADIUS_LEVEL_STEP * float(level - 1)
+			)
+		elif system is AreaWeaponSystem:
+			var area_scale := (
+				HC_AREA_WEAPON_START_SCALE + HC_AREA_WEAPON_SCALE_STEP * float(level - 1)
+			)
+			system.weapon.area_radius = max(0.1, base_area_radius * area_scale + bonus_area_size)
+		else:
+			system.weapon.area_radius = max(0.1, base_area_radius + bonus_area_size)
+	if base_area_interval > 0.0 and system is AreaWeaponSystem:
+		var area_interval_multiplier := pow(HC_AREA_WEAPON_INTERVAL_MULTIPLIER, float(level - 1))
+		var area_system := system as AreaWeaponSystem
+		area_system.aws_damage_interval = max(0.05, base_area_interval * area_interval_multiplier)
 
 	return level
 
@@ -525,6 +570,17 @@ func _is_missile_weapon(system: WeaponSystem) -> bool:
 	if projectile_path == "":
 		return false
 	return projectile_path.ends_with("homing_missile.tscn")
+
+
+func _is_grenade_weapon(system: WeaponSystem) -> bool:
+	if system == null or system.weapon == null:
+		return false
+	if system.weapon.projectile_scene == null:
+		return false
+	var projectile_path := system.weapon.projectile_scene.resource_path
+	if projectile_path == "":
+		return false
+	return projectile_path.ends_with("grenade_projectile.tscn")
 
 
 func _get_unlocked_weapon_count() -> int:

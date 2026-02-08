@@ -1,7 +1,8 @@
 [gd_scene format=3 uid="uid://qp5lb2p6eipd"]
 
+[ext_resource type="Texture2D" uid="uid://b4vbypn3vqhkj" path="res://ground_gpt_2.png" id="2_jayf2"]
 [ext_resource type="PackedScene" uid="uid://ddo5hf3gvff11" path="res://hordecopter.tscn" id="2_qn30u"]
-[ext_resource type="Texture2D" uid="uid://cvmso3ruvike3" path="res://ground_gpt.png" id="2_wkxu0"]
+[ext_resource type="Environment" uid="uid://d4mwoxujdu6d6" path="res://the_environment.tres" id="3_ctu57"]
 [ext_resource type="Script" uid="uid://c5ovtis2odund" path="res://camera_3d.gd" id="3_qn30u"]
 [ext_resource type="PackedScene" uid="uid://b4fmt4sv8ly22" path="res://enemies/basic_enemy.tscn" id="4_test_enemy"]
 [ext_resource type="Script" uid="uid://byuj30fao1rua" path="res://enemies/enemy_spawner.gd" id="5_enemy_spawner"]
@@ -13,21 +14,20 @@
 [ext_resource type="Script" uid="uid://ltl7lenutetf" path="res://ui/hud.gd" id="7_hud"]
 [ext_resource type="PackedScene" uid="uid://61wxncgqfry7" path="res://enemies/basic_enemy_4.tscn" id="8_ctu57"]
 [ext_resource type="Script" uid="uid://5y4lu84m00fd" path="res://props/prop_spawner.gd" id="8_prop_spawner"]
+[ext_resource type="PackedScene" path="res://ui/pause_menu.tscn" id="9_pause_menu"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qn30u"]
-albedo_texture = ExtResource("2_wkxu0")
-uv1_scale = Vector3(10, 10, 10)
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7qrhf"]
+albedo_texture = ExtResource("2_jayf2")
+uv1_scale = Vector3(5, 5, 5)
 
-[sub_resource type="BoxMesh" id="BoxMesh_koayk"]
-size = Vector3(100, 1, 100)
+[sub_resource type="CylinderMesh" id="CylinderMesh_ctu57"]
+top_radius = 75.0
+bottom_radius = 75.0
+height = 1.0
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_4jg3y"]
-size = Vector3(100, 1, 100)
-
-[sub_resource type="Environment" id="Environment_jayf2"]
-ambient_light_source = 3
-ambient_light_color = Color(0.7735279, 0.7565761, 0, 1)
-ambient_light_energy = 0.2
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_ctu57"]
+height = 1.0
+radius = 75.0
 
 [sub_resource type="LabelSettings" id="LabelSettings_lrgam"]
 font_size = 28
@@ -45,12 +45,12 @@ lock_rotation = true
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Maa" unique_id=1704752473]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5091238, 0)
-material_override = SubResource("StandardMaterial3D_qn30u")
-mesh = SubResource("BoxMesh_koayk")
+material_override = SubResource("StandardMaterial3D_7qrhf")
+mesh = SubResource("CylinderMesh_ctu57")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Maa" unique_id=478634929]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
-shape = SubResource("BoxShape3D_4jg3y")
+shape = SubResource("CylinderShape3D_ctu57")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1013122941]
 transform = Transform3D(1, 0, 0, 0, 0.19387484, 0.9810263, 0, -0.9810263, 0.19387484, 0, 23.777777, 0)
@@ -58,12 +58,14 @@ shadow_enabled = true
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1177538808]
 transform = Transform3D(1, 0, 0, 0, 0.9583226, 0.28568837, 0, -0.28568837, 0.9583226, 0, 5.8, 5.26)
-environment = SubResource("Environment_jayf2")
+environment = ExtResource("3_ctu57")
 script = ExtResource("3_qn30u")
 
 [node name="EnemySpawner" type="Node3D" parent="." unique_id=1364854204]
 script = ExtResource("5_enemy_spawner")
 ground_enemy_scenes = Array[PackedScene]([ExtResource("4_test_enemy"), ExtResource("6_jayf2"), ExtResource("7_7qrhf"), ExtResource("8_ctu57"), ExtResource("7_e7tll"), ExtResource("6_flyover_enemy")])
+spawn_interval_max = 4.0
+spawn_interval_min = 2.0
 
 [node name="PropSpawner" type="Node3D" parent="." unique_id=1101542793]
 script = ExtResource("8_prop_spawner")
@@ -73,6 +75,10 @@ script = ExtResource("6_game_state")
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=542620325]
 script = ExtResource("7_hud")
+
+[node name="PauseMenu" parent="HUD" unique_id=2000828744 instance=ExtResource("9_pause_menu")]
+grow_horizontal = 2
+grow_vertical = 2
 
 [node name="MarginContainer" type="MarginContainer" parent="HUD" unique_id=1692005082]
 anchors_preset = 10

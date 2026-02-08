@@ -19,7 +19,7 @@ const WEAPON_SYSTEM_PLASMA_SFX: AudioStream = preload("res://sfx/plasma_shoot.sf
 @export var muzzle_path: NodePath = NodePath("../Muzzle")
 
 var is_ready: bool = false
-var is_active: bool = false
+@export var is_active: bool = false
 
 var _muzzle: Node3D
 var _next_fire_time: float = 0.0
@@ -71,7 +71,20 @@ func _fire_hitscan() -> void:
 		return
 	_play_sfx_at(WEAPON_SYSTEM_LASER_SFX, _muzzle.global_position)
 	var start := _muzzle.global_position
-	var direction := -_muzzle.global_transform.basis.z
+	var base_direction := -_muzzle.global_transform.basis.z
+	var base_up := _muzzle.global_transform.basis.y
+	var beam_count: int = int(max(1, weapon.projectile_count))
+	var spread_step_degrees := 8.0
+	var spread_start := -0.5 * float(beam_count - 1) * spread_step_degrees
+	for index in range(beam_count):
+		var direction := base_direction
+		if beam_count > 1:
+			var spread_angle := spread_start + float(index) * spread_step_degrees
+			direction = base_direction.rotated(base_up, deg_to_rad(spread_angle))
+		_fire_hitscan_beam(start, direction)
+
+
+func _fire_hitscan_beam(start: Vector3, direction: Vector3) -> void:
 	var beam: Node = null
 	if weapon.beam_scene != null:
 		beam = weapon.beam_scene.instantiate()
@@ -122,11 +135,11 @@ func _fire_projectile() -> void:
 		var projectile := weapon.projectile_scene.instantiate()
 		get_tree().current_scene.add_child(projectile)
 		projectile.global_transform = _muzzle.global_transform
-		_apply_projectile_item_bonuses(projectile)
 		if projectile.has_method("configure"):
 			var spread_angle := spread_start + float(index) * spread_step_degrees
 			var direction := base_direction.rotated(base_up, deg_to_rad(spread_angle))
 			projectile.configure(weapon, direction)
+		_apply_projectile_item_bonuses(projectile)
 
 
 func _play_projectile_sfx() -> void:

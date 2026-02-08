@@ -41,8 +41,9 @@ extends Node3D
 @export var flyover_height: float = 6.0
 @export var flyover_spawn_margin: float = 20.0
 @export var spawn_cluster_radius: float = 3.0
+@export var new_enemy_interval: float = 60
 
-var enemy_spawner_elapsed: float = 0.0
+var enemy_spawner_elapsed: float = 110.0
 var enemy_spawner_elite_chance_step: float = 0.07
 var enemy_spawner_elite_chance: float = enemy_spawner_elite_chance_step
 var enemy_spawner_rng: RandomNumberGenerator = RandomNumberGenerator.new()
@@ -73,7 +74,7 @@ func _process(delta: float) -> void:
 	var enemy_spawner_group_size := _resolve_group_size()
 	enemy_spawner_elapsed += delta
 	while enemy_spawner_elapsed >= enemy_spawner_interval:
-		enemy_spawner_elapsed -= enemy_spawner_interval
+		enemy_spawner_elapsed = 0
 		if _can_spawn(enemy_spawner_group_size):
 			_spawn_group(enemy_spawner_group_size)
 		else:
@@ -81,7 +82,7 @@ func _process(delta: float) -> void:
 
 
 func _can_spawn(requested_count: int) -> bool:
-	return get_tree().get_nodes_in_group("enemies").size() + requested_count <= max_enemies
+	return get_tree().get_nodes_in_group("enemy_targets").size() + requested_count <= max_enemies
 
 
 func _spawn_group(enemy_spawner_group_size: int) -> void:
@@ -227,17 +228,17 @@ func _random_flyover_offset(enemy_spawner_side: int) -> Vector3:
 	return Vector3.ZERO
 
 
-func _apply_time_scaling(enemy_instance: Node) -> void:
+func _apply_level_scaling(enemy_instance: Node) -> void:
 	if game_state == null:
-		push_warning("EnemySpawner: GameState not found; skipping time scaling.")
+		push_warning("EnemySpawner: GameState not found; skipping level scaling.")
 		return
-	if not game_state.has_method("get_elapsed_time"):
-		push_warning("EnemySpawner: GameState missing get_elapsed_time; skipping scaling.")
+	if not game_state.has_method("get_current_level"):
+		push_warning("EnemySpawner: GameState missing get_current_level; skipping scaling.")
 		return
-	if enemy_instance.has_method("configure_from_time"):
-		enemy_instance.configure_from_time(game_state.get_elapsed_time())
+	if enemy_instance.has_method("configure_from_level"):
+		enemy_instance.configure_from_level(game_state.get_current_level())
 	else:
-		push_warning("EnemySpawner: Enemy missing configure_from_time; skipping scaling.")
+		push_warning("EnemySpawner: Enemy missing configure_from_level; skipping scaling.")
 
 
 func _spawn_with_effect(
@@ -277,7 +278,7 @@ func _spawn_enemy_instance(
 	enemy_spawner_instance.global_position = spawn_position
 	if configure_callback.is_valid():
 		configure_callback.call(enemy_spawner_instance)
-	_apply_time_scaling(enemy_spawner_instance)
+	_apply_level_scaling(enemy_spawner_instance)
 	_apply_elite_roll(enemy_spawner_instance)
 
 
@@ -320,7 +321,8 @@ func _pick_enemy_scene(enemy_scenes: Array[PackedScene]) -> PackedScene:
 		return null
 	var enemy_spawner_candidates: Array[PackedScene] = []
 	# time per 2min on max index
-	var time_based_max_size = int(game_state.get_elapsed_time() / 120)
+	var time = game_state.get_elapsed_time() if game_state != null else Time.get_ticks_msec() / 1000
+	var time_based_max_size = int(time / new_enemy_interval)
 
 	for enemy_spawner_scene in enemy_scenes:
 		if enemy_spawner_scene != null:
