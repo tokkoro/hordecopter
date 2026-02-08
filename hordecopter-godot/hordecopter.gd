@@ -21,6 +21,11 @@ const HC_ITEM_MOVE_SPEED_STEP: float = 1.0
 const HC_ITEM_AREA_SIZE_STEP: float = 0.25
 const HC_ITEM_ATTACK_SPEED_STEP: float = 0.02
 const HC_ITEM_PROJECTILE_SPEED_STEP: float = 1.0
+const HC_ITEM_ICON_DAMAGE: Texture2D = preload("res://ui/high-impact-rounds.png")
+const HC_ITEM_ICON_MOVE_SPEED: Texture2D = preload("res://ui/overclocked-rotors.png")
+const HC_ITEM_ICON_AREA_SIZE: Texture2D = preload("res://ui/expanded-payloads.png")
+const HC_ITEM_ICON_ATTACK_SPEED: Texture2D = preload("res://ui/rapid-reload.png")
+const HC_ITEM_ICON_PROJECTILE_SPEED: Texture2D = preload("res://ui/turbo-munitions.png")
 
 @export var auto_float: bool = true
 @export var my_camera_name: StringName = &"Camera3D"
@@ -121,7 +126,7 @@ func _physics_process(delta: float) -> void:
 		up_force_input = 1
 	if Input.is_action_pressed("p1_thurst_down"):
 		up_force_input = -1
-	
+
 	if hc_fuel_current <= 0.0:
 		up_force_input = 0
 
@@ -184,7 +189,7 @@ func _physics_process(delta: float) -> void:
 
 		#total force
 		var force_y := hover_force + u
-		auto_float_debug_value = force_y 
+		auto_float_debug_value = force_y
 		#limit
 		force_y = clamp(force_y, -auto_float_power_max, auto_float_power_max)
 
@@ -233,8 +238,7 @@ func _update_fuel(delta: float) -> void:
 		if Time.get_ticks_msec() - hc_previous_aerial_time > 1000:
 			hc_fuel_current = min(fuel_max, hc_fuel_current + fuel_regen_per_second * delta)
 		return
-	else:
-		hc_previous_aerial_time = Time.get_ticks_msec()
+	hc_previous_aerial_time = Time.get_ticks_msec()
 	var altitude: float = max(0.0, _get_ground_distance())
 	var altitude_drain: float = fuel_altitude_drain_per_second * altitude
 	var drain: float = (fuel_drain_per_second + altitude_drain) * delta
@@ -566,6 +570,7 @@ func _configure_item_definitions() -> void:
 	var damage_item := ItemDefinition.new()
 	damage_item.item_name = "High-Impact Rounds"
 	damage_item.item_type = ItemDefinition.ItemType.DAMAGE
+	damage_item.icon = HC_ITEM_ICON_DAMAGE
 	damage_item.bonus_per_level = HC_ITEM_DAMAGE_STEP
 	damage_item.max_level = 5
 	hc_item_definitions.append(damage_item)
@@ -574,6 +579,7 @@ func _configure_item_definitions() -> void:
 	var move_item := ItemDefinition.new()
 	move_item.item_name = "Overclocked Rotors"
 	move_item.item_type = ItemDefinition.ItemType.MOVE_SPEED
+	move_item.icon = HC_ITEM_ICON_MOVE_SPEED
 	move_item.bonus_per_level = HC_ITEM_MOVE_SPEED_STEP
 	move_item.max_level = 5
 	hc_item_definitions.append(move_item)
@@ -582,6 +588,7 @@ func _configure_item_definitions() -> void:
 	var size_item := ItemDefinition.new()
 	size_item.item_name = "Expanded Payloads"
 	size_item.item_type = ItemDefinition.ItemType.AREA_SIZE
+	size_item.icon = HC_ITEM_ICON_AREA_SIZE
 	size_item.bonus_per_level = HC_ITEM_AREA_SIZE_STEP
 	size_item.max_level = 5
 	hc_item_definitions.append(size_item)
@@ -590,6 +597,7 @@ func _configure_item_definitions() -> void:
 	var attack_speed_item := ItemDefinition.new()
 	attack_speed_item.item_name = "Rapid Reload"
 	attack_speed_item.item_type = ItemDefinition.ItemType.ATTACK_SPEED
+	attack_speed_item.icon = HC_ITEM_ICON_ATTACK_SPEED
 	attack_speed_item.bonus_per_level = HC_ITEM_ATTACK_SPEED_STEP
 	attack_speed_item.max_level = 5
 	hc_item_definitions.append(attack_speed_item)
@@ -598,6 +606,7 @@ func _configure_item_definitions() -> void:
 	var projectile_speed_item := ItemDefinition.new()
 	projectile_speed_item.item_name = "Turbo Munitions"
 	projectile_speed_item.item_type = ItemDefinition.ItemType.PROJECTILE_SPEED
+	projectile_speed_item.icon = HC_ITEM_ICON_PROJECTILE_SPEED
 	projectile_speed_item.bonus_per_level = HC_ITEM_PROJECTILE_SPEED_STEP
 	projectile_speed_item.max_level = 5
 	hc_item_definitions.append(projectile_speed_item)
