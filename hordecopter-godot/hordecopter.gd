@@ -24,6 +24,7 @@ const HC_ITEM_MOVE_SPEED_STEP: float = 1.0
 const HC_ITEM_AREA_SIZE_STEP: float = 0.25
 const HC_ITEM_ATTACK_SPEED_STEP: float = 0.02
 const HC_ITEM_PROJECTILE_SPEED_STEP: float = 1.0
+const HC_GRENADE_RADIUS_LEVEL_STEP: float = 0.25
 
 @export var auto_float: bool = true
 @export var my_camera_name: StringName = &"Camera3D"
@@ -520,7 +521,12 @@ func _apply_weapon_level(index: int) -> int:
 	if system.has_method("apply_projectile_count"):
 		system.apply_projectile_count(system.weapon.projectile_count)
 	if base_area_radius > 0.0:
-		if system is AreaWeaponSystem:
+		if _is_grenade_weapon(system):
+			system.weapon.area_radius = max(
+				0.1,
+				base_area_radius + bonus_area_size + HC_GRENADE_RADIUS_LEVEL_STEP * float(level - 1)
+			)
+		elif system is AreaWeaponSystem:
 			var area_scale := (
 				HC_AREA_WEAPON_START_SCALE + HC_AREA_WEAPON_SCALE_STEP * float(level - 1)
 			)
@@ -531,6 +537,8 @@ func _apply_weapon_level(index: int) -> int:
 		var area_interval_multiplier := pow(HC_AREA_WEAPON_INTERVAL_MULTIPLIER, float(level - 1))
 		var area_system := system as AreaWeaponSystem
 		area_system.aws_damage_interval = max(0.05, base_area_interval * area_interval_multiplier)
+
+
 
 	return level
 
@@ -544,6 +552,17 @@ func _is_missile_weapon(system: WeaponSystem) -> bool:
 	if projectile_path == "":
 		return false
 	return projectile_path.ends_with("homing_missile.tscn")
+
+
+func _is_grenade_weapon(system: WeaponSystem) -> bool:
+	if system == null or system.weapon == null:
+		return false
+	if system.weapon.projectile_scene == null:
+		return false
+	var projectile_path := system.weapon.projectile_scene.resource_path
+	if projectile_path == "":
+		return false
+	return projectile_path.ends_with("grenade_projectile.tscn")
 
 
 func _get_unlocked_weapon_count() -> int:
