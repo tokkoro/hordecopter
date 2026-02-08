@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" uid="uid://boy3ufjfjqxsy" path="res://ui/main_menu.gd" id="1_c0j6p"]
 [ext_resource type="Script" uid="uid://fa4lscqld16j" path="res://weapons/weapon_system.gd" id="2_p8ri8"]
+[ext_resource type="LabelSettings" uid="uid://bw44rir3et7ia" path="res://ui/label_settings.tres" id="2_q75kt"]
 [ext_resource type="Texture2D" uid="uid://brfha4l641gob" path="res://weapons/missile.png" id="4_8jgmr"]
 [ext_resource type="PackedScene" uid="uid://d25k72efcjldo" path="res://models/vain_body.glb" id="4_arv2f"]
 [ext_resource type="Script" uid="uid://ckkyad8tnpn7e" path="res://rollaus_pivot_piste.gd" id="5_5klac"]
@@ -69,6 +70,7 @@ alignment = 1
 [node name="TitleLabel" type="Label" parent="CenterContainer/VBoxContainer" unique_id=976338056]
 layout_mode = 2
 text = "HORDECOPTER"
+label_settings = ExtResource("2_q75kt")
 horizontal_alignment = 1
 
 [node name="StartButton" type="Button" parent="CenterContainer/VBoxContainer" unique_id=1246232049]

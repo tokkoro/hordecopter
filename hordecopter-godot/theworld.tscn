@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://b7itd7wfeyfgu" path="res://camera_3d.gd" id="3_qn30u"]
 [ext_resource type="PackedScene" uid="uid://b4fmt4sv8ly22" path="res://enemies/basic_enemy.tscn" id="4_test_enemy"]
 [ext_resource type="Script" uid="uid://bis62j8a7c1e7" path="res://enemies/enemy_spawner.gd" id="5_enemy_spawner"]
-[ext_resource type="PackedScene" path="res://enemies/flyover_enemy.tscn" id="6_flyover_enemy"]
+[ext_resource type="PackedScene" uid="uid://dnws6oy2g18y4" path="res://enemies/flyover_enemy.tscn" id="6_flyover_enemy"]
 [ext_resource type="Script" uid="uid://bbpxugrk8bb2e" path="res://game_state.gd" id="6_game_state"]
 [ext_resource type="PackedScene" uid="uid://3wckabtb30ws" path="res://enemies/basic_enemy_2.tscn" id="6_jayf2"]
 [ext_resource type="PackedScene" uid="uid://b54rvoqsjj6f3" path="res://enemies/basic_enemy_3.tscn" id="7_7qrhf"]
@@ -14,6 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://61wxncgqfry7" path="res://enemies/basic_enemy_4.tscn" id="8_ctu57"]
 [ext_resource type="Script" uid="uid://drk6ii0pt530u" path="res://props/prop_spawner.gd" id="8_prop_spawner"]
 [ext_resource type="PackedScene" uid="uid://dclj2yuowjvlv" path="res://ui/pause_menu.tscn" id="9_pause_menu"]
+[ext_resource type="LabelSettings" uid="uid://bw44rir3et7ia" path="res://ui/label_settings.tres" id="15_jm5vp"]
 [ext_resource type="PackedScene" uid="uid://b0fhkjani5dta" path="res://world_environment.tscn" id="16_jm5vp"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7qrhf"]
@@ -28,12 +29,6 @@ height = 1.0
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_ctu57"]
 height = 1.0
 radius = 75.0
-
-[sub_resource type="LabelSettings" id="LabelSettings_lrgam"]
-font_size = 28
-
-[sub_resource type="LabelSettings" id="LabelSettings_r430w"]
-font_size = 32
 
 [node name="Node3D" type="Node3D" unique_id=1023174345]
 
@@ -101,17 +96,18 @@ show_percentage = false
 [node name="LevelLabel" type="Label" parent="HUD/MarginContainer/VBoxContainer" unique_id=2098179565]
 layout_mode = 2
 text = "  Level 1"
-label_settings = SubResource("LabelSettings_lrgam")
+label_settings = ExtResource("15_jm5vp")
 
 [node name="TimeLabel" type="Label" parent="HUD/MarginContainer/VBoxContainer" unique_id=1932256981]
 layout_mode = 2
 text = "00:00"
-label_settings = SubResource("LabelSettings_r430w")
+label_settings = ExtResource("15_jm5vp")
 horizontal_alignment = 1
 
 [node name="ExperienceLabel" type="Label" parent="HUD/MarginContainer/VBoxContainer" unique_id=1483063927]
 visible = false
 layout_mode = 2
 text = "0 / 0 XP"
+label_settings = ExtResource("15_jm5vp")
 
 [node name="WorldEnvironment" parent="." unique_id=2067898889 instance=ExtResource("16_jm5vp")]
