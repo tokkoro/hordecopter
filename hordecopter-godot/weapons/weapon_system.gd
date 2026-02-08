@@ -13,6 +13,7 @@ extends Node3D
 
 const WEAPON_SYSTEM_LASER_SFX: AudioStream = preload("res://sfx/laser.sfxr")
 const WEAPON_SYSTEM_MISSILE_SFX: AudioStream = preload("res://sfx/missile_shoot.sfxr")
+const WEAPON_SYSTEM_PLASMA_SFX: AudioStream = preload("res://sfx/plasma_shoot.sfxr")
 
 @export var weapon: WeaponDefinition
 @export var muzzle_path: NodePath = NodePath("../Muzzle")
@@ -136,6 +137,9 @@ func _play_projectile_sfx() -> void:
 		return
 	if projectile_path.ends_with("homing_missile.tscn"):
 		_play_sfx_at(WEAPON_SYSTEM_MISSILE_SFX, _muzzle.global_position)
+		return
+	if projectile_path.ends_with("plasma_ball.tscn"):
+		_play_sfx_at(WEAPON_SYSTEM_PLASMA_SFX, _muzzle.global_position)
 
 
 func _apply_projectile_item_bonuses(projectile: Node) -> void:

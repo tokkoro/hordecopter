@@ -25,6 +25,7 @@ class_name EnemyBase
 extends RigidBody3D
 
 const ENEMY_HIT_SFX: AudioStream = preload("res://sfx/monster_hit.sfxr")
+const ENEMY_DEATH_SFX: AudioStream = preload("res://sfx/enemy_death.sfxr")
 const ENEMY_BASE_FLASH_COLOR: Color = Color(1.0, 0.2, 0.2, 1.0)
 const ENEMY_BASE_FLASH_DURATION: float = 0.12
 
@@ -124,6 +125,7 @@ func _on_death() -> void:
 	if enemy_base_is_dead:
 		return
 	enemy_base_is_dead = true
+	_play_sfx_at(ENEMY_DEATH_SFX, global_position)
 	_drop_experience()
 	queue_free()
 
