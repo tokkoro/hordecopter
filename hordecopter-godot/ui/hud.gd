@@ -162,7 +162,7 @@ func _build_level_up_menu() -> void:
 	vbox.add_child(title)
 
 	var speed_note := Label.new()
-	speed_note.text = "Movement speed starts 10% slower, then +10% per level."
+	speed_note.text = "Movement speed +10%"
 	speed_note.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	speed_note.add_theme_font_size_override("font_size", 12)
 	vbox.add_child(speed_note)

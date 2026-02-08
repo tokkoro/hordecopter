@@ -29,7 +29,7 @@ const HC_MOVE_SPEED_LEVEL_MULTIPLIER: float = 1.1
 @export var ki: float = 2.0
 @export var kd: float = 12.0
 @export var d_filter_hz: float = -1.0
-@export var rotation_speed: float = 50.0
+@export var rotation_speed: float = 100.0
 
 var my_camera: Camera3D
 var auto_float_target_altitude: float = 0.5
