@@ -196,7 +196,7 @@ func _physics_process(delta: float) -> void:
 		infotext.text = ""
 
 
-func apply_damage(amount: float) -> void:
+func apply_player_damage(amount: float) -> void:
 	if amount <= 0.0:
 		return
 	_play_sfx_at(player_hit_sound, global_position)
