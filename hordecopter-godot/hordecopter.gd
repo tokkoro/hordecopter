@@ -121,7 +121,6 @@ func _physics_process(delta: float) -> void:
 		up_force_input = 1
 	if Input.is_action_pressed("p1_thurst_down"):
 		up_force_input = -1
-	
 	if hc_fuel_current <= 0.0:
 		up_force_input = 0
 
@@ -184,7 +183,7 @@ func _physics_process(delta: float) -> void:
 
 		#total force
 		var force_y := hover_force + u
-		auto_float_debug_value = force_y 
+		auto_float_debug_value = force_y
 		#limit
 		force_y = clamp(force_y, -auto_float_power_max, auto_float_power_max)
 
@@ -233,8 +232,7 @@ func _update_fuel(delta: float) -> void:
 		if Time.get_ticks_msec() - hc_previous_aerial_time > 1000:
 			hc_fuel_current = min(fuel_max, hc_fuel_current + fuel_regen_per_second * delta)
 		return
-	else:
-		hc_previous_aerial_time = Time.get_ticks_msec()
+	hc_previous_aerial_time = Time.get_ticks_msec()
 	var altitude: float = max(0.0, _get_ground_distance())
 	var altitude_drain: float = fuel_altitude_drain_per_second * altitude
 	var drain: float = (fuel_drain_per_second + altitude_drain) * delta
@@ -484,6 +482,7 @@ func _apply_weapon_level(index: int) -> int:
 	var base_knockback := hc_weapon_base_knockback[index]
 	var base_projectile_count := hc_weapon_base_projectile_count[index]
 	var level: int = int(max(1, hc_weapon_levels[index]))
+	system.weapon.set_meta("current_level", level)
 	var bonus_damage := get_item_bonus(ItemDefinition.ItemType.DAMAGE)
 	var bonus_attack_speed := get_item_bonus(ItemDefinition.ItemType.ATTACK_SPEED)
 	var bonus_area_size := get_item_bonus(ItemDefinition.ItemType.AREA_SIZE)
