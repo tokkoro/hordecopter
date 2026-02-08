@@ -13,6 +13,7 @@ class_name GameHud
 extends CanvasLayer
 
 const HUD_MAX_WEAPON_SLOTS: int = 6
+const HUD_MAX_ITEM_SLOTS: int = 5
 
 @export var show_experience_numbers: bool = false
 @export var menu_select_sound: AudioStream = preload("res://sfx/menu_select.sfxr")
@@ -24,6 +25,10 @@ var hud_weapon_slots_container: HBoxContainer
 var hud_weapon_slot_panels: Array[PanelContainer] = []
 var hud_weapon_slot_icons: Array[TextureRect] = []
 var hud_weapon_slot_labels: Array[Label] = []
+var hud_item_slots_container: HBoxContainer
+var hud_item_slot_panels: Array[PanelContainer] = []
+var hud_item_slot_icons: Array[TextureRect] = []
+var hud_item_slot_labels: Array[Label] = []
 
 @onready var hud_time_label: Label = $MarginContainer/VBoxContainer/TimeLabel
 @onready var hud_level_label: Label = $MarginContainer/VBoxContainer/LevelLabel
@@ -41,6 +46,8 @@ func _ready() -> void:
 	_build_level_up_menu()
 	_build_weapon_slots()
 	update_weapon_slots([])
+	_build_item_slots()
+	update_item_slots([])
 	_register_with_game_state()
 
 
@@ -81,6 +88,32 @@ func update_weapon_slots(weapon_data: Array[Dictionary]) -> void:
 			var unlocked := level > 0 and texture != null
 			icon.texture = texture
 			icon.visible = unlocked
+			label.visible = unlocked
+			label.text = "%d" % level if unlocked else ""
+			slot_panel.modulate = Color(1, 1, 1, 1) if unlocked else Color(1, 1, 1, 0.35)
+		else:
+			icon.texture = null
+			icon.visible = false
+			label.text = ""
+			label.visible = false
+			slot_panel.modulate = Color(1, 1, 1, 0.35)
+
+
+func update_item_slots(item_data: Array[Dictionary]) -> void:
+	if hud_item_slot_panels.is_empty():
+		_build_item_slots()
+	var slot_count := HUD_MAX_ITEM_SLOTS
+	for index in range(slot_count):
+		var slot_panel := hud_item_slot_panels[index]
+		var icon := hud_item_slot_icons[index]
+		var label := hud_item_slot_labels[index]
+		if index < item_data.size():
+			var entry := item_data[index]
+			var texture := entry.get("icon", null) as Texture2D
+			var level := int(entry.get("level", 0))
+			var unlocked := level > 0
+			icon.texture = texture
+			icon.visible = texture != null and unlocked
 			label.visible = unlocked
 			label.text = "%d" % level if unlocked else ""
 			slot_panel.modulate = Color(1, 1, 1, 1) if unlocked else Color(1, 1, 1, 0.35)
@@ -257,6 +290,88 @@ func _build_weapon_slots() -> void:
 		hud_weapon_slot_icons.append(icon)
 		hud_weapon_slot_labels.append(level_label)
 		hud_weapon_slots_container.add_child(slot_panel)
+
+
+func _build_item_slots() -> void:
+	if hud_item_slots_container != null:
+		return
+	var container := MarginContainer.new()
+	container.name = "ItemSlots"
+	container.anchor_left = 1.0
+	container.anchor_top = 1.0
+	container.anchor_right = 1.0
+	container.anchor_bottom = 1.0
+	container.offset_left = -360.0
+	container.offset_top = -132.0
+	container.offset_right = -20.0
+	container.offset_bottom = -84.0
+	container.grow_horizontal = Control.GROW_DIRECTION_BEGIN
+	container.grow_vertical = Control.GROW_DIRECTION_BEGIN
+
+	hud_item_slots_container = HBoxContainer.new()
+	hud_item_slots_container.name = "ItemSlotRow"
+	hud_item_slots_container.add_theme_constant_override("separation", 8)
+	container.add_child(hud_item_slots_container)
+	add_child(container)
+
+	for index in range(HUD_MAX_ITEM_SLOTS):
+		var slot_panel := PanelContainer.new()
+		slot_panel.name = "ItemSlot%d" % [index + 1]
+		slot_panel.custom_minimum_size = Vector2(48, 48)
+
+		var slot_root := Control.new()
+		slot_root.custom_minimum_size = Vector2(48, 48)
+		slot_panel.add_child(slot_root)
+
+		var icon := TextureRect.new()
+		icon.name = "Icon"
+		icon.anchor_left = 0.0
+		icon.anchor_top = 0.0
+		icon.anchor_right = 1.0
+		icon.anchor_bottom = 1.0
+		icon.offset_left = 0.0
+		icon.offset_top = 0.0
+		icon.offset_right = 0.0
+		icon.offset_bottom = 0.0
+		icon.expand_mode = TextureRect.EXPAND_FIT_WIDTH
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		slot_root.add_child(icon)
+
+		var slot_label := Label.new()
+		slot_label.name = "SlotLabel"
+		slot_label.text = "%d" % [index + 1]
+		slot_label.anchor_left = 0.0
+		slot_label.anchor_top = 0.0
+		slot_label.anchor_right = 0.0
+		slot_label.anchor_bottom = 0.0
+		slot_label.offset_left = 4.0
+		slot_label.offset_top = 2.0
+		slot_label.offset_right = 20.0
+		slot_label.offset_bottom = 18.0
+		slot_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		slot_label.vertical_alignment = VERTICAL_ALIGNMENT_TOP
+		slot_label.add_theme_font_size_override("font_size", 12)
+		slot_root.add_child(slot_label)
+
+		var level_label := Label.new()
+		level_label.name = "LevelLabel"
+		level_label.anchor_left = 0.0
+		level_label.anchor_top = 0.0
+		level_label.anchor_right = 1.0
+		level_label.anchor_bottom = 1.0
+		level_label.offset_left = 0.0
+		level_label.offset_top = 0.0
+		level_label.offset_right = -4.0
+		level_label.offset_bottom = -2.0
+		level_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+		level_label.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
+		level_label.add_theme_font_size_override("font_size", 14)
+		slot_root.add_child(level_label)
+
+		hud_item_slot_panels.append(slot_panel)
+		hud_item_slot_icons.append(icon)
+		hud_item_slot_labels.append(level_label)
+		hud_item_slots_container.add_child(slot_panel)
 
 
 func _on_level_up_option_pressed(index: int) -> void:

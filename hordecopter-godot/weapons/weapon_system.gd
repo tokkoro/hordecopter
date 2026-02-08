@@ -114,6 +114,7 @@ func _fire_projectile() -> void:
 	var projectile := weapon.projectile_scene.instantiate()
 	get_tree().current_scene.add_child(projectile)
 	projectile.global_transform = _muzzle.global_transform
+	_apply_projectile_item_bonuses(projectile)
 	if projectile.has_method("configure"):
 		var direction := -_muzzle.global_transform.basis.z
 		projectile.configure(weapon, direction)
@@ -127,6 +128,24 @@ func _play_projectile_sfx() -> void:
 		return
 	if projectile_path.ends_with("homing_missile.tscn"):
 		_play_sfx_at(WEAPON_SYSTEM_MISSILE_SFX, _muzzle.global_position)
+
+
+func _apply_projectile_item_bonuses(projectile: Node) -> void:
+	if projectile == null:
+		return
+	var speed_bonus := _get_player_item_bonus(ItemDefinition.ItemType.PROJECTILE_SPEED)
+	var size_bonus := _get_player_item_bonus(ItemDefinition.ItemType.AREA_SIZE)
+	if projectile.has_method("apply_projectile_speed_bonus"):
+		projectile.apply_projectile_speed_bonus(speed_bonus)
+	if projectile.has_method("apply_projectile_size_bonus"):
+		projectile.apply_projectile_size_bonus(size_bonus)
+
+
+func _get_player_item_bonus(item_type: ItemDefinition.ItemType) -> float:
+	var player := get_tree().get_first_node_in_group("player")
+	if player != null and player.has_method("get_item_bonus"):
+		return player.get_item_bonus(item_type)
+	return 0.0
 
 
 func _play_sfx_at(stream: AudioStream, position: Vector3) -> void:
