@@ -11,6 +11,9 @@
 #                 • map_padding: float – keep props inside bounds
 #                 • spawn_height: float – ground height for props
 #                 • min_spacing: float – minimum spacing between props
+#                 • cluster_size_min: int – minimum props per cluster
+#                 • cluster_size_max: int – maximum props per cluster
+#                 • cluster_radius: float – cluster scatter radius in meters
 #                 • center_clear_radius: float – keep props away from center
 #                 • loot_crate_scene: PackedScene – loot crate scene to drop
 #                 • loot_crate_min_delay: float – minimum drop delay in seconds
@@ -48,6 +51,9 @@ const PROP_SCALE_RANGES := {
 @export var map_padding: float = 6.0
 @export var spawn_height: float = 0.0
 @export var min_spacing: float = 5.0
+@export var cluster_size_min: int = 2
+@export var cluster_size_max: int = 5
+@export var cluster_radius: float = 3.0
 @export var center_clear_radius: float = 10.0
 @export var max_attempts: int = 200
 @export var loot_crate_scene: PackedScene = preload("res://props/loot_crate.tscn")
@@ -89,18 +95,36 @@ func _spawn_props() -> void:
 	if prop_count <= 0:
 		return
 	var prop_spawner_positions: Array[Vector3] = []
+	var prop_spawner_centers: Array[Vector3] = []
 	var prop_spawner_half: float = map_size * 0.5
 	var prop_spawner_attempts: int = 0
 	while prop_spawner_positions.size() < prop_count and prop_spawner_attempts < max_attempts:
 		prop_spawner_attempts += 1
-		var prop_spawner_position := _random_position(prop_spawner_half)
-		if not _is_position_valid(prop_spawner_position, prop_spawner_positions):
+		var prop_spawner_center := _random_position(prop_spawner_half)
+		if not _is_position_valid(prop_spawner_center, prop_spawner_centers):
 			continue
-		prop_spawner_positions.append(prop_spawner_position)
-		var prop_spawner_definition := prop_spawner_definitions[prop_spawner_rng.randi_range(
-			0, prop_spawner_definitions.size() - 1
-		)]
-		_spawn_prop(prop_spawner_definition, prop_spawner_position)
+		prop_spawner_centers.append(prop_spawner_center)
+		var prop_spawner_remaining := prop_count - prop_spawner_positions.size()
+		var prop_spawner_group_size := _resolve_cluster_size(prop_spawner_remaining)
+		var prop_spawner_group_spawned: int = 0
+		var prop_spawner_group_attempts: int = 0
+		while (
+			prop_spawner_group_spawned < prop_spawner_group_size
+			and prop_spawner_group_attempts < max_attempts
+		):
+			prop_spawner_group_attempts += 1
+			var prop_spawner_offset := _random_cluster_offset()
+			var prop_spawner_position := prop_spawner_center + prop_spawner_offset
+			if not _is_position_within_bounds(prop_spawner_position, prop_spawner_half):
+				continue
+			if prop_spawner_position.length() < center_clear_radius:
+				continue
+			prop_spawner_positions.append(prop_spawner_position)
+			var prop_spawner_definition := prop_spawner_definitions[prop_spawner_rng.randi_range(
+				0, prop_spawner_definitions.size() - 1
+			)]
+			_spawn_prop(prop_spawner_definition, prop_spawner_position)
+			prop_spawner_group_spawned += 1
 
 
 func _random_position(prop_spawner_half: float) -> Vector3:
@@ -113,6 +137,19 @@ func _random_position(prop_spawner_half: float) -> Vector3:
 	return Vector3(prop_spawner_x, spawn_height, prop_spawner_z)
 
 
+func _random_cluster_offset() -> Vector3:
+	var prop_spawner_radius: float = max(0.0, cluster_radius)
+	if prop_spawner_radius <= 0.0:
+		return Vector3.ZERO
+	var prop_spawner_angle := prop_spawner_rng.randf_range(0.0, TAU)
+	var prop_spawner_distance := prop_spawner_rng.randf_range(0.0, prop_spawner_radius)
+	return Vector3(
+		cos(prop_spawner_angle) * prop_spawner_distance,
+		0.0,
+		sin(prop_spawner_angle) * prop_spawner_distance
+	)
+
+
 func _is_position_valid(position: Vector3, existing: Array[Vector3]) -> bool:
 	if position.length() < center_clear_radius:
 		return false
@@ -120,6 +157,22 @@ func _is_position_valid(position: Vector3, existing: Array[Vector3]) -> bool:
 		if position.distance_to(prop_spawner_existing) < min_spacing:
 			return false
 	return true
+
+
+func _is_position_within_bounds(position: Vector3, prop_spawner_half: float) -> bool:
+	var prop_spawner_limit: float = prop_spawner_half - map_padding
+	if abs(position.x) > prop_spawner_limit:
+		return false
+	if abs(position.z) > prop_spawner_limit:
+		return false
+	return true
+
+
+func _resolve_cluster_size(remaining: int) -> int:
+	var prop_spawner_min: int = max(1, cluster_size_min)
+	var prop_spawner_max: int = max(prop_spawner_min, cluster_size_max)
+	var prop_spawner_target: int = prop_spawner_rng.randi_range(prop_spawner_min, prop_spawner_max)
+	return min(remaining, prop_spawner_target)
 
 
 func _load_prop_definitions() -> Array[Dictionary]:

@@ -69,6 +69,9 @@ spawn_interval_min = 2.0
 
 [node name="PropSpawner" type="Node3D" parent="." unique_id=1101542793]
 script = ExtResource("8_prop_spawner")
+prop_count = 70
+cluster_size_min = 1
+cluster_size_max = 3
 
 [node name="GameState" type="Node" parent="." unique_id=554225321]
 script = ExtResource("6_game_state")
