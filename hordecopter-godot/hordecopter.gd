@@ -275,15 +275,13 @@ func _configure_weapon_systems() -> void:
 			hc_weapon_base_damage.append(system.weapon.damage)
 			hc_weapon_base_cooldown.append(system.weapon.cooldown)
 			hc_weapon_base_area_radius.append(system.weapon.area_radius)
-		else:
-			hc_weapon_base_damage.append(0.0)
-			hc_weapon_base_cooldown.append(0.0)
-			hc_weapon_base_area_radius.append(0.0)
 			hc_weapon_base_knockback.append(system.weapon.knockback)
 			hc_weapon_base_projectile_count.append(system.weapon.projectile_count)
 		else:
+			push_warning("Weapon system has no weapon!")
 			hc_weapon_base_damage.append(0.0)
 			hc_weapon_base_cooldown.append(0.0)
+			hc_weapon_base_area_radius.append(0.0)
 			hc_weapon_base_knockback.append(0.0)
 			hc_weapon_base_projectile_count.append(1)
 	# TODO: level up at a start of give certain weapon?

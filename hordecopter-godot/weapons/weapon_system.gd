@@ -117,7 +117,7 @@ func _fire_projectile() -> void:
 		var projectile := weapon.projectile_scene.instantiate()
 		get_tree().current_scene.add_child(projectile)
 		projectile.global_transform = _muzzle.global_transform
-	  _apply_projectile_item_bonuses(projectile)
+		_apply_projectile_item_bonuses(projectile)
 		if projectile.has_method("configure"):
 			var direction := -_muzzle.global_transform.basis.z
 			projectile.configure(weapon, direction)
