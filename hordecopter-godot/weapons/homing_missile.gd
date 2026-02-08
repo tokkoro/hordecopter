@@ -54,7 +54,7 @@ func _physics_process(delta: float) -> void:
 	if _target == null or not is_instance_valid(_target):
 		_target = _find_target()
 	if _target != null:
-		var desired := (_target.global_position - global_position).normalized()
+		var desired := (_target.global_position - global_position + Vector3.UP).normalized()
 		var current := _velocity.normalized()
 		var lerp_amount: float = clamp(turn_rate * delta, 0.0, 1.0)
 		var new_direction := current.slerp(desired, lerp_amount)
