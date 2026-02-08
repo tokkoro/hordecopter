@@ -146,7 +146,7 @@ func _flash_indicator() -> void:
 	var local_flash_id := aws_flash_id
 	aws_indicator_material.albedo_color = aws_damage_flash_color
 	aws_indicator_material.emission = aws_damage_flash_color
-	await get_tree().create_timer(max(0.02, aws_damage_flash_duration)).timeout
+	await get_tree().create_timer(max(0.1, aws_damage_flash_duration)).timeout
 	if local_flash_id != aws_flash_id:
 		return
 	aws_indicator_material.albedo_color = aws_indicator_base_albedo

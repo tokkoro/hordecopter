@@ -5,11 +5,11 @@
 [ext_resource type="Script" uid="uid://421udilwjuap" path="res://weapons/area_weapon_system.gd" id="3_area_weapon_system"]
 [ext_resource type="PackedScene" uid="uid://d25k72efcjldo" path="res://models/vain_body.glb" id="4_body"]
 [ext_resource type="Resource" uid="uid://b26uwna5dssms" path="res://weapons/laser_weapon.tres" id="5_laser_weapon"]
-[ext_resource type="Resource" uid="uid://dqlqfh7fx2lhv" path="res://weapons/homing_missile_weapon.tres" id="6_missile_weapon"]
+[ext_resource type="Resource" uid="uid://kqaffrt5hvoc" path="res://weapons/homing_missile_weapon.tres" id="6_missile_weapon"]
 [ext_resource type="Script" uid="uid://nmj5je32etrs" path="res://rollaus_pivot_piste.gd" id="7_rollaus_pivot"]
 [ext_resource type="Resource" uid="uid://bar0g1efnvqlw" path="res://weapons/grenade_weapon.tres" id="8_grenade_weapon"]
 [ext_resource type="PackedScene" uid="uid://yksjed5m5v1b" path="res://models/vain_ropeli.glb" id="9_ropeli"]
-[ext_resource type="Resource" uid="uid://dsadsb2eao25f" path="res://weapons/plasma_weapon.tres" id="10_plasma_weapon"]
+[ext_resource type="Resource" uid="uid://ckexc7c57b1uu" path="res://weapons/plasma_weapon.tres" id="10_plasma_weapon"]
 [ext_resource type="Resource" uid="uid://dtq2mw6n4aqm3" path="res://weapons/area_weapon.tres" id="11_area_weapon"]
 [ext_resource type="Script" uid="uid://4tcllulb563i" path="res://weapons/orbiting_helicopter_weapon_system.gd" id="12_6gtap"]
 [ext_resource type="Texture2D" uid="uid://b0323mruxlisk" path="res://weapons/copters_around.png" id="13_8sv32"]
@@ -20,7 +20,7 @@
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_area_indicator"]
 transparency = 1
-albedo_color = Color(0.2, 0.8, 0.4, 0.25)
+albedo_color = Color(0.2, 0.8, 0.4, 0.2509804)
 emission = Color(0.2, 0.8, 0.4, 1)
 emission_energy_multiplier = 1.4
 
@@ -71,6 +71,7 @@ weapon = ExtResource("10_plasma_weapon")
 [node name="AreaWeaponSystem" type="Node3D" parent="." unique_id=1566627557]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.12811616, 0)
 script = ExtResource("3_area_weapon_system")
+aws_damage_flash_color = Color(0.18604204, 0.72774696, 0.42812437, 0.36862746)
 weapon = ExtResource("11_area_weapon")
 
 [node name="AreaIndicator" type="MeshInstance3D" parent="AreaWeaponSystem" unique_id=981061800]
