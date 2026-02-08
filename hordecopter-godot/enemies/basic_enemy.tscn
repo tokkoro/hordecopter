@@ -1,22 +1,22 @@
 [gd_scene format=3 uid="uid://b4fmt4sv8ly22"]
 
-[ext_resource type="Script" uid="uid://didoxsqy6ljic" path="res://enemies/basic_enemy.gd" id="1_test_enemy"]
+[ext_resource type="Script" uid="uid://cj8ia58iv77jt" path="res://enemies/basic_enemy.gd" id="1_test_enemy"]
 [ext_resource type="PackedScene" path="res://items/experience_token.tscn" id="2_experience_token"]
 [ext_resource type="PackedScene" uid="uid://cwy2xmpah0dwq" path="res://enemies/enemy_health_bar.tscn" id="3_enemy_health_bar"]
-[ext_resource type="PackedScene" path="res://models/mech_giraffe.glb" id="3_mech_giraffe"]
+[ext_resource type="PackedScene" uid="uid://bb12hq7jkgnqg" path="res://models/mech_giraffe.glb" id="3_mech_giraffe"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_4b8bn"]
-size = Vector3(1.2, 1.2, 1.2)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_li1hj"]
+height = 1.8
 
 [node name="TestEnemy" type="RigidBody3D" unique_id=1458272205]
 script = ExtResource("1_test_enemy")
 experience_token_scene = ExtResource("2_experience_token")
 
-[node name="MechGiraffe" parent="." instance=ExtResource("3_mech_giraffe")]
-transform = Transform3D(0.6, 0, 0, 0, 0.6, 0, 0, 0, 0.6, 0, 0, 0)
+[node name="MechGiraffe" parent="." unique_id=394078193 instance=ExtResource("3_mech_giraffe")]
 
 [node name="HealthBar3D" parent="." unique_id=1174431845 instance=ExtResource("3_enemy_health_bar")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=95496211]
-shape = SubResource("BoxShape3D_4b8bn")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.9, 0)
+shape = SubResource("CylinderShape3D_li1hj")

@@ -1,26 +1,25 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://61wxncgqfry7"]
 
-[ext_resource type="Script" path="res://enemies/basic_enemy.gd" id="1_1rang"]
+[ext_resource type="Script" uid="uid://cj8ia58iv77jt" path="res://enemies/basic_enemy.gd" id="1_1rang"]
 [ext_resource type="PackedScene" path="res://items/experience_token.tscn" id="2_t4u0n"]
-[ext_resource type="PackedScene" path="res://models/snail_tank.glb" id="3_snail_tank"]
-[ext_resource type="PackedScene" path="res://enemies/enemy_health_bar.tscn" id="4_mfad5"]
+[ext_resource type="PackedScene" uid="uid://donei5vjdtxig" path="res://models/snail_tank.glb" id="3_snail_tank"]
+[ext_resource type="PackedScene" uid="uid://cwy2xmpah0dwq" path="res://enemies/enemy_health_bar.tscn" id="4_mfad5"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_4b8bn"]
-radius = 1.8
-height = 3.6
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_1rang"]
+radius = 1.0
 
-[node name="TestEnemy" type="RigidBody3D"]
-script = ExtResource("1_1rang")
-experience_token_scene = ExtResource("2_t4u0n")
+[node name="TestEnemy" type="RigidBody3D" unique_id=1039942037]
 axis_lock_angular_x = true
 axis_lock_angular_z = true
+script = ExtResource("1_1rang")
+experience_token_scene = ExtResource("2_t4u0n")
 
-[node name="SnailTank" parent="." instance=ExtResource("3_snail_tank")]
+[node name="SnailTank" parent="." unique_id=880486306 instance=ExtResource("3_snail_tank")]
 transform = Transform3D(1.8, 0, 0, 0, 1.8, 0, 0, 0, 1.8, 0, 0, 0)
 
-[node name="HealthBar3D" parent="." instance=ExtResource("4_mfad5")]
+[node name="HealthBar3D" parent="." unique_id=1938014586 instance=ExtResource("4_mfad5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
-shape = SubResource("CapsuleShape3D_4b8bn")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=2136008155]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+shape = SubResource("CylinderShape3D_1rang")

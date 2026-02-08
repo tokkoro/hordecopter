@@ -1,26 +1,25 @@
-[gd_scene format=3]
+[gd_scene format=3 uid="uid://3wckabtb30ws"]
 
-[ext_resource type="Script" path="res://enemies/basic_enemy.gd" id="1_hl4u3"]
+[ext_resource type="Script" uid="uid://cj8ia58iv77jt" path="res://enemies/basic_enemy.gd" id="1_hl4u3"]
 [ext_resource type="PackedScene" path="res://items/experience_token.tscn" id="2_8r0c7"]
-[ext_resource type="PackedScene" path="res://models/tiger.glb" id="3_tiger"]
-[ext_resource type="PackedScene" path="res://enemies/enemy_health_bar.tscn" id="4_bmdkl"]
+[ext_resource type="PackedScene" uid="uid://c35hyk3v525tm" path="res://models/tiger.glb" id="3_tiger"]
+[ext_resource type="PackedScene" uid="uid://cwy2xmpah0dwq" path="res://enemies/enemy_health_bar.tscn" id="4_bmdkl"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_4b8bn"]
-radius = 1.8
-height = 3.6
+[sub_resource type="BoxShape3D" id="BoxShape3D_hl4u3"]
+size = Vector3(1, 1, 2)
 
-[node name="TestEnemy" type="RigidBody3D"]
-script = ExtResource("1_hl4u3")
-experience_token_scene = ExtResource("2_8r0c7")
+[node name="TestEnemy" type="RigidBody3D" unique_id=1077545931]
 axis_lock_angular_x = true
 axis_lock_angular_z = true
+script = ExtResource("1_hl4u3")
+experience_token_scene = ExtResource("2_8r0c7")
 
-[node name="Tiger" parent="." instance=ExtResource("3_tiger")]
+[node name="Tiger" parent="." unique_id=209002446 instance=ExtResource("3_tiger")]
 transform = Transform3D(1.8, 0, 0, 0, 1.8, 0, 0, 0, 1.8, 0, 0, 0)
 
-[node name="HealthBar3D" parent="." instance=ExtResource("4_bmdkl")]
+[node name="HealthBar3D" parent="." unique_id=256217153 instance=ExtResource("4_bmdkl")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
-shape = SubResource("CapsuleShape3D_4b8bn")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1875676995]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.48672998, 0.39957726)
+shape = SubResource("BoxShape3D_hl4u3")
