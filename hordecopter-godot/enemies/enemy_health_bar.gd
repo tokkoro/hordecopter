@@ -13,6 +13,8 @@ class_name EnemyHealthBar3D
 extends Node3D
 
 @export var bar_width: float = 1.0
+@export var  always_visible = false
+@export var fade_when_full = false
 
 var enemy_health_bar_max_health: float = 1.0
 var enemy_health_bar_base_width: float = 1.0
@@ -24,7 +26,7 @@ var enemy_health_bar_base_width: float = 1.0
 func _ready() -> void:
 	add_to_group("enemy_health_bars")
 	enemy_health_bar_base_width = _resolve_base_width()
-	visible = _resolve_initial_visibility()
+	visible = always_visible or _resolve_initial_visibility()
 
 
 func set_health(current_health: float, max_health: float) -> void:

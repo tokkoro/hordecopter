@@ -35,6 +35,12 @@ const HC_ITEM_PROJECTILE_SPEED_STEP: float = 1.0
 @export var kd: float = 12.0
 @export var d_filter_hz: float = -1.0
 @export var rotation_speed: float = 100.0
+@export var fuel_max: float = 100.0
+@export var fuel_regen_per_second: float = 18.0
+@export var fuel_drain_per_second: float = 10.0
+@export var fuel_altitude_drain_per_second: float = 2.5
+@export var fuel_ground_height: float = 0.0
+@export var fuel_ground_check_distance: float = 1.0
 
 var my_camera: Camera3D
 var auto_float_target_altitude: float = 0.5
@@ -74,19 +80,25 @@ var hc_base_max_z_speed: float = 0.0
 var hc_weapon_base_knockback: Array[float] = []
 var hc_weapon_base_projectile_count: Array[int] = []
 var hc_rotor_swosh_timer: float = 0.0
+var hc_fuel_current: float = 0.0
+var hc_previous_aerial_time = 0.0
 var _i: float = 0.0
 var _prev_error: float = 0.0
 var _d_state: float = 0.0
 @onready var propellit: Node = get_node("rollaus_pivot_piste")
 @onready var infotext: Label3D = get_node("infotext")
+@onready var fuel_bar: EnemyHealthBar3D = get_node("FuelBar")
 
 
 func _ready() -> void:
 	add_to_group("player")
+	contact_monitor = true
+	max_contacts_reported = 8
 	my_camera = _find_node_by_name(get_tree().current_scene, my_camera_name)
 	if my_camera == null:
 		push_error("Missä on mun kamera? %s" % [my_camera_name])
 		return
+	hc_fuel_current = fuel_max
 	_cache_base_movement_stats()
 	_configure_item_definitions()
 	_ensure_orbiting_weapon_system()
@@ -98,6 +110,8 @@ func _physics_process(delta: float) -> void:
 	if not hc_weapon_systems_is_initialized:
 		_configure_weapon_systems()
 		hc_weapon_systems_is_initialized = true
+	_update_fuel(delta)
+	_update_fuel_label()
 	var current_level := _get_current_level()
 	if current_level != hc_cached_level:
 		_apply_movement_speed_for_level(current_level)
@@ -107,6 +121,9 @@ func _physics_process(delta: float) -> void:
 		up_force_input = 1
 	if Input.is_action_pressed("p1_thurst_down"):
 		up_force_input = -1
+	
+	if hc_fuel_current <= 0.0:
+		up_force_input = 0
 
 	if up_force_input == 0:
 		if not auto_float:
@@ -138,6 +155,7 @@ func _physics_process(delta: float) -> void:
 
 	var auto_float_debug_value: float = 0.0
 	## AUTO FLOAT SYSTEM
+	auto_float = auto_float and hc_fuel_current > 0.0
 	if auto_float:
 		var y := global_position.y
 		var error := auto_float_target_altitude - y
@@ -166,11 +184,13 @@ func _physics_process(delta: float) -> void:
 
 		#total force
 		var force_y := hover_force + u
-		auto_float_debug_value = force_y
+		auto_float_debug_value = force_y 
 		#limit
 		force_y = clamp(force_y, -auto_float_power_max, auto_float_power_max)
 
 		apply_force(Vector3.UP * force_y)
+	else:
+		auto_float_target_altitude = 0.0
 
 	var rot_input: float = 0.0
 	if Input.is_action_pressed("p1_rotate_ccw"):
@@ -204,6 +224,48 @@ func _physics_process(delta: float) -> void:
 		)
 	else:
 		infotext.text = ""
+
+
+func _update_fuel(delta: float) -> void:
+	var grounded: bool = _is_grounded()
+	if grounded:
+		# stay on ground for 1 second to start fueling
+		if Time.get_ticks_msec() - hc_previous_aerial_time > 1000:
+			hc_fuel_current = min(fuel_max, hc_fuel_current + fuel_regen_per_second * delta)
+		return
+	else:
+		hc_previous_aerial_time = Time.get_ticks_msec()
+	var altitude: float = max(0.0, _get_ground_distance())
+	var altitude_drain: float = fuel_altitude_drain_per_second * altitude
+	var drain: float = (fuel_drain_per_second + altitude_drain) * delta
+	hc_fuel_current = max(0.0, hc_fuel_current - drain)
+
+
+func _update_fuel_label() -> void:
+	if fuel_bar == null:
+		push_warning("no fuel bar for copter")
+		return
+	var ratio: float = 0.0
+	if fuel_max > 0.0:
+		ratio = clamp(hc_fuel_current / fuel_max, 0.0, 1.0)
+	fuel_bar.set_ratio(ratio)
+
+
+func _is_grounded() -> bool:
+	return _get_ground_distance() <= fuel_ground_check_distance
+
+
+func _get_ground_distance() -> float:
+	var space_state: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
+	var from: Vector3 = global_position
+	var to: Vector3 = from + Vector3.DOWN * max(0.1, fuel_ground_check_distance * 2.0)
+	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(from, to)
+	query.exclude = [self]
+	var result: Dictionary = space_state.intersect_ray(query)
+	if result.is_empty():
+		return max(0.0, global_position.y - fuel_ground_height)
+	var hit_position: Vector3 = result.get("position", to)
+	return max(0.0, from.y - hit_position.y)
 
 
 func apply_player_damage(amount: float) -> void:

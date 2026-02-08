@@ -15,6 +15,7 @@
 [ext_resource type="Texture2D" uid="uid://b0323mruxlisk" path="res://weapons/copters_around.png" id="13_8sv32"]
 [ext_resource type="Script" uid="uid://jw2coyki72vv" path="res://weapons/weapon_definition.gd" id="14_t13ue"]
 [ext_resource type="PackedScene" uid="uid://bvillwguvjmyl" path="res://weapons/orbiting_ropelli.tscn" id="15_8sv32"]
+[ext_resource type="Script" uid="uid://ccb7g4kffyyj6" path="res://enemies/enemy_health_bar.gd" id="16_t13ue"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_eifgo"]
 
@@ -35,6 +36,20 @@ weapon_name = "OrbitingWeaponSystem"
 icon = ExtResource("13_8sv32")
 fire_mode = 1
 metadata/_custom_type_script = "uid://jw2coyki72vv"
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_health_bg"]
+shading_mode = 0
+albedo_color = Color(0.1, 0.1, 0.1, 0.8)
+
+[sub_resource type="BoxMesh" id="BoxMesh_health_bg"]
+size = Vector3(0.98, 0.12, 0.12)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3adfc"]
+shading_mode = 0
+albedo_color = Color(1, 0.6431373, 0.2, 0.9019608)
+
+[sub_resource type="BoxMesh" id="BoxMesh_health_fill"]
+size = Vector3(1, 0.08, 0.08)
 
 [node name="Hordecopter" type="RigidBody3D" unique_id=770129423]
 mass = 100.0
@@ -93,3 +108,18 @@ script = ExtResource("7_rollaus_pivot")
 
 [node name="vain_ropeli" parent="rollaus_pivot_piste" unique_id=1609318281 instance=ExtResource("9_ropeli")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.45494208, -0.20959833)
+
+[node name="FuelBar" type="Node3D" parent="." unique_id=1304257082]
+transform = Transform3D(-1.5517543e-08, -0.355, 0, 0.355, -1.5517543e-08, 0, 0, 0, 0.355, 0.36136544, -0.20244703, 0.22431117)
+script = ExtResource("16_t13ue")
+always_visible = true
+fade_when_full = true
+
+[node name="Background" type="MeshInstance3D" parent="FuelBar" unique_id=1647053598]
+material_override = SubResource("StandardMaterial3D_health_bg")
+mesh = SubResource("BoxMesh_health_bg")
+
+[node name="Fill" type="MeshInstance3D" parent="FuelBar" unique_id=1037435142]
+transform = Transform3D(0.5, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, -0.01)
+material_override = SubResource("StandardMaterial3D_3adfc")
+mesh = SubResource("BoxMesh_health_fill")
