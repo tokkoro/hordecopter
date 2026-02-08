@@ -81,9 +81,7 @@ func _physics_process(delta: float) -> void:
 	if test_enemy_has_target:
 		test_enemy_speed = test_enemy_seek_speed
 	if test_enemy_touching_prop:
-		test_enemy_climb_timer = test_enemy_climb_duration
-	else:
-		test_enemy_climb_timer = 0.0
+		test_enemy_climb_timer = max(test_enemy_climb_timer, test_enemy_climb_duration)
 	if test_enemy_climb_timer > 0.0:
 		test_enemy_climb_timer = max(0.0, test_enemy_climb_timer - delta)
 	var test_enemy_velocity := linear_velocity
