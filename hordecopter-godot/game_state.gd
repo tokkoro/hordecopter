@@ -153,6 +153,9 @@ func _handle_enemy_health_toggle() -> void:
 func _apply_enemy_health_bar_visibility() -> void:
 	var health_bars := get_tree().get_nodes_in_group("enemy_health_bars")
 	for health_bar in health_bars:
+		if health_bar is EnemyHealthBar3D:
+			if health_bar.always_visible:
+				continue
 		if health_bar is Node3D:
 			health_bar.visible = game_state_show_enemy_health_bars
 		elif health_bar is CanvasItem:

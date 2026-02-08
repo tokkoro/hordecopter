@@ -81,12 +81,13 @@ var hc_weapon_base_knockback: Array[float] = []
 var hc_weapon_base_projectile_count: Array[int] = []
 var hc_rotor_swosh_timer: float = 0.0
 var hc_fuel_current: float = 0.0
+var hc_previous_aerial_time = 0.0
 var _i: float = 0.0
 var _prev_error: float = 0.0
 var _d_state: float = 0.0
 @onready var propellit: Node = get_node("rollaus_pivot_piste")
 @onready var infotext: Label3D = get_node("infotext")
-@onready var fuel_text: Label3D = get_node("fueltext")
+@onready var fuel_bar: EnemyHealthBar3D = get_node("FuelBar")
 
 
 func _ready() -> void:
@@ -120,8 +121,11 @@ func _physics_process(delta: float) -> void:
 		up_force_input = 1
 	if Input.is_action_pressed("p1_thurst_down"):
 		up_force_input = -1
+	
+	if hc_fuel_current <= 0.0:
+		up_force_input = 0
 
-	if up_force_input == 0 or hc_fuel_current <= 0.0:
+	if up_force_input == 0:
 		if not auto_float:
 			auto_float_target_altitude = global_position.y
 			auto_float = true
@@ -137,7 +141,7 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_pressed("p1_thurst_left"):
 		side_force_input = -1
 
-	if side_force_input != 0 and hc_fuel_current > 0.0:
+	if side_force_input != 0:
 		apply_force(directions["right"] * sideward_power * delta * side_force_input)
 
 	var forward_force_input = 0
@@ -146,11 +150,12 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_pressed("p1_thurst_backward"):
 		forward_force_input = -1
 
-	if forward_force_input != 0 and hc_fuel_current > 0.0:
+	if forward_force_input != 0:
 		apply_force(directions["forward"] * forward_power * delta * forward_force_input)
 
 	var auto_float_debug_value: float = 0.0
 	## AUTO FLOAT SYSTEM
+	auto_float = auto_float and hc_fuel_current > 0.0
 	if auto_float:
 		var y := global_position.y
 		var error := auto_float_target_altitude - y
@@ -179,11 +184,13 @@ func _physics_process(delta: float) -> void:
 
 		#total force
 		var force_y := hover_force + u
-		auto_float_debug_value = force_y
+		auto_float_debug_value = force_y 
 		#limit
 		force_y = clamp(force_y, -auto_float_power_max, auto_float_power_max)
 
 		apply_force(Vector3.UP * force_y)
+	else:
+		auto_float_target_altitude = 0.0
 
 	var rot_input: float = 0.0
 	if Input.is_action_pressed("p1_rotate_ccw"):
@@ -222,8 +229,12 @@ func _physics_process(delta: float) -> void:
 func _update_fuel(delta: float) -> void:
 	var grounded: bool = _is_grounded()
 	if grounded:
-		hc_fuel_current = min(fuel_max, hc_fuel_current + fuel_regen_per_second * delta)
+		# stay on ground for 1 second to start fueling
+		if Time.get_ticks_msec() - hc_previous_aerial_time > 1000:
+			hc_fuel_current = min(fuel_max, hc_fuel_current + fuel_regen_per_second * delta)
 		return
+	else:
+		hc_previous_aerial_time = Time.get_ticks_msec()
 	var altitude: float = max(0.0, _get_ground_distance())
 	var altitude_drain: float = fuel_altitude_drain_per_second * altitude
 	var drain: float = (fuel_drain_per_second + altitude_drain) * delta
@@ -231,13 +242,13 @@ func _update_fuel(delta: float) -> void:
 
 
 func _update_fuel_label() -> void:
-	if fuel_text == null:
+	if fuel_bar == null:
+		push_warning("no fuel bar for copter")
 		return
 	var ratio: float = 0.0
 	if fuel_max > 0.0:
 		ratio = clamp(hc_fuel_current / fuel_max, 0.0, 1.0)
-	var percentage := int(round(ratio * 100.0))
-	fuel_text.text = "Fuel: %d%%" % percentage
+	fuel_bar.set_ratio(ratio)
 
 
 func _is_grounded() -> bool:
