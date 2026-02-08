@@ -1,6 +1,6 @@
-[gd_scene format=3 uid="uid://puindrw6g6rm"]
+[gd_scene format=3 uid="uid://cksfgpkhgs7uq"]
 
-[ext_resource type="Script" uid="uid://boy3ufjfjqxsy" path="res://ui/main_menu.gd" id="1_c0j6p"]
+[ext_resource type="Script" uid="uid://dv1bt8rnxg4kh" path="res://ui/main_menu.gd" id="1_c0j6p"]
 [ext_resource type="Script" uid="uid://bwc8b66rmbyph" path="res://weapons/weapon_system.gd" id="2_p8ri8"]
 [ext_resource type="Resource" uid="uid://kqaffrt5hvoc" path="res://weapons/homing_missile_weapon.tres" id="3_ubpvv"]
 [ext_resource type="PackedScene" uid="uid://d25k72efcjldo" path="res://models/vain_body.glb" id="4_arv2f"]
@@ -109,7 +109,6 @@ max_enemies = 10
 group_size_min = 5
 group_size_max = 10
 map_size = 5.0
-new_enemy_interval = 0.001
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1556954517]
 transform = Transform3D(0.7813951, -0.23068504, 0.579833, 0.026434876, 0.94056696, 0.338578, -0.62347656, -0.24923533, 0.7410525, 2.2345638, 1.2234739, 10.918057)
