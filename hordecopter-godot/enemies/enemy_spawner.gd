@@ -320,7 +320,7 @@ func _pick_enemy_scene(enemy_scenes: Array[PackedScene]) -> PackedScene:
 		return null
 	var enemy_spawner_candidates: Array[PackedScene] = []
 	# time per 2min on max index
-	var time_based_max_size = int(game_state.get_elapsed_time() / 120)
+	var time_based_max_size = int(game_state.get_elapsed_time() / 60)
 
 	for enemy_spawner_scene in enemy_scenes:
 		if enemy_spawner_scene != null:
