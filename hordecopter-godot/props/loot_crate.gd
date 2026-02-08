@@ -33,7 +33,7 @@ extends StaticBody3D
 const LOOT_CRATE_HIT_SFX: AudioStream = preload("res://sfx/monster_hit.sfxr")
 
 @export var max_health: float = 6.0
-@export var drop_speed: float = 4.5
+@export var drop_speed: float = 2.5
 @export var experience_drop_count: int = 6
 @export var drop_radius_min: float = 0.6
 @export var drop_radius_max: float = 2.0

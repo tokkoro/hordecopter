@@ -11,14 +11,14 @@ size = Vector3(1.2, 1.2, 1.2)
 albedo_color = Color(0.855, 0.168, 0.188, 1)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_parachute_canopy"]
-top_radius = 0.2
-bottom_radius = 0.9
-height = 0.3
+top_radius = 0.35
+bottom_radius = 1.9
+height = 0.5
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_parachute_lines"]
-top_radius = 0.02
-bottom_radius = 0.02
-height = 1.0
+top_radius = 0.04
+bottom_radius = 0.04
+height = 2.2
 
 [node name="LootCrate" type="StaticBody3D"]
 script = ExtResource("2_loot_crate")
@@ -26,14 +26,14 @@ script = ExtResource("2_loot_crate")
 [node name="CrateModel" parent="." instance=ExtResource("1_crate_model")]
 
 [node name="Parachute" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.2, 0)
 
 [node name="Canopy" type="MeshInstance3D" parent="Parachute"]
 mesh = SubResource("CylinderMesh_parachute_canopy")
 surface_material_override/0 = SubResource("StandardMaterial3D_parachute")
 
 [node name="Lines" type="MeshInstance3D" parent="Parachute"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.65, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1.35, 0)
 mesh = SubResource("CylinderMesh_parachute_lines")
 surface_material_override/0 = SubResource("StandardMaterial3D_parachute")
 

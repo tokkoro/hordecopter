@@ -51,8 +51,8 @@ const PROP_SCALE_RANGES := {
 @export var center_clear_radius: float = 10.0
 @export var max_attempts: int = 200
 @export var loot_crate_scene: PackedScene = preload("res://props/loot_crate.tscn")
-@export var loot_crate_min_delay: float = 12.0
-@export var loot_crate_max_delay: float = 24.0
+@export var loot_crate_min_delay: float = 6.0
+@export var loot_crate_max_delay: float = 12.0
 @export var loot_crate_drop_height: float = 18.0
 @export var loot_crate_max_active: int = 3
 
