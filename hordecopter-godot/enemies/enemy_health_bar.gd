@@ -79,11 +79,16 @@ func _apply_full_fade(ratio: float) -> void:
 		return
 	var fade_ratio := clampf((ratio - 0.9) / 0.1, 0.0, 1.0)
 	var fade_alpha := 1.0 - fade_ratio
-	_set_material_alpha(bar_background, enemy_health_bar_background_color, fade_alpha)
+	if fade_alpha > 0.01:
+		bar_background.visible = true
+		_set_material_alpha(bar_background, Color(fade_ratio, fade_ratio, fade_ratio) * enemy_health_bar_fill_color, 1)
+	else:
+		bar_background.visible = false
+		
 	_set_material_alpha(bar_fill, enemy_health_bar_fill_color, fade_alpha)
 
 
-func _set_material_alpha(mesh_instance: MeshInstance3D, base_color: Color, alpha: float) -> void:
+func _set_material_alpha(mesh_instance: GeometryInstance3D, base_color: Color, alpha: float) -> void:
 	if mesh_instance.material_override is StandardMaterial3D:
 		var material := mesh_instance.material_override as StandardMaterial3D
 		var next_color := base_color
