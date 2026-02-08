@@ -43,6 +43,8 @@ func _ready() -> void:
 		weapon.fire_mode = WeaponDefinition.FireMode.AREA
 		weapon.cooldown = 4.0
 		weapon.damage = 2.0
+		weapon.knockback = 1.2
+		weapon.knockback_per_level = 0.3
 		weapon.range = orbit_radius_max
 	_spawn_copters()
 	_set_copters_visible(false)
@@ -132,7 +134,8 @@ func _apply_swarm_damage(delta: float) -> void:
 			var enemy_node := enemy as Node3D
 			if _is_enemy_in_swarm_range(enemy_node):
 				if enemy_node.has_method("apply_damage"):
-					enemy_node.apply_damage(weapon.damage)
+					var origin := _get_swarm_hit_origin(enemy_node)
+					enemy_node.apply_damage(weapon.damage, weapon.knockback, origin)
 
 
 func _is_enemy_in_swarm_range(enemy_node: Node3D) -> bool:
@@ -142,3 +145,15 @@ func _is_enemy_in_swarm_range(enemy_node: Node3D) -> bool:
 			if enemy_node.global_position.distance_to(copter.global_position) <= radius:
 				return true
 	return false
+
+
+func _get_swarm_hit_origin(enemy_node: Node3D) -> Vector3:
+	var closest_position := global_position
+	var closest_distance := INF
+	for copter in ohs_helicopters:
+		if copter != null:
+			var distance := enemy_node.global_position.distance_to(copter.global_position)
+			if distance < closest_distance:
+				closest_distance = distance
+				closest_position = copter.global_position
+	return closest_position

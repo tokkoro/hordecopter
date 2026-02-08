@@ -6,6 +6,8 @@
 # Editor Exports   • weapon_name: String – display label
 #                 • icon: Texture2D – HUD icon
 #                 • area_radius: float – radius for area weapons
+#                 • knockback: float – base knockback force
+#                 • knockback_per_level: float – knockback gained per level
 # Dependencies     • n/a
 # Last Major Rev   • 25-09-27 – add area fire mode data
 ###############################################################
@@ -24,6 +26,8 @@ enum FireMode {
 @export var fire_mode: FireMode = FireMode.HITSCAN
 @export var cooldown: float = 0.2
 @export var damage: float = 5.0
+@export var knockback: float = 0.0
+@export var knockback_per_level: float = 0.0
 @export var range: float = 50.0
 @export var area_radius: float = 6.0
 @export var projectile_scene: PackedScene

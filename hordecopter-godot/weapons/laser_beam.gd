@@ -11,12 +11,12 @@
 class_name LaserBeam
 extends Node3D
 
+const SWEEP_ANGLE_DEGREES: float = 179.0
+
 @export var lifetime: float = 0.05
 @export var beam_mesh_path: NodePath = NodePath("BeamMesh")
 @export var sweep_duration: float = 0.35
 @export var sweep_ease_power: float = 2.0
-
-const sweep_angle_degrees: float = 179.0
 var _beam_mesh: MeshInstance3D
 var _beam_material: StandardMaterial3D
 var _sweep_active := false
@@ -26,6 +26,7 @@ var _sweep_base_direction := Vector3.FORWARD
 var _sweep_right_axis := Vector3.RIGHT
 var _sweep_range := 0.0
 var _sweep_damage := 0.0
+var _sweep_knockback := 0.0
 var _sweep_color := Color.WHITE
 var _sweep_width := 0.05
 var _sweep_start_angle := 0.0
@@ -71,6 +72,7 @@ func configure_sweep(
 	direction: Vector3,
 	range: float,
 	damage: float,
+	knockback: float,
 	color: Color,
 	width: float,
 	exclude_node: Node = null
@@ -81,6 +83,7 @@ func configure_sweep(
 	_sweep_base_direction = direction.normalized()
 	_sweep_range = range
 	_sweep_damage = damage
+	_sweep_knockback = knockback
 	_sweep_color = color
 	_sweep_width = width
 	_hit_ids.clear()
@@ -93,8 +96,8 @@ func configure_sweep(
 	if right_axis.length() < 0.001:
 		right_axis = Vector3.RIGHT
 	_sweep_right_axis = right_axis.normalized()
-	_sweep_start_angle = sweep_angle_degrees * 0.5
-	_sweep_end_angle = -sweep_angle_degrees * 0.5
+	_sweep_start_angle = SWEEP_ANGLE_DEGREES * 0.5
+	_sweep_end_angle = -SWEEP_ANGLE_DEGREES * 0.5
 	_update_beam(
 		_sweep_origin,
 		_sweep_origin + _sweep_base_direction * _sweep_range,
@@ -128,7 +131,7 @@ func _apply_sweep_damage(start: Vector3, direction: Vector3) -> void:
 		if _hit_ids.has(id):
 			continue
 		_hit_ids[id] = true
-		collider.apply_damage(_sweep_damage)
+		collider.apply_damage(_sweep_damage, _sweep_knockback, _sweep_origin)
 
 
 func _update_beam(start: Vector3, end: Vector3, color: Color, width: float) -> void:

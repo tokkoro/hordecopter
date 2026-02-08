@@ -10,4 +10,5 @@ icon = ExtResource("1_cskxu")
 fire_mode = 2
 cooldown = 1.0
 damage = 2.5
+knockback = 1.5
 range = 6.0
