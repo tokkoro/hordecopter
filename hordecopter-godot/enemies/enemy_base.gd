@@ -67,6 +67,8 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	_update_hit_flash(delta)
+	if global_position.y < -10:
+		_on_death(true)
 	if enemy_base_time_stop_remaining <= 0.0:
 		return
 	enemy_base_time_stop_remaining = max(0.0, enemy_base_time_stop_remaining - delta)
@@ -80,7 +82,7 @@ func apply_damage(amount: float, knockback: float = 0.0, origin: Vector3 = Vecto
 	health -= amount
 	_update_health_bar()
 	if health <= 0.0:
-		_on_death()
+		_on_death(false)
 
 
 func configure_elite() -> void:
@@ -122,12 +124,13 @@ func set_max_health(value: float) -> void:
 	_update_health_bar()
 
 
-func _on_death() -> void:
+func _on_death(force: bool) -> void:
 	if enemy_base_is_dead:
 		return
 	enemy_base_is_dead = true
-	_play_sfx_at(ENEMY_DEATH_SFX, global_position)
-	_drop_experience()
+	if not force:
+		_play_sfx_at(ENEMY_DEATH_SFX, global_position)
+		_drop_experience()
 	queue_free()
 
 

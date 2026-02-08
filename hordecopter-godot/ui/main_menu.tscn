@@ -22,10 +22,12 @@ uv1_scale = Vector3(5, 5, 5)
 
 [sub_resource type="CylinderMesh" id="CylinderMesh_arv2f"]
 top_radius = 10.0
+bottom_radius = 10.0
 height = 1.0
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_5klac"]
-size = Vector3(100, 1, 100)
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_0nobx"]
+height = 1.0
+radius = 10.0
 
 [node name="MainMenu" type="Control" unique_id=1534175925]
 layout_mode = 3
@@ -74,7 +76,7 @@ mesh = SubResource("CylinderMesh_arv2f")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Maa" unique_id=1185607996]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
-shape = SubResource("BoxShape3D_5klac")
+shape = SubResource("CylinderShape3D_0nobx")
 
 [node name="Hordecopter" type="Node3D" parent="." unique_id=2134224287]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 10.114728)
@@ -102,13 +104,13 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.20205303, -0.8301058)
 transform = Transform3D(0.7813951, -0.23068504, 0.579833, 0.026434876, 0.94056696, 0.338578, -0.62347656, -0.24923533, 0.7410525, 2.2345638, 1.2234739, 0.80332935)
 script = ExtResource("9_0nobx")
 ground_enemy_scenes = Array[PackedScene]([ExtResource("10_iyrh0"), ExtResource("11_8jgmr"), ExtResource("12_q75kt"), ExtResource("13_0i0gl"), ExtResource("14_jqly5"), ExtResource("15_pbm0j")])
-spawn_interval_max = 10.0
-spawn_interval_min = 10.0
-spawn_ramp_duration = 10.0
+spawn_interval_max = 5.0
+spawn_interval_min = 5.0
+spawn_ramp_duration = 1.0
 max_enemies = 10
 group_size_min = 5
 group_size_max = 10
-map_size = 5.0
+map_size = 1.0
 
 [node name="Camera3D" type="Camera3D" parent="." unique_id=1556954517]
 transform = Transform3D(0.7813951, -0.23068504, 0.579833, 0.026434876, 0.94056696, 0.338578, -0.62347656, -0.24923533, 0.7410525, 2.2345638, 1.2234739, 10.918057)
