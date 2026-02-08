@@ -11,7 +11,8 @@
 [ext_resource type="PackedScene" uid="uid://3wckabtb30ws" path="res://enemies/basic_enemy_2.tscn" id="6_jayf2"]
 [ext_resource type="PackedScene" uid="uid://b54rvoqsjj6f3" path="res://enemies/basic_enemy_3.tscn" id="7_7qrhf"]
 [ext_resource type="PackedScene" path="res://enemies/medusa_flyer.tscn" id="7_e7tll"]
-[ext_resource type="Script" uid="uid://c4m7enyay13p3" path="res://ui/hud.gd" id="7_hud"]
+[ext_resource type="Script" uid="uid://ltl7lenutetf" path="res://ui/hud.gd" id="7_hud"]
+[ext_resource type="PackedScene" uid="uid://dclj2yuowjvlv" path="res://ui/pause_menu.tscn" id="9_pause_menu"]
 [ext_resource type="PackedScene" uid="uid://61wxncgqfry7" path="res://enemies/basic_enemy_4.tscn" id="8_ctu57"]
 [ext_resource type="Script" uid="uid://5y4lu84m00fd" path="res://props/prop_spawner.gd" id="8_prop_spawner"]
 
@@ -83,6 +84,8 @@ script = ExtResource("6_game_state")
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=542620325]
 script = ExtResource("7_hud")
+
+[node name="PauseMenu" parent="HUD" unique_id=2000828744 instance=ExtResource("9_pause_menu")]
 
 [node name="MarginContainer" type="MarginContainer" parent="HUD" unique_id=1692005082]
 anchors_preset = 10
