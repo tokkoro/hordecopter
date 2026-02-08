@@ -113,14 +113,20 @@ func _fire_projectile() -> void:
 	_play_projectile_sfx()
 
 	var projectile_count: int = int(max(1, weapon.projectile_count))
-	for _index in range(projectile_count):
+	var base_direction := -_muzzle.global_transform.basis.z
+	var base_up := _muzzle.global_transform.basis.y
+	var spread_step_degrees := 5.0
+	var spread_start := -0.5 * float(projectile_count - 1) * spread_step_degrees
+	for index in range(projectile_count):
 		var projectile := weapon.projectile_scene.instantiate()
 		get_tree().current_scene.add_child(projectile)
 		projectile.global_transform = _muzzle.global_transform
 		_apply_projectile_item_bonuses(projectile)
 		if projectile.has_method("configure"):
-			var direction := -_muzzle.global_transform.basis.z
+			var spread_angle := spread_start + float(index) * spread_step_degrees
+			var direction := base_direction.rotated(base_up, deg_to_rad(spread_angle))
 			projectile.configure(weapon, direction)
+
 
 func _play_projectile_sfx() -> void:
 	if weapon == null or weapon.projectile_scene == null:
