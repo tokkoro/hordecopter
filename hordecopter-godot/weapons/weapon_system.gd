@@ -111,14 +111,16 @@ func _fire_projectile() -> void:
 		push_warning("Projectile weapon should have projectile_scene!")
 		return
 	_play_projectile_sfx()
-	var projectile := weapon.projectile_scene.instantiate()
-	get_tree().current_scene.add_child(projectile)
-	projectile.global_transform = _muzzle.global_transform
-	_apply_projectile_item_bonuses(projectile)
-	if projectile.has_method("configure"):
-		var direction := -_muzzle.global_transform.basis.z
-		projectile.configure(weapon, direction)
 
+	var projectile_count: int = int(max(1, weapon.projectile_count))
+	for _index in range(projectile_count):
+		var projectile := weapon.projectile_scene.instantiate()
+		get_tree().current_scene.add_child(projectile)
+		projectile.global_transform = _muzzle.global_transform
+		_apply_projectile_item_bonuses(projectile)
+		if projectile.has_method("configure"):
+			var direction := -_muzzle.global_transform.basis.z
+			projectile.configure(weapon, direction)
 
 func _play_projectile_sfx() -> void:
 	if weapon == null or weapon.projectile_scene == null:

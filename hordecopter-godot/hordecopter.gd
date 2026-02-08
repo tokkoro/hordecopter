@@ -66,6 +66,7 @@ var hc_item_levels: Array[int] = []
 var hc_base_max_x_speed: float = 0.0
 var hc_base_max_z_speed: float = 0.0
 var hc_weapon_base_knockback: Array[float] = []
+var hc_weapon_base_projectile_count: Array[int] = []
 var hc_rotor_swosh_timer: float = 0.0
 var _i: float = 0.0
 var _prev_error: float = 0.0
@@ -265,6 +266,7 @@ func _configure_weapon_systems() -> void:
 	hc_weapon_base_cooldown.clear()
 	hc_weapon_base_area_radius.clear()
 	hc_weapon_base_knockback.clear()
+	hc_weapon_base_projectile_count.clear()
 	for system in hc_weapon_systems:
 		if not system.is_ready:
 			push_warning("Weapon was not ready to be configured!")
@@ -273,15 +275,15 @@ func _configure_weapon_systems() -> void:
 			hc_weapon_base_damage.append(system.weapon.damage)
 			hc_weapon_base_cooldown.append(system.weapon.cooldown)
 			hc_weapon_base_area_radius.append(system.weapon.area_radius)
+			hc_weapon_base_knockback.append(system.weapon.knockback)
+			hc_weapon_base_projectile_count.append(system.weapon.projectile_count)
 		else:
+			push_warning("Weapon system has no weapon!")
 			hc_weapon_base_damage.append(0.0)
 			hc_weapon_base_cooldown.append(0.0)
 			hc_weapon_base_area_radius.append(0.0)
-			hc_weapon_base_knockback.append(system.weapon.knockback)
-		else:
-			hc_weapon_base_damage.append(0.0)
-			hc_weapon_base_cooldown.append(0.0)
 			hc_weapon_base_knockback.append(0.0)
+			hc_weapon_base_projectile_count.append(1)
 	# TODO: level up at a start of give certain weapon?
 	var rng := RandomNumberGenerator.new()
 	rng.randomize()
@@ -390,6 +392,7 @@ func _apply_weapon_level(index: int) -> int:
 	var base_cooldown := hc_weapon_base_cooldown[index]
 	var base_area_radius := hc_weapon_base_area_radius[index]
 	var base_knockback := hc_weapon_base_knockback[index]
+	var base_projectile_count := hc_weapon_base_projectile_count[index]
 	var level: int = int(max(1, hc_weapon_levels[index]))
 	var bonus_damage := get_item_bonus(ItemDefinition.ItemType.DAMAGE)
 	var bonus_attack_speed := get_item_bonus(ItemDefinition.ItemType.ATTACK_SPEED)
@@ -398,9 +401,16 @@ func _apply_weapon_level(index: int) -> int:
 	system.weapon.damage += bonus_damage
 	system.weapon.knockback = base_knockback + system.weapon.knockback_per_level * float(level - 1)
 	var cooldown_multiplier := pow(HC_WEAPON_COOLDOWN_MULTIPLIER, float(level - 1))
+
 	system.weapon.cooldown = max(0.05, base_cooldown * cooldown_multiplier - bonus_attack_speed)
+	var interval: int = int(max(1, system.weapon.projectile_count_level_interval))
+	var steps := int(floor(float(level - 1) / float(interval)))
+	system.weapon.projectile_count = max(
+		1, base_projectile_count + steps * system.weapon.projectile_count_level_step
+	)
 	if base_area_radius > 0.0:
 		system.weapon.area_radius = max(0.1, base_area_radius + bonus_area_size)
+
 	return level
 
 
